@@ -1,7 +1,6 @@
 package org.docksidestage.handson.dbflute.allcommon;
 
 import org.dbflute.dbway.DBDef;
-import org.dbflute.jdbc.DataSourceHandler;
 import org.dbflute.hook.PrologueHook;
 import org.dbflute.system.DBFluteSystem;
 
@@ -22,8 +21,6 @@ public class DBFluteInitializer {
     // ===================================================================================
     //                                                                           Attribute
     //                                                                           =========
-    protected final String _dataSourceFqcn; // to determine DataSource, not null
-
     // -----------------------------------------------------
     //                                                Option
     //                                                ------
@@ -34,14 +31,8 @@ public class DBFluteInitializer {
     //                                                                         ===========
     /**
      * Constructor, which initializes various components.
-     * @param dataSource The instance of data source. (NotNull)
      */
-    public DBFluteInitializer(javax.sql.DataSource dataSource) {
-        if (dataSource == null) {
-            String msg = "The argument 'dataSource' should not be null!";
-            throw new IllegalArgumentException(msg);
-        }
-        _dataSourceFqcn = dataSource.getClass().getName();
+    public DBFluteInitializer() {
         announce();
         prologue();
         standBy();
@@ -81,7 +72,6 @@ public class DBFluteInitializer {
         if (_prologueHook != null) {
             _prologueHook.hookBefore();
         }
-        setupDataSourceHandler(_dataSourceFqcn);
         adjustDBFluteSystem();
     }
 
@@ -100,37 +90,6 @@ public class DBFluteInitializer {
     // ===================================================================================
     //                                                                            Contents
     //                                                                            ========
-    /**
-     * Set up the handler of data source to the configuration of DBFlute. <br>
-     * If it uses commons-DBCP, it needs to arrange some for transaction.
-     * <ul>
-     *     <li>A. To use DataSourceUtils which is Spring Framework class.</li>
-     *     <li>B. To use TransactionConnection that is original class and doesn't close really.</li>
-     * </ul>
-     * If you use a transaction library which has a data source which supports transaction,
-     * It doesn't need these arrangement. (For example, the framework 'Atomikos') <br>
-     * This method should be executed when application is initialized.
-     * @param dataSourceFqcn The FQCN of data source. (NotNull)
-     */
-    protected void setupDataSourceHandler(String dataSourceFqcn) { // for Spring
-        final DBFluteConfig config = DBFluteConfig.getInstance();
-        final DataSourceHandler dataSourceHandler = config.getDataSourceHandler();
-        if (dataSourceHandler != null) {
-            return;
-        }
-        if (needsSpringTransactionalDataSource(dataSourceFqcn)) {
-            config.unlock();
-            config.setDataSourceHandler(new DBFluteConfig.SpringTransactionalDataSourceHandler());
-        }
-    }
-
-    protected boolean needsSpringTransactionalDataSource(String dataSourceFqcn) {
-        return dataSourceFqcn.startsWith("org.apache.commons.dbcp.")
-            || dataSourceFqcn.startsWith("org.apache.commons.dbcp2.")
-            || dataSourceFqcn.startsWith("org.apache.tomcat.jdbc.pool.")
-            || dataSourceFqcn.startsWith("com.zaxxer.hikari.");
-    }
-
     /**
      * Adjust DBFlute system if it needs.
      */

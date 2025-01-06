@@ -1,5 +1,6 @@
 package org.docksidestage.handson.dbflute.allcommon;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.dbflute.bhv.core.InvokerAssistant;
@@ -23,12 +24,16 @@ import org.dbflute.optional.RelationOptionalFactory;
 import org.dbflute.outsidesql.OutsideSqlOption;
 import org.dbflute.outsidesql.factory.DefaultOutsideSqlExecutorFactory;
 import org.dbflute.outsidesql.factory.OutsideSqlExecutorFactory;
+import org.dbflute.helper.beans.factory.DfBeanDescFactory;
 import org.dbflute.s2dao.extension.TnBeanMetaDataFactoryExtension;
 import org.dbflute.s2dao.jdbc.TnResultSetHandlerFactory;
 import org.dbflute.s2dao.jdbc.TnResultSetHandlerFactoryImpl;
 import org.dbflute.s2dao.jdbc.TnStatementFactoryImpl;
 import org.dbflute.s2dao.metadata.TnBeanMetaDataFactory;
 import org.dbflute.twowaysql.factory.SqlAnalyzerFactory;
+
+import org.lastaflute.di.Disposable;
+import org.lastaflute.di.DisposableUtil;
 
 /**
  * @author DBFlute(AutoGenerator)
@@ -471,7 +476,26 @@ public class ImplementedInvokerAssistant implements InvokerAssistant {
     //                                                                             =======
     /** {@inheritDoc} */
     public void toBeDisposable(final DisposableProcess callerProcess) { // for HotDeploy
-        // do nothing: unsupported at this DI container
+        if (_disposable) {
+            return;
+        }
+        synchronized (this) {
+            if (_disposable) {
+                return;
+            }
+            DisposableUtil.add(new Disposable() {
+                public void dispose() {
+                    callerProcess.dispose();
+                    _disposable = false;
+                }
+            });
+            DisposableUtil.add(new Disposable() {
+                public void dispose() {
+                    DfBeanDescFactory.clear();
+                }
+            });
+            _disposable = true;
+        }
     }
 
     public boolean isDisposable() {
@@ -481,6 +505,7 @@ public class ImplementedInvokerAssistant implements InvokerAssistant {
     // ===================================================================================
     //                                                                            Accessor
     //                                                                            ========
+    @Resource
     public void setDataSource(DataSource dataSource) {
         _dataSource = dataSource;
     }
@@ -489,6 +514,7 @@ public class ImplementedInvokerAssistant implements InvokerAssistant {
     // when the initializer is extended by DBFlute property
     // so this variable is actually unused in this class
     // (needs to be injected only when the DI container is set by its DI setting file)
+    @Resource
     public void setIntroduction(DBFluteInitializer introduction) {
         _introduction = introduction;
     }

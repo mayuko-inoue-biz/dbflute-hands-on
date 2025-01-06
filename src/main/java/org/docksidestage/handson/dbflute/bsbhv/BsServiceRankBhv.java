@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.dbflute.*;
 import org.dbflute.bhv.*;
-import org.dbflute.bhv.core.BehaviorCommandInvoker;
 import org.dbflute.bhv.readable.*;
 import org.dbflute.bhv.writable.*;
 import org.dbflute.bhv.referrer.*;
@@ -12,7 +11,6 @@ import org.dbflute.cbean.*;
 import org.dbflute.cbean.chelper.HpSLSFunction;
 import org.dbflute.cbean.result.*;
 import org.dbflute.exception.*;
-import org.dbflute.hook.CommonColumnAutoSetupper;
 import org.dbflute.optional.OptionalEntity;
 import org.dbflute.outsidesql.executor.*;
 import org.docksidestage.handson.dbflute.exbhv.*;
@@ -902,28 +900,4 @@ public abstract class BsServiceRankBhv extends AbstractBehaviorWritable<ServiceR
     protected Class<? extends ServiceRank> typeOfSelectedEntity() { return ServiceRank.class; }
     protected Class<ServiceRank> typeOfHandlingEntity() { return ServiceRank.class; }
     protected Class<ServiceRankCB> typeOfHandlingConditionBean() { return ServiceRankCB.class; }
-
-    // ===================================================================================
-    //                                                                            Accessor
-    //                                                                            ========
-    @Override
-    @org.springframework.beans.factory.annotation.Autowired
-    @org.springframework.beans.factory.annotation.Qualifier("behaviorCommandInvoker")
-    public void setBehaviorCommandInvoker(BehaviorCommandInvoker behaviorCommandInvoker) {
-        super.setBehaviorCommandInvoker(behaviorCommandInvoker);
-    }
-
-    @Override
-    @org.springframework.beans.factory.annotation.Autowired
-    @org.springframework.beans.factory.annotation.Qualifier("behaviorSelector")
-    public void setBehaviorSelector(BehaviorSelector behaviorSelector) {
-        super.setBehaviorSelector(behaviorSelector);
-    }
-
-    @Override
-    @org.springframework.beans.factory.annotation.Autowired
-    @org.springframework.beans.factory.annotation.Qualifier("commonColumnAutoSetupper")
-    public void setCommonColumnAutoSetupper(CommonColumnAutoSetupper commonColumnAutoSetupper) {
-        super.setCommonColumnAutoSetupper(commonColumnAutoSetupper);
-    }
 }
