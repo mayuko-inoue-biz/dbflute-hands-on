@@ -58,7 +58,7 @@ public class HandsOn02Test extends UnitContainerTestCase {
      */
     public void test_searchByMemberIdOne() throws Exception {
         // ## Arrange ##
-        Integer memberId = 1;
+        Integer memberId = 99999;
 
         // ## Act ##
         OptionalEntity<Member> member = memberBhv.selectEntity(cb -> {
@@ -66,7 +66,7 @@ public class HandsOn02Test extends UnitContainerTestCase {
         });
 
         // ## Assert ##
-        assertTrue(member.isPresent());
+        assertTrue(member.isPresent()); // memberがnullのときに下のgetMemberId()でExceptionにならないようにisPresent()を追加したが、不要かも
         assertEquals(memberId, member.get().getMemberId());
         log("memberName: {}, memberId: {}, memberIdForSearch", member.get().getMemberName(), member.get().getMemberId(), memberId);
     }
