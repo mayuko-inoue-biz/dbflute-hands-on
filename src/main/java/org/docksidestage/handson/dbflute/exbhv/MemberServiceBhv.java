@@ -10,6 +10,5 @@ import org.docksidestage.handson.dbflute.bsbhv.BsMemberServiceBhv;
  * </p>
  * @author DBFlute(AutoGenerator)
  */
-@org.springframework.stereotype.Component("memberServiceBhv")
 public class MemberServiceBhv extends BsMemberServiceBhv {
 }

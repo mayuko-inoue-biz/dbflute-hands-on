@@ -10,6 +10,5 @@ import org.docksidestage.handson.dbflute.bsbhv.BsServiceRankBhv;
  * </p>
  * @author DBFlute(AutoGenerator)
  */
-@org.springframework.stereotype.Component("serviceRankBhv")
 public class ServiceRankBhv extends BsServiceRankBhv {
 }

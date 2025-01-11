@@ -10,6 +10,5 @@ import org.docksidestage.handson.dbflute.bsbhv.BsMemberWithdrawalBhv;
  * </p>
  * @author DBFlute(AutoGenerator)
  */
-@org.springframework.stereotype.Component("memberWithdrawalBhv")
 public class MemberWithdrawalBhv extends BsMemberWithdrawalBhv {
 }
