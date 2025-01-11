@@ -8,11 +8,18 @@ import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
 import org.docksidestage.handson.dbflute.exentity.Member;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
+/**
+ * DBFluteハンズオン02のクラス
+ * @author mayukorin
+ */
 public class HandsOn02Test extends UnitContainerTestCase {
 
     @Resource
     private MemberBhv memberBhv;
-    
+
+    /**
+     * テストデータがあることをテスト
+     */
     public void test_existsTestData() throws Exception {
         // ## Arrange ##
     
@@ -20,11 +27,15 @@ public class HandsOn02Test extends UnitContainerTestCase {
         int memberCnt = memberBhv.selectCount(cb -> {
             cb.query().addOrderBy_MemberId_Asc();
         });
+
         // ## Assert ##
         assertTrue(memberCnt > 0);
     }
 
-    public void test_searchByMemberNamePrefix() throws Exception {
+    /**
+     * 会員名称がSで始まる会員を検索
+     */
+    public void test_searchByMemberNamePrefixS() throws Exception {
         // ## Arrange ##
         String memberNamePrefix = "S";
 
@@ -33,6 +44,7 @@ public class HandsOn02Test extends UnitContainerTestCase {
             cb.query().setMemberName_LikeSearch(memberNamePrefix, op -> op.likePrefix());
             cb.query().addOrderBy_MemberName_Asc();
         });
+
         // ## Assert ##
         assertFalse(memberList.isEmpty());
         memberList.forEach(member -> {
@@ -40,20 +52,28 @@ public class HandsOn02Test extends UnitContainerTestCase {
             assertTrue(member.getMemberName().startsWith(memberNamePrefix));
         });
     }
-    
-    public void test_searchByMemberId() throws Exception {
+
+    /**
+     * 会員IDが1の会員を検索
+     */
+    public void test_searchByMemberIdOne() throws Exception {
         // ## Arrange ##
         Integer memberId = 1;
+
         // ## Act ##
         OptionalEntity<Member> member = memberBhv.selectEntity(cb -> {
             cb.query().setMemberId_Equal(memberId);
         });
+
         // ## Assert ##
         assertTrue(member.isPresent());
         assertEquals(memberId, member.get().getMemberId());
         log("memberName: {}, memberId: {}, memberIdForSearch", member.get().getMemberName(), member.get().getMemberId(), memberId);
     }
 
+    /**
+     * 生年月日がない会員を検索
+     */
     public void test_searchMemberByNoBirthDate() throws Exception {
         // ## Arrange ##
 
@@ -62,6 +82,7 @@ public class HandsOn02Test extends UnitContainerTestCase {
             cb.query().setBirthdate_IsNull();
             cb.query().addOrderBy_UpdateDatetime_Desc();
         });
+
         // ## Assert ##
         memberList.forEach(member -> {
             log("memberId: {}, birthDate: {}", member.getMemberName(), member.getBirthdate());
