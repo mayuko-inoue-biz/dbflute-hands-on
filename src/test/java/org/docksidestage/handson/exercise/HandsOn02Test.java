@@ -1,5 +1,7 @@
 package org.docksidestage.handson.exercise;
 
+import java.time.LocalDate;
+
 import javax.annotation.Resource;
 
 import org.dbflute.cbean.result.ListResultBean;
@@ -106,8 +108,10 @@ public class HandsOn02Test extends UnitContainerTestCase {
         // TODO done mayukorin こっちも素通り防止を by jflute (2025/01/14)
         assertHasAnyElement(memberList);
         memberList.forEach(member -> {
-            log("memberId: {}, birthDate: {}", member.getMemberName(), member.getBirthdate());
-            assertNull(member.getBirthdate());
+            LocalDate birthdate = member.getBirthdate();
+            String memberName = member.getMemberName();
+            log("memberId: {}, birthDate: {}", memberName, birthdate);
+            assertNull(birthdate);
         });
     }
 }
