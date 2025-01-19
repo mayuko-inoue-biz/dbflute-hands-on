@@ -110,7 +110,7 @@ public class HandsOn02Test extends UnitContainerTestCase {
         memberList.forEach(member -> {
             LocalDate birthdate = member.getBirthdate();
             String memberName = member.getMemberName();
-            log("memberId: {}, birthDate: {}", memberName, birthdate);
+            log("memberName: {}, birthDate: {}", memberName, birthdate);
             assertNull(birthdate);
         });
     }
