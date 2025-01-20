@@ -24,8 +24,11 @@ public class HandsOn02Test extends UnitContainerTestCase {
      */
     public void test_existsTestData() throws Exception {
         // ## Arrange ##
-    
+
         // ## Act ##
+        // [1on1でのふぉろー] 単語省略語のよもやま話
+        // 省略語をあまり使わなくなってきた歴史がある。でも明らかにわかる省略語はある程度使われている。
+        // 例外的にもう広まっている省略語、例えばFLGのお話。あと現場の省略語のお話。
         int memberCnt = memberBhv.selectCount(cb -> {
             cb.query().addOrderBy_MemberId_Asc();
         });
@@ -56,6 +59,7 @@ public class HandsOn02Test extends UnitContainerTestCase {
         memberList.forEach(member -> {
             // done mayukorin 細かいですが、member.getMemberName() が二度呼ばれてコードが横長なので... by jflute (2025/01/14)
             // 変数に抽出してみましょう。IntelliJのショートカットがあるはずです。
+            // [1on1でのふぉろー] 書く時は勢いに乗って.get.getして呼び出して、書き終わった後に抽出するってのがコツ
             String memberName = member.getMemberName();
             log("memberName: {}, memberNamePrefixForSearch: {}", memberName, memberNamePrefix);
             assertTrue(memberName.startsWith(memberNamePrefix));
@@ -68,7 +72,7 @@ public class HandsOn02Test extends UnitContainerTestCase {
     public void test_searchByMemberIdOne() throws Exception {
         // ## Arrange ##
         // done mayukorin 99999は一時的なお試しで、コミットはしないようにしましょう by jflute (2025/01/14)
-        Integer memberId = 1;
+        Integer memberId = 999999;
 
         // ## Act ##
         OptionalEntity<Member> searchedMemberOpt = memberBhv.selectEntity(cb -> {
@@ -76,7 +80,8 @@ public class HandsOn02Test extends UnitContainerTestCase {
         });
 
         // ## Assert ##
-        // TODO jflute 1on1でOptionalの概念とDBFluteのOptionalの話をする予定 (2025/01/20)
+        // done jflute 1on1でOptionalの概念 (2025/01/20)
+        // TODO jflute 1on1でDBFluteのOptionalの話をする予定 (2025/01/20)
         // done mayukorin 丁寧で明示的で悪くはないですが、この場合 DBFlute の get() で例外の方がデバッグしやすいですね by jflute (2025/01/14)
         // assertTrue()を削除して99999で実行して例外メッセージを読んでみましょう。
         // 確かに、getの例外の方がデバックしやすかったです！  by m.inoue (2025/01/15)
@@ -87,7 +92,7 @@ public class HandsOn02Test extends UnitContainerTestCase {
         String searchedMemberName = searchedMember.getMemberName();
         Integer searchedMemberId = searchedMember.getMemberId();
 
-        // TODO done mayukorin テスト内でログを出すとき、assertの前に出す方が落ちたときにそのログを見てデバッグできます by jflute (2025/01/14)
+        // done mayukorin テスト内でログを出すとき、assertの前に出す方が落ちたときにそのログを見てデバッグできます by jflute (2025/01/14)
         // 確かに！！教えていただき、ありがとうございます  by m.inoue (2025/01/15)
         log("searchedMemberName: {}, searchedMemberId: {}, memberIdForSearch", searchedMemberName, searchedMemberId, memberId);
         assertEquals(searchedMemberId, memberId);
@@ -109,8 +114,10 @@ public class HandsOn02Test extends UnitContainerTestCase {
         // done mayukorin こっちも素通り防止を by jflute (2025/01/14)
         assertHasAnyElement(memberList);
         memberList.forEach(member -> {
-            LocalDate birthdate = member.getBirthdate();
+            // [1on1でのふぉろー] 変数は、右側から書いて、ショートカット抽出しちゃった方が宣言が楽 (オススメ)
+            // IntelliJだと、.var もしくは option+Enter でヒントを聞く (だいたい一番上に出てくる)
             String memberName = member.getMemberName();
+            LocalDate birthdate = member.getBirthdate();
             // TODO mayukorin 細かいですが、カラム名変数名としてはbirthdateでdは小文字なのでラベルも合わせましょう by jflute (2025/01/20)
             log("memberName: {}, birthDate: {}", memberName, birthdate);
             assertNull(birthdate);

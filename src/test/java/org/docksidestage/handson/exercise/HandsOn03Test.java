@@ -129,6 +129,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
 
             // Assertするために、MemberSecurityInfoを取ってくる（でもmember分検索してしまっているの微妙かも）
             // TODO mayukorin ちゃすかに by jflute (2025/01/20)
+            // TODO mayukorin [読み物課題] 単純な話、getであんまり検索したくない by jflute (2025/01/20)
+            // https://jflute.hatenadiary.jp/entry/20151020/stopgetselect
             Member memberSelectedById = memberBhv.selectEntity(cb -> {
                 cb.setupSelect_MemberSecurityAsOne();
                 cb.query().setMemberId_Equal(memberId);
