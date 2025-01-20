@@ -39,7 +39,7 @@ public class HandsOn02Test extends UnitContainerTestCase {
      */
     public void test_searchByMemberNamePrefixS() throws Exception {
         // ## Arrange ##
-        // TODO done mayukorin [いいね] 良い変数名、わかりやすい！ by jflute (2025/01/14)
+        // done mayukorin [いいね] 良い変数名、わかりやすい！ by jflute (2025/01/14)
         String memberNamePrefix = "S";
 
         // ## Act ##
@@ -49,12 +49,12 @@ public class HandsOn02Test extends UnitContainerTestCase {
         });
 
         // ## Assert ##
-        // TODO done mayukorin [いいね] ちゃんと素通り防止できてますね！ by jflute (2025/01/14)
+        // done mayukorin [いいね] ちゃんと素通り防止できてますね！ by jflute (2025/01/14)
         // ちなみに、UnitTestでループするときはずっとそうなので、assH -> assertHasAnyElement()
         // という専用のメソッドあるので、そっちを使ってみてください。
         assertHasAnyElement(memberList);
         memberList.forEach(member -> {
-            // TODO done mayukorin 細かいですが、member.getMemberName() が二度呼ばれてコードが横長なので... by jflute (2025/01/14)
+            // done mayukorin 細かいですが、member.getMemberName() が二度呼ばれてコードが横長なので... by jflute (2025/01/14)
             // 変数に抽出してみましょう。IntelliJのショートカットがあるはずです。
             String memberName = member.getMemberName();
             log("memberName: {}, memberNamePrefixForSearch: {}", memberName, memberNamePrefix);
@@ -67,7 +67,7 @@ public class HandsOn02Test extends UnitContainerTestCase {
      */
     public void test_searchByMemberIdOne() throws Exception {
         // ## Arrange ##
-        // TODO done mayukorin 99999は一時的なお試しで、コミットはしないようにしましょう by jflute (2025/01/14)
+        // done mayukorin 99999は一時的なお試しで、コミットはしないようにしましょう by jflute (2025/01/14)
         Integer memberId = 1;
 
         // ## Act ##
@@ -76,12 +76,13 @@ public class HandsOn02Test extends UnitContainerTestCase {
         });
 
         // ## Assert ##
-        // TODO mayukorin 丁寧で明示的で悪くはないですが、この場合 DBFlute の get() で例外の方がデバッグしやすいですね by jflute (2025/01/14)
+        // TODO jflute 1on1でOptionalの概念とDBFluteのOptionalの話をする予定 (2025/01/20)
+        // done mayukorin 丁寧で明示的で悪くはないですが、この場合 DBFlute の get() で例外の方がデバッグしやすいですね by jflute (2025/01/14)
         // assertTrue()を削除して99999で実行して例外メッセージを読んでみましょう。
         // 確かに、getの例外の方がデバックしやすかったです！  by m.inoue (2025/01/15)
         // [思い出]
         // assertTrue(member.isPresent()); // memberがnullのときに下のgetMemberId()でExceptionにならないようにisPresent()を追加したが、不要かも
-        // TODO done mayukorin せめて member.get() は変数に抽出しちゃった方がスッキリするかと思います by jflute (2025/01/14)
+        // done mayukorin せめて member.get() は変数に抽出しちゃった方がスッキリするかと思います by jflute (2025/01/14)
         Member searchedMember = searchedMemberOpt.get();
         String searchedMemberName = searchedMember.getMemberName();
         Integer searchedMemberId = searchedMember.getMemberId();
@@ -105,11 +106,12 @@ public class HandsOn02Test extends UnitContainerTestCase {
         });
 
         // ## Assert ##
-        // TODO done mayukorin こっちも素通り防止を by jflute (2025/01/14)
+        // done mayukorin こっちも素通り防止を by jflute (2025/01/14)
         assertHasAnyElement(memberList);
         memberList.forEach(member -> {
             LocalDate birthdate = member.getBirthdate();
             String memberName = member.getMemberName();
+            // TODO mayukorin 細かいですが、カラム名変数名としてはbirthdateでdは小文字なのでラベルも合わせましょう by jflute (2025/01/20)
             log("memberName: {}, birthDate: {}", memberName, birthdate);
             assertNull(birthdate);
         });
