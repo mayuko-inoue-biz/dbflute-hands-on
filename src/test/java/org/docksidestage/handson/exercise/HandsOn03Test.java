@@ -35,11 +35,17 @@ public class HandsOn03Test extends UnitContainerTestCase {
     
         // ## Act ##
         ListResultBean<Member> memberList = memberBhv.selectList(cb -> {
+            // TODO mayukorin [いいね] メソッドの呼び出し順序、いいですね！ by jflute (2025/01/20)
+            // 実装順序は、データの取得、絞り込み、並び替え by jflute
+            //  => http://dbflute.seasar.org/ja/manual/function/ormapper/conditionbean/effective.html#implorder
             cb.setupSelect_MemberStatus();
             cb.specify().columnMemberName();
             cb.specify().columnBirthdate();
+            // TODO mayukorin specify[テーブル]だけやっても意味がないコードになります。カラムまで指定しないと。 by jflute (2025/01/20)
             cb.specify().specifyMemberStatus();
             cb.query().setMemberName_LikeSearch(memberNamePrefixForSearch, op -> op.likePrefix());
+            // TODO mayukorin [tips] おおぉ、いきなり高度な機能を！でもできてますね。 by jflute (2025/01/20)
+            // でもここでは lessEqual でも大丈夫でしたということで
             cb.query().setBirthdate_FromTo(null, birthdateForSearch, op -> {
                 op.allowOneSide(); // 指定日以前に生まれた人を検索したくて、何日以降に生まれたかは問わない
                 op.compareAsDate();
@@ -51,10 +57,12 @@ public class HandsOn03Test extends UnitContainerTestCase {
         assertHasAnyElement(memberList);
         memberList.forEach(member -> {
             String memberName = member.getMemberName();
+            // TODO mayukorin ここはmemberを付けなくてもいいかなと。birthdateで十分member限定感あるので by jflute (2025/01/20)
             LocalDate memberBirthdate = member.getBirthdate();
             MemberStatus memberStatus = member.getMemberStatus().get();
             log("memberName: {}, memberBirthDate: {}, memberStatusCodeName: {}, memberNamePrefixForSearch: {}, fromBirthDateForSearch: {}", memberName, memberBirthdate, memberStatus.getMemberStatusName(), memberNamePrefixForSearch, birthdateForSearch);
             assertTrue(memberName.startsWith(memberNamePrefixForSearch));
+            // TODO mayukorin 細かいですが、ループの中で毎回同じ処理 plusDays(1) を実行してしまうのが無駄なので、ループ外に出しましょう by jflute (2025/01/20)
             assertTrue(memberBirthdate.isBefore(birthdateForSearch.plusDays(1))); // 生年月日が指定日時ぴったりでもOK
         });
     }
@@ -82,6 +90,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         });
     
         // ## Assert ##
+        // TODO jflute 1on1でカーディナリティのフォロー予定 (2025/01/20)
         assertHasAnyElement(memberList);
         memberList.forEach(member -> {
             Integer memberId = member.getMemberId();
@@ -109,6 +118,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         ListResultBean<Member> memberList = memberBhv.selectList(cb -> {
             cb.specify().columnMemberId();
             cb.specify().columnMemberName();
+            // TODO mayukorin [いいね] 素晴らしい by jflute (2025/01/20)
             cb.query().queryMemberSecurityAsOne().setReminderQuestion_LikeSearch(reminderQuestionKeyword, op -> op.likeContain()); // dbfluteでは、関連テーブルを使いたい目的に対応するメソッドがあるらしい。今回の目的はカラム取得ではなく絞り込みなので、setUpSelect使う必要なし。
         });
     
@@ -118,6 +128,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             Integer memberId = member.getMemberId();
 
             // Assertするために、MemberSecurityInfoを取ってくる（でもmember分検索してしまっているの微妙かも）
+            // TODO mayukorin ちゃすかに by jflute (2025/01/20)
             Member memberSelectedById = memberBhv.selectEntity(cb -> {
                 cb.setupSelect_MemberSecurityAsOne();
                 cb.query().setMemberId_Equal(memberId);
