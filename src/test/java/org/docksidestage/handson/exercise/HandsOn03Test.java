@@ -32,24 +32,28 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Arrange ##
         String memberNamePrefixForSearch = "S";
         LocalDate birthdateForSearch = LocalDate.of(1968, 1, 1);
+        LocalDate birthdateForSearchPlusOneDay = birthdateForSearch.plusDays(1);
     
         // ## Act ##
         ListResultBean<Member> memberList = memberBhv.selectList(cb -> {
-            // TODO mayukorin [いいね] メソッドの呼び出し順序、いいですね！ by jflute (2025/01/20)
+            // TODO done mayukorin [いいね] メソッドの呼び出し順序、いいですね！ by jflute (2025/01/20)
             // 実装順序は、データの取得、絞り込み、並び替え by jflute
             //  => http://dbflute.seasar.org/ja/manual/function/ormapper/conditionbean/effective.html#implorder
             cb.setupSelect_MemberStatus();
             cb.specify().columnMemberName();
             cb.specify().columnBirthdate();
             // TODO mayukorin specify[テーブル]だけやっても意味がないコードになります。カラムまで指定しないと。 by jflute (2025/01/20)
-            cb.specify().specifyMemberStatus();
+            cb.specify().specifyMemberStatus().columnMemberStatusName();
             cb.query().setMemberName_LikeSearch(memberNamePrefixForSearch, op -> op.likePrefix());
-            // TODO mayukorin [tips] おおぉ、いきなり高度な機能を！でもできてますね。 by jflute (2025/01/20)
+            // TODO done mayukorin [tips] おおぉ、いきなり高度な機能を！でもできてますね。 by jflute (2025/01/20)
             // でもここでは lessEqual でも大丈夫でしたということで
-            cb.query().setBirthdate_FromTo(null, birthdateForSearch, op -> {
-                op.allowOneSide(); // 指定日以前に生まれた人を検索したくて、何日以降に生まれたかは問わない
-                op.compareAsDate();
-            });
+            // あ、なるほど！ lessEqual でもできるのですね！
+            // [思い出]
+//            cb.query().setBirthdate_FromTo(null, birthdateForSearch, op -> {
+//                op.allowOneSide(); // 指定日以前に生まれた人を検索したくて、何日以降に生まれたかは問わない
+//                op.compareAsDate();
+//            });
+            cb.query().setBirthdate_LessEqual(birthdateForSearch);
             cb.query().addOrderBy_Birthdate_Asc();
         });
 
@@ -57,13 +61,13 @@ public class HandsOn03Test extends UnitContainerTestCase {
         assertHasAnyElement(memberList);
         memberList.forEach(member -> {
             String memberName = member.getMemberName();
-            // TODO mayukorin ここはmemberを付けなくてもいいかなと。birthdateで十分member限定感あるので by jflute (2025/01/20)
-            LocalDate memberBirthdate = member.getBirthdate();
+            // TODO done mayukorin ここはmemberを付けなくてもいいかなと。birthdateで十分member限定感あるので by jflute (2025/01/20)
+            LocalDate birthdate = member.getBirthdate();
             MemberStatus memberStatus = member.getMemberStatus().get();
-            log("memberName: {}, memberBirthdate: {}, memberStatusCodeName: {}, memberNamePrefixForSearch: {}, fromBirthDateForSearch: {}", memberName, memberBirthdate, memberStatus.getMemberStatusName(), memberNamePrefixForSearch, birthdateForSearch);
+            log("memberName: {}, memberBirthdate: {}, memberStatusCodeName: {}, memberNamePrefixForSearch: {}, fromBirthDateForSearch: {}", memberName, birthdate, memberStatus.getMemberStatusName(), memberNamePrefixForSearch, birthdateForSearch);
             assertTrue(memberName.startsWith(memberNamePrefixForSearch));
-            // TODO mayukorin 細かいですが、ループの中で毎回同じ処理 plusDays(1) を実行してしまうのが無駄なので、ループ外に出しましょう by jflute (2025/01/20)
-            assertTrue(memberBirthdate.isBefore(birthdateForSearch.plusDays(1))); // 生年月日が指定日時ぴったりでもOK
+            // TODO done mayukorin 細かいですが、ループの中で毎回同じ処理 plusDays(1) を実行してしまうのが無駄なので、ループ外に出しましょう by jflute (2025/01/20)
+            assertTrue(birthdate.isBefore(birthdateForSearchPlusOneDay)); // 生年月日が指定日時ぴったりでもOK
         });
     }
 
@@ -94,10 +98,10 @@ public class HandsOn03Test extends UnitContainerTestCase {
         assertHasAnyElement(memberList);
         memberList.forEach(member -> {
             Integer memberId = member.getMemberId();
-            LocalDate memberBirthdate = member.getBirthdate();
+            LocalDate birthdate = member.getBirthdate();
             OptionalEntity<MemberStatus> optMemberStatus = member.getMemberStatus();
             OptionalEntity<MemberSecurity> optMemberSecurity = member.getMemberSecurityAsOne();
-            log("memberId: {}, birthdate: {}, memberStatus: {}, memberSecurity: {}", memberId, memberBirthdate, optMemberStatus, optMemberSecurity);
+            log("memberId: {}, birthdate: {}, memberStatus: {}, memberSecurity: {}", memberId, birthdate, optMemberStatus, optMemberSecurity);
             assertTrue(optMemberStatus.isPresent());
             assertTrue(optMemberSecurity.isPresent());
         });
@@ -129,7 +133,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
 
             // Assertするために、MemberSecurityInfoを取ってくる（でもmember分検索してしまっているの微妙かも）
             // TODO mayukorin ちゃすかに by jflute (2025/01/20)
-            // TODO mayukorin [読み物課題] 単純な話、getであんまり検索したくない by jflute (2025/01/20)
+            // TODO done mayukorin [読み物課題] 単純な話、getであんまり検索したくない by jflute (2025/01/20)
             // https://jflute.hatenadiary.jp/entry/20151020/stopgetselect
             Member memberSelectedById = memberBhv.selectEntity(cb -> {
                 cb.setupSelect_MemberSecurityAsOne();
