@@ -60,7 +60,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             // TODO mayukorin ここはmemberを付けなくてもいいかなと。birthdateで十分member限定感あるので by jflute (2025/01/20)
             LocalDate memberBirthdate = member.getBirthdate();
             MemberStatus memberStatus = member.getMemberStatus().get();
-            log("memberName: {}, memberBirthDate: {}, memberStatusCodeName: {}, memberNamePrefixForSearch: {}, fromBirthDateForSearch: {}", memberName, memberBirthdate, memberStatus.getMemberStatusName(), memberNamePrefixForSearch, birthdateForSearch);
+            log("memberName: {}, memberBirthdate: {}, memberStatusCodeName: {}, memberNamePrefixForSearch: {}, fromBirthDateForSearch: {}", memberName, memberBirthdate, memberStatus.getMemberStatusName(), memberNamePrefixForSearch, birthdateForSearch);
             assertTrue(memberName.startsWith(memberNamePrefixForSearch));
             // TODO mayukorin 細かいですが、ループの中で毎回同じ処理 plusDays(1) を実行してしまうのが無駄なので、ループ外に出しましょう by jflute (2025/01/20)
             assertTrue(memberBirthdate.isBefore(birthdateForSearch.plusDays(1))); // 生年月日が指定日時ぴったりでもOK
@@ -97,7 +97,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             LocalDate memberBirthdate = member.getBirthdate();
             OptionalEntity<MemberStatus> optMemberStatus = member.getMemberStatus();
             OptionalEntity<MemberSecurity> optMemberSecurity = member.getMemberSecurityAsOne();
-            log("memberId: {}, birthDate: {}, memberStatus: {}, memberSecurity: {}", memberId, memberBirthdate, optMemberStatus, optMemberSecurity);
+            log("memberId: {}, birthdate: {}, memberStatus: {}, memberSecurity: {}", memberId, memberBirthdate, optMemberStatus, optMemberSecurity);
             assertTrue(optMemberStatus.isPresent());
             assertTrue(optMemberSecurity.isPresent());
         });
@@ -118,7 +118,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         ListResultBean<Member> memberList = memberBhv.selectList(cb -> {
             cb.specify().columnMemberId();
             cb.specify().columnMemberName();
-            // TODO mayukorin [いいね] 素晴らしい by jflute (2025/01/20)
+            // TODO done mayukorin [いいね] 素晴らしい by jflute (2025/01/20)
             cb.query().queryMemberSecurityAsOne().setReminderQuestion_LikeSearch(reminderQuestionKeyword, op -> op.likeContain()); // dbfluteでは、関連テーブルを使いたい目的に対応するメソッドがあるらしい。今回の目的はカラム取得ではなく絞り込みなので、setUpSelect使う必要なし。
         });
     
