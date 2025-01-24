@@ -1,12 +1,15 @@
 package org.docksidestage.handson.exercise;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
 import org.dbflute.cbean.result.ListResultBean;
 import org.dbflute.optional.OptionalEntity;
 import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
+import org.docksidestage.handson.dbflute.exbhv.MemberSecurityBhv;
 import org.docksidestage.handson.dbflute.exentity.Member;
 import org.docksidestage.handson.dbflute.exentity.MemberSecurity;
 import org.docksidestage.handson.dbflute.exentity.MemberStatus;
@@ -20,6 +23,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
 
     @Resource
     private MemberBhv memberBhv;
+    @Resource
+    private MemberSecurityBhv memberSecurityBhv;
 
     /**
      * 会員名称がSで始まる1968年1月1日以前に生まれた会員を検索する <br>
@@ -128,21 +133,38 @@ public class HandsOn03Test extends UnitContainerTestCase {
     
         // ## Assert ##
         assertHasAnyElement(memberList);
-        memberList.forEach(member -> {
-            Integer memberId = member.getMemberId();
 
-            // Assertするために、MemberSecurityInfoを取ってくる（でもmember分検索してしまっているの微妙かも）
-            // TODO mayukorin ちゃすかに by jflute (2025/01/20)
-            // TODO done mayukorin [読み物課題] 単純な話、getであんまり検索したくない by jflute (2025/01/20)
-            // https://jflute.hatenadiary.jp/entry/20151020/stopgetselect
-            Member memberSelectedById = memberBhv.selectEntity(cb -> {
-                cb.setupSelect_MemberSecurityAsOne();
-                cb.query().setMemberId_Equal(memberId);
-            }).get();
-            MemberSecurity memberSecurity = memberSelectedById.getMemberSecurityAsOne().get(); // memberSecurityは存在すること前提（1個前のテストでそれをassertしてる）
-
-            log("memberId: {}, memberSecurity: {}", memberId, memberSecurity);
-            assertContains(memberSecurity.getReminderQuestion(), reminderQuestionKeyword);
+        // 1回の検索で、 memberList に紐づく memberSecurity を持ってくるようにした
+        List<Integer> memberIds = memberList.stream().map(member -> member.getMemberId()).collect(Collectors.toList());
+        ListResultBean<MemberSecurity> memberSecurities = memberSecurityBhv.selectList(cb -> {
+            cb.specify().columnMemberId();
+            cb.specify().columnReminderQuestion();
+            cb.query().setMemberId_InScope(memberIds);
         });
+
+        for (MemberSecurity memberSecurity : memberSecurities) {
+            Integer memberId = memberSecurity.getMemberId();
+            String reminderQuestion = memberSecurity.getReminderQuestion();
+            log("memberId: {}, reminderQuestion: {}", memberId, reminderQuestion);
+            assertContains(memberSecurity.getReminderQuestion(), reminderQuestionKeyword);
+        }
+
+        // [思い出]
+//        memberList.forEach(member -> {
+//            Integer memberId = member.getMemberId();
+//
+//            // Assertするために、MemberSecurityInfoを取ってくる（でもmember分検索してしまっているの微妙かも）
+//            // TODO done mayukorin ちゃすかに by jflute (2025/01/20)
+//            // TODO done mayukorin [読み物課題] 単純な話、getであんまり検索したくない by jflute (2025/01/20)
+//            // https://jflute.hatenadiary.jp/entry/20151020/stopgetselect
+//            Member memberSelectedById = memberBhv.selectEntity(cb -> {
+//                cb.setupSelect_MemberSecurityAsOne();
+//                cb.query().setMemberId_Equal(memberId);
+//            }).get();
+//            MemberSecurity memberSecurity = memberSelectedById.getMemberSecurityAsOne().get(); // memberSecurityは存在すること前提（1個前のテストでそれをassertしてる）
+//
+//            log("memberId: {}, memberSecurity: {}", memberId, memberSecurity);
+//            assertContains(memberSecurity.getReminderQuestion(), reminderQuestionKeyword);
+//        });
     }
 }
