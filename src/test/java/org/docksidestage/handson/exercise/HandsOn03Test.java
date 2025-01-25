@@ -1,6 +1,7 @@
 package org.docksidestage.handson.exercise;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,9 +11,8 @@ import org.dbflute.cbean.result.ListResultBean;
 import org.dbflute.optional.OptionalEntity;
 import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
 import org.docksidestage.handson.dbflute.exbhv.MemberSecurityBhv;
-import org.docksidestage.handson.dbflute.exentity.Member;
-import org.docksidestage.handson.dbflute.exentity.MemberSecurity;
-import org.docksidestage.handson.dbflute.exentity.MemberStatus;
+import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
+import org.docksidestage.handson.dbflute.exentity.*;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
 /**
@@ -25,6 +25,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
     private MemberBhv memberBhv;
     @Resource
     private MemberSecurityBhv memberSecurityBhv;
+    @Resource
+    private PurchaseBhv purchaseBhv;
 
     /**
      * 会員名称がSで始まる1968年1月1日以前に生まれた会員を検索する <br>
@@ -167,4 +169,95 @@ public class HandsOn03Test extends UnitContainerTestCase {
 //            assertContains(memberSecurity.getReminderQuestion(), reminderQuestionKeyword);
 //        });
     }
+
+    /**
+     * 会員ステータスの表示順カラムで会員を並べて検索 <br>
+     * 会員ステータスのデータ自体は要らない <br>
+     * その次には、会員の会員IDの降順で並べる <br>
+     * o 上に該当する会員が存在すること <br>
+     * o 会員ステータスのデータが取れていないこと <br>
+     * o 会員が会員ステータスごとに固まって並んでいること
+     * をチェックしたい <br>
+     */
+    public void test_searchMemberOrderByStatusDisplayOrder() throws Exception {
+        // ## Arrange ##
+    
+        // ## Act ##
+        ListResultBean<Member> members = memberBhv.selectList(cb -> {
+            cb.specify().columnMemberId();
+            cb.specify().columnMemberStatusCode();
+            cb.query().queryMemberStatus().addOrderBy_DisplayOrder_Asc();
+            cb.query().addOrderBy_MemberId_Desc();
+        });
+
+        // ## Assert ##
+        List<String> memberStatusCodeList = new ArrayList<>();
+
+        for (Member member : members) {
+            Integer memberId = member.getMemberId();
+            String memberStatusCode = member.getMemberStatusCode();
+            log("memberId: {}, memberStatusCode: {}", memberId, memberStatusCode);
+
+            assertTrue(member.getMemberStatus().isEmpty()); // 会員ステータスのデータが取れていないことをチェック
+
+            // 取得した会員の順に memberStatusCode を取り出して、memberStatusCodeList に加える
+            // ただし、直前に追加した memberStatusCode と同じであれば、List には加えない
+            // 例：[FML, FML, WDL, PRV, FML] の場合、memberStatusCodeList には [FML, WDL, PRV, FML] が入る
+            if (memberStatusCodeList.isEmpty()) {
+                memberStatusCodeList.add(memberStatusCode);
+                continue;
+            }
+            String currentStatusCode = memberStatusCodeList.get(memberStatusCodeList.size() - 1);
+            if (currentStatusCode.equals(memberStatusCode)) continue;
+            memberStatusCodeList.add(memberStatusCode);
+        }
+
+        // 会員が会員ステータスごとに固まって並んでいることをチェックしていく
+        log("memberStatusCodeList: {}", memberStatusCodeList);
+        List<String> UniqueMemberStatusCodeList = new ArrayList<>();
+        for (String statusCode : memberStatusCodeList) {
+            log("statusCode: {}", statusCode);
+            assertFalse(UniqueMemberStatusCodeList.contains(statusCode));  // UniqueMemberStatusCodeList に既に値が存在していたら、会員ステータスが飛び飛びに並んでいることになってしまう
+            UniqueMemberStatusCodeList.add(statusCode);
+        }
+    }
+
+    /**
+     * 生年月日が存在する会員の購入を検索 <br>
+     * o 会員名称と会員ステータス名称と商品名を取得する(ログ出力) <br>
+     * o 購入日時の降順、購入価格の降順、商品IDの昇順、会員IDの昇順で並べる <br>
+     * o OrderBy がたくさん追加されていることをログで目視確認すること <br>
+     * o 購入に紐づく会員の生年月日が存在することをアサート <br>
+     */
+    public void test_searchPurchaseByBirthdayExistsMember() throws Exception {
+        // ## Arrange ##
+    
+        // ## Act ##
+        ListResultBean<Purchase> purchases = purchaseBhv.selectList(cb -> {
+            cb.setupSelect_Member().withMemberStatus();
+            cb.setupSelect_Product();
+            cb.specify().specifyMember().columnMemberName();
+            cb.specify().specifyMember().columnBirthdate();
+            cb.specify().specifyMember().specifyMemberStatus().columnMemberStatusName();
+            cb.specify().specifyProduct().columnProductName();
+            cb.query().queryMember().setBirthdate_IsNotNull();
+            cb.query().addOrderBy_PurchaseDatetime_Desc();
+            cb.query().addOrderBy_PurchasePrice_Desc();
+            cb.query().queryProduct().addOrderBy_ProductId_Asc();
+            cb.query().queryMember().addOrderBy_MemberId_Asc();
+        });
+
+        // ## Assert ##
+        purchases.forEach(purchase -> {
+            // 紐づく member・memberStatus・product は必ず存在する
+            Member member = purchase.getMember().get();
+            MemberStatus memberStatus = member.getMemberStatus().get();
+            Product product = purchase.getProduct().get();
+
+            log("memberName: {}, memberStatusName: {}, productName: {}", member.getMemberName(), memberStatus.getMemberStatusName(), product.getProductName());
+            assertNotNull(member.getBirthdate());
+        });
+    }
+
+    
 }
