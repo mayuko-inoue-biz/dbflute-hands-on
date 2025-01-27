@@ -211,8 +211,11 @@ public class HandsOn03Test extends UnitContainerTestCase {
         });
 
         // ## Assert ##
+        // TODO mayukorin 変数名にもう少しニュアンス(このリストの役割)を入れたいところですね by jflute (2025/01/28)
+        // このリストは何が入るのですか？って聞かれたらなんて答えます？その答えを変数名に入れることができれば...
         List<String> memberStatusCodeList = new ArrayList<>();
 
+        // TODO jflute できてるので、1on1にて別の方法について一緒に考えてもらう (2025/01/28)
         for (Member member : members) {
             Integer memberId = member.getMemberId();
             String memberStatusCode = member.getMemberStatusCode();
@@ -234,6 +237,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
 
         // 会員が会員ステータスごとに固まって並んでいることをチェックしていく
         log("memberStatusCodeList: {}", memberStatusCodeList);
+        // TODO mayukorin 変数名は先頭小文字で by jflute (2025/01/28)
         List<String> UniqueMemberStatusCodeList = new ArrayList<>();
         for (String statusCode : memberStatusCodeList) {
             log("statusCode: {}", statusCode);
