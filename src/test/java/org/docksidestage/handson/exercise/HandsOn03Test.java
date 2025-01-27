@@ -28,6 +28,19 @@ public class HandsOn03Test extends UnitContainerTestCase {
     @Resource
     private PurchaseBhv purchaseBhv;
 
+    // _/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+    // TODO mayukorin こんな感じで、スクロールしたときのクラスの見通しよくしてみましょう。タグコメントと言います by jflute (2025/01/27)
+    // ===================================================================================
+    //                                                                       Silverストレッチ
+    //                                                                       ==============
+    // 例えば、こちらのクラスを見てみてください。
+    // https://github.com/lastaflute/lastaflute-example-harbor/blob/master/src/main/java/org/docksidestage/app/web/product/ProductListAction.java
+    // https://github.com/lastaflute/lastaflute-example-harbor/blob/master/src/main/java/org/docksidestage/app/web/signup/SignupAction.java
+    // ハンズオンでも実務でも、クラスのメンバー (フィールドやメソッド) の業務的なまとまりを意識してクラス作りをして頂けると嬉しいです。
+    // _ta で補完できます。特に大きなクラスでは、カテゴリごとに定義をまとめる習慣を付けていきましょう。
+    // 別に、一タグコメント、一メソッドじゃなくてもOKです。まとまった単位で付けていくとよいでしょう。
+    // ちなみに、インスタンス変数は、オブジェクト指向の "属性" ということで、Attribute。これは _taattr で用意されています。
+    // _/_/_/_/_/_/_/_/_/_/
     /**
      * 会員名称がSで始まる1968年1月1日以前に生まれた会員を検索する <br>
      * o 上記条件に合致する会員がDBに存在するか <br>
@@ -38,21 +51,23 @@ public class HandsOn03Test extends UnitContainerTestCase {
     public void test_searchMemberByNamePrefixAndBirthDate() throws Exception {
         // ## Arrange ##
         String memberNamePrefixForSearch = "S";
+        // TODO mayukorin 変数抽出でループ外に出すのOKです。一方で、Assertでしか使わない変数なので... by jflute (2025/01/27)
+        // ArrangeじゃなくてAssertコメント配下に宣言でOKです。(ArrangeはActのための準備という感覚で)
         LocalDate birthdateForSearch = LocalDate.of(1968, 1, 1);
         LocalDate birthdateForSearchPlusOneDay = birthdateForSearch.plusDays(1);
     
         // ## Act ##
         ListResultBean<Member> memberList = memberBhv.selectList(cb -> {
-            // TODO done mayukorin [いいね] メソッドの呼び出し順序、いいですね！ by jflute (2025/01/20)
+            // done mayukorin [いいね] メソッドの呼び出し順序、いいですね！ by jflute (2025/01/20)
             // 実装順序は、データの取得、絞り込み、並び替え by jflute
             //  => http://dbflute.seasar.org/ja/manual/function/ormapper/conditionbean/effective.html#implorder
             cb.setupSelect_MemberStatus();
             cb.specify().columnMemberName();
             cb.specify().columnBirthdate();
-            // TODO mayukorin specify[テーブル]だけやっても意味がないコードになります。カラムまで指定しないと。 by jflute (2025/01/20)
+            // done mayukorin specify[テーブル]だけやっても意味がないコードになります。カラムまで指定しないと。 by jflute (2025/01/20)
             cb.specify().specifyMemberStatus().columnMemberStatusName();
             cb.query().setMemberName_LikeSearch(memberNamePrefixForSearch, op -> op.likePrefix());
-            // TODO done mayukorin [tips] おおぉ、いきなり高度な機能を！でもできてますね。 by jflute (2025/01/20)
+            // done mayukorin [tips] おおぉ、いきなり高度な機能を！でもできてますね。 by jflute (2025/01/20)
             // でもここでは lessEqual でも大丈夫でしたということで
             // あ、なるほど！ lessEqual でもできるのですね！
             // [思い出]
@@ -68,12 +83,12 @@ public class HandsOn03Test extends UnitContainerTestCase {
         assertHasAnyElement(memberList);
         memberList.forEach(member -> {
             String memberName = member.getMemberName();
-            // TODO done mayukorin ここはmemberを付けなくてもいいかなと。birthdateで十分member限定感あるので by jflute (2025/01/20)
+            // done mayukorin ここはmemberを付けなくてもいいかなと。birthdateで十分member限定感あるので by jflute (2025/01/20)
             LocalDate birthdate = member.getBirthdate();
             MemberStatus memberStatus = member.getMemberStatus().get();
             log("memberName: {}, memberBirthdate: {}, memberStatusCodeName: {}, memberNamePrefixForSearch: {}, fromBirthDateForSearch: {}", memberName, birthdate, memberStatus.getMemberStatusName(), memberNamePrefixForSearch, birthdateForSearch);
             assertTrue(memberName.startsWith(memberNamePrefixForSearch));
-            // TODO done mayukorin 細かいですが、ループの中で毎回同じ処理 plusDays(1) を実行してしまうのが無駄なので、ループ外に出しましょう by jflute (2025/01/20)
+            // done mayukorin 細かいですが、ループの中で毎回同じ処理 plusDays(1) を実行してしまうのが無駄なので、ループ外に出しましょう by jflute (2025/01/20)
             assertTrue(birthdate.isBefore(birthdateForSearchPlusOneDay)); // 生年月日が指定日時ぴったりでもOK
         });
     }
@@ -94,6 +109,9 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.setupSelect_MemberSecurityAsOne();
             cb.specify().columnMemberId();
             cb.specify().columnBirthdate();
+            // TODO mayukorin ここも同じでカラムまで指定しないと意味がないです by jflute (2025/01/27)
+            // ちなみに、SpecifyColumnを使うか使わないかはお任せしますが、デフォルトでは不要です。
+            // 現場によってはカラム指定まで細かくやるところありますが、DBFluteとしてはSpecifyColumnは追加的な機能です。
             cb.specify().specifyMemberStatus();
             cb.specify().specifyMemberServiceAsOne();
             cb.query().addOrderBy_Birthdate_Desc();
@@ -129,7 +147,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         ListResultBean<Member> memberList = memberBhv.selectList(cb -> {
             cb.specify().columnMemberId();
             cb.specify().columnMemberName();
-            // TODO done mayukorin [いいね] 素晴らしい by jflute (2025/01/20)
+            // done mayukorin [いいね] 素晴らしい by jflute (2025/01/20)
             cb.query().queryMemberSecurityAsOne().setReminderQuestion_LikeSearch(reminderQuestionKeyword, op -> op.likeContain()); // dbfluteでは、関連テーブルを使いたい目的に対応するメソッドがあるらしい。今回の目的はカラム取得ではなく絞り込みなので、setUpSelect使う必要なし。
         });
     
@@ -144,6 +162,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.query().setMemberId_InScope(memberIds);
         });
 
+        // TODO mayukorin 念のため、securitiesが空っぽでないこともアサートしておきましょう by jflute (2025/01/27)
         for (MemberSecurity memberSecurity : memberSecurities) {
             Integer memberId = memberSecurity.getMemberId();
             String reminderQuestion = memberSecurity.getReminderQuestion();
@@ -156,8 +175,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
 //            Integer memberId = member.getMemberId();
 //
 //            // Assertするために、MemberSecurityInfoを取ってくる（でもmember分検索してしまっているの微妙かも）
-//            // TODO done mayukorin ちゃすかに by jflute (2025/01/20)
-//            // TODO done mayukorin [読み物課題] 単純な話、getであんまり検索したくない by jflute (2025/01/20)
+//            // done mayukorin ちゃすかに by jflute (2025/01/20)
+//            // done mayukorin [読み物課題] 単純な話、getであんまり検索したくない by jflute (2025/01/20)
 //            // https://jflute.hatenadiary.jp/entry/20151020/stopgetselect
 //            Member memberSelectedById = memberBhv.selectEntity(cb -> {
 //                cb.setupSelect_MemberSecurityAsOne();
@@ -170,6 +189,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
 //        });
     }
 
+    // TODO jflute section3の4は後でじっくりレビュー (2025/01/27)
     /**
      * 会員ステータスの表示順カラムで会員を並べて検索 <br>
      * 会員ステータスのデータ自体は要らない <br>
@@ -243,6 +263,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.query().queryMember().setBirthdate_IsNotNull();
             cb.query().addOrderBy_PurchaseDatetime_Desc();
             cb.query().addOrderBy_PurchasePrice_Desc();
+            // TODO mayukorin PURCHASEテーブルがPRODUCT_IDもMEMBER_IDも持っているので... by jflute (2025/01/27)
+            // 実はここは query[関連テーブル]() をやらなくても実現できてしまいます。
             cb.query().queryProduct().addOrderBy_ProductId_Asc();
             cb.query().queryMember().addOrderBy_MemberId_Asc();
         });

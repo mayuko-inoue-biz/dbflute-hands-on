@@ -118,7 +118,7 @@ public class HandsOn02Test extends UnitContainerTestCase {
             // IntelliJだと、.var もしくは option+Enter でヒントを聞く (だいたい一番上に出てくる)
             String memberName = member.getMemberName();
             LocalDate birthdate = member.getBirthdate();
-            // TODO done mayukorin 細かいですが、カラム名変数名としてはbirthdateでdは小文字なのでラベルも合わせましょう by jflute (2025/01/20)
+            // done mayukorin 細かいですが、カラム名変数名としてはbirthdateでdは小文字なのでラベルも合わせましょう by jflute (2025/01/20)
             log("memberName: {}, birthdate: {}", memberName, birthdate);
             assertNull(birthdate);
         });
