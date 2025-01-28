@@ -120,6 +120,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
     
         // ## Assert ##
         // TODO jflute 1on1でカーディナリティのフォロー予定 (2025/01/20)
+        // 会員ステータスは、会員からみて必ず存在する理由は？ => NotNullのFKカラムだから (物理的に存在する)
+        // 会員セキュリティは、会員からみて必ず存在する理由は？ => ？？？ (ちょい宿題)
         assertHasAnyElement(memberList);
         memberList.forEach(member -> {
             Integer memberId = member.getMemberId();
