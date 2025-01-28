@@ -21,6 +21,9 @@ import org.docksidestage.handson.unit.UnitContainerTestCase;
  */
 public class HandsOn03Test extends UnitContainerTestCase {
 
+    // ===================================================================================
+    //                                                                           Attribute
+    //                                                                           =========
     @Resource
     private MemberBhv memberBhv;
     @Resource
@@ -29,7 +32,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
     private PurchaseBhv purchaseBhv;
 
     // _/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-    // TODO mayukorin こんな感じで、スクロールしたときのクラスの見通しよくしてみましょう。タグコメントと言います by jflute (2025/01/27)
+    // TODO done mayukorin こんな感じで、スクロールしたときのクラスの見通しよくしてみましょう。タグコメントと言います by jflute (2025/01/27)
     // ===================================================================================
     //                                                                       Silverストレッチ
     //                                                                       ==============
@@ -191,6 +194,9 @@ public class HandsOn03Test extends UnitContainerTestCase {
 //        });
     }
 
+    // ===================================================================================
+    //                                                                        Goldストレッチ
+    //                                                                        ============
     // TODO jflute section3の4は後でじっくりレビュー (2025/01/27)
     /**
      * 会員ステータスの表示順カラムで会員を並べて検索 <br>
