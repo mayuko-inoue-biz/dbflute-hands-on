@@ -54,10 +54,9 @@ public class HandsOn03Test extends UnitContainerTestCase {
     public void test_searchMemberByNamePrefixAndBirthDate() throws Exception {
         // ## Arrange ##
         String memberNamePrefixForSearch = "S";
-        // TODO mayukorin 変数抽出でループ外に出すのOKです。一方で、Assertでしか使わない変数なので... by jflute (2025/01/27)
+        // TODO done mayukorin 変数抽出でループ外に出すのOKです。一方で、Assertでしか使わない変数なので... by jflute (2025/01/27)
         // ArrangeじゃなくてAssertコメント配下に宣言でOKです。(ArrangeはActのための準備という感覚で)
         LocalDate birthdateForSearch = LocalDate.of(1968, 1, 1);
-        LocalDate birthdateForSearchPlusOneDay = birthdateForSearch.plusDays(1);
     
         // ## Act ##
         ListResultBean<Member> memberList = memberBhv.selectList(cb -> {
@@ -83,6 +82,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         });
 
         // ## Assert ##
+        LocalDate birthdateForSearchPlusOneDay = birthdateForSearch.plusDays(1);
         assertHasAnyElement(memberList);
         memberList.forEach(member -> {
             String memberName = member.getMemberName();
@@ -112,11 +112,14 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.setupSelect_MemberSecurityAsOne();
             cb.specify().columnMemberId();
             cb.specify().columnBirthdate();
-            // TODO mayukorin ここも同じでカラムまで指定しないと意味がないです by jflute (2025/01/27)
+            // TODO done mayukorin ここも同じでカラムまで指定しないと意味がないです by jflute (2025/01/27)
             // ちなみに、SpecifyColumnを使うか使わないかはお任せしますが、デフォルトでは不要です。
             // 現場によってはカラム指定まで細かくやるところありますが、DBFluteとしてはSpecifyColumnは追加的な機能です。
-            cb.specify().specifyMemberStatus();
-            cb.specify().specifyMemberServiceAsOne();
+            // 教えていただき、ありがとうございます。なるほど、カラム指定した方がパフォーマンス的に良いのかなと思ったのですが、全カラム取得する場合とあまり変わらないことが多いのですね by m.inoue (2025/01/28)
+            // https://dbflute.seasar.org/ja/manual/function/ormapper/conditionbean/specify/specifycolumn.html#balancepolicy
+            // を読みました。
+            cb.specify().specifyMemberStatus().columnMemberStatusName();
+            cb.specify().specifyMemberServiceAsOne().columnVersionNo();
             cb.query().addOrderBy_Birthdate_Desc();
             cb.query().addOrderBy_MemberId_Asc();
         });
@@ -142,7 +145,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
      * o 上に該当する会員が存在すること <br>
      * o リマインダ質問に2が含まれていること <br>
      * をチェックしたい <br>
-     * ただし、検索時に会員セキュリティ情報のデータ自体は要らない
+     * ただし、検索時に会員セキュリティ情報のデータ自体は要らない <br>
+     * ※修行++: 実装できたら、(もし複数回検索していたら) Assert内の検索が一回になるようにしてみましょう。 その際、Act内で検索しているデータを、Assert内でもう一度検索することなく実現してみましょう。
      */
     public void test_searchMemberBySecurityInfoReminderQuestion() throws Exception {
         // ## Arrange ##
@@ -167,7 +171,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.query().setMemberId_InScope(memberIds);
         });
 
-        // TODO mayukorin 念のため、securitiesが空っぽでないこともアサートしておきましょう by jflute (2025/01/27)
+        // TODO done mayukorin 念のため、securitiesが空っぽでないこともアサートしておきましょう by jflute (2025/01/27)
+        assertHasAnyElement(memberSecurities);
         for (MemberSecurity memberSecurity : memberSecurities) {
             Integer memberId = memberSecurity.getMemberId();
             String reminderQuestion = memberSecurity.getReminderQuestion();
@@ -245,12 +250,12 @@ public class HandsOn03Test extends UnitContainerTestCase {
 
         // 会員が会員ステータスごとに固まって並んでいることをチェックしていく
         log("memberStatusCodeList: {}", memberStatusCodeList);
-        // TODO mayukorin 変数名は先頭小文字で by jflute (2025/01/28)
-        List<String> UniqueMemberStatusCodeList = new ArrayList<>();
+        // TODO done mayukorin 変数名は先頭小文字で by jflute (2025/01/28)
+        List<String> uniqueMemberStatusCodeList = new ArrayList<>();
         for (String statusCode : memberStatusCodeList) {
             log("statusCode: {}", statusCode);
-            assertFalse(UniqueMemberStatusCodeList.contains(statusCode));  // UniqueMemberStatusCodeList に既に値が存在していたら、会員ステータスが飛び飛びに並んでいることになってしまう
-            UniqueMemberStatusCodeList.add(statusCode);
+            assertFalse(uniqueMemberStatusCodeList.contains(statusCode));  // UniqueMemberStatusCodeList に既に値が存在していたら、会員ステータスが飛び飛びに並んでいることになってしまう
+            uniqueMemberStatusCodeList.add(statusCode);
         }
     }
 
@@ -275,10 +280,11 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.query().queryMember().setBirthdate_IsNotNull();
             cb.query().addOrderBy_PurchaseDatetime_Desc();
             cb.query().addOrderBy_PurchasePrice_Desc();
-            // TODO mayukorin PURCHASEテーブルがPRODUCT_IDもMEMBER_IDも持っているので... by jflute (2025/01/27)
+            // TODO done mayukorin PURCHASEテーブルがPRODUCT_IDもMEMBER_IDも持っているので... by jflute (2025/01/27)
             // 実はここは query[関連テーブル]() をやらなくても実現できてしまいます。
-            cb.query().queryProduct().addOrderBy_ProductId_Asc();
-            cb.query().queryMember().addOrderBy_MemberId_Asc();
+            // ほんとですね！教えていただき、ありがとうございます！ by m.inoue (2025/01/28)
+            cb.query().addOrderBy_ProductId_Asc();
+            cb.query().addOrderBy_MemberId_Asc();
         });
 
         // ## Assert ##
