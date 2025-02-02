@@ -1,6 +1,9 @@
 package org.docksidestage.handson.exercise;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.dbflute.cbean.result.ListResultBean;
+import org.dbflute.exception.NonSpecifiedColumnAccessException;
 import org.dbflute.optional.OptionalEntity;
 import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
 import org.docksidestage.handson.dbflute.exbhv.MemberSecurityBhv;
@@ -299,5 +303,70 @@ public class HandsOn03Test extends UnitContainerTestCase {
         });
     }
 
-    
+    /**
+     * 2005年10月の1日から3日までに正式会員になった会員を検索 <br>
+     * o 画面からの検索条件で2005年10月1日と2005年10月3日がリクエストされたと想定して... <br>
+     * o Arrange で String の "2005/10/01", "2005/10/03" を一度宣言してから日時クラスに変換し... <br>
+     * o 自分で日付移動などはせず、DBFluteの機能を使って、そのままの日付(日時)を使って条件を設定 <br>
+     * o 会員ステータスも一緒に取得 <br>
+     * o ただし、会員ステータス名称だけ取得できればいい (説明や表示順カラムは不要) <br>
+     * o 会員名称に "vi" を含む会員を検索 <br>
+     * o 会員名称と正式会員日時と会員ステータス名称をログに出力 <br>
+     * o 会員ステータスがコードと名称だけが取得されていることをアサート <br>
+     * o 会員の正式会員日時が指定された条件の範囲内であることをアサート <br>
+     */
+    public void test_searchMemberByFormalizedDatetimeAndNameKeyword() throws Exception {
+        // ## Arrange ##
+        String fromDateStr = "2005/10/01";
+        LocalDateTime fromLocalDateTime = convertStrDateToLocalDateTime(fromDateStr);
+        LocalDate fromLocalDateMinusOneDay = convertLocalDateTimeToLocalDate(fromLocalDateTime).minusDays(1);
+
+        String toDateStr = "2005/10/03";
+        LocalDateTime toLocalDateTime = convertStrDateToLocalDateTime(toDateStr);
+        LocalDate toLocalDatePlusOneDay = convertLocalDateTimeToLocalDate(toLocalDateTime).plusDays(1);
+
+        String nameKeyword = "vi";
+
+        // ## Act ##
+        ListResultBean<Member> members = memberBhv.selectList(cb -> {
+            cb.setupSelect_MemberStatus();
+            cb.specify().specifyMemberStatus().columnMemberStatusName();
+            cb.specify().columnMemberName();
+            cb.specify().columnFormalizedDatetime();
+            cb.query().setFormalizedDatetime_FromTo(fromLocalDateTime, toLocalDateTime, op -> op.compareAsDate());
+            cb.query().setMemberName_LikeSearch(nameKeyword, op -> op.likeContain());
+        });
+
+        // ## Assert ##
+        assertHasAnyElement(members);
+        members.forEach(member -> {
+            MemberStatus memberStatus = member.getMemberStatus().get(); // memberStatusCodeはmemberテーブルのNotNullのFKカラムなため、memberからみてmemberStatusは必ず存在する
+            LocalDateTime formalizedDatetime = member.getFormalizedDatetime();
+            LocalDate formalizedDate = convertLocalDateTimeToLocalDate(formalizedDatetime);
+
+            log("name: {}, formalizedDatetime: {}, status: {}", member.getMemberName(), formalizedDatetime, memberStatus.getMemberStatusName());
+
+            assertNotNull(memberStatus.getMemberStatusCode());
+            assertNotNull(memberStatus.getMemberStatusName());
+            // 会員ステータスの説明・表示順を取得していないことをアサート。
+            assertException(NonSpecifiedColumnAccessException.class, () -> memberStatus.getDescription());
+            assertException(NonSpecifiedColumnAccessException.class, () -> memberStatus.getDisplayOrder());
+
+            // 正式会員日時が指定日ぴったりでもOK
+            assertTrue(formalizedDate.isAfter(fromLocalDateMinusOneDay));
+            assertTrue(formalizedDate.isBefore(toLocalDatePlusOneDay));
+        });
+    }
+
+    // ===================================================================================
+    //                                                                             Convert
+    //                                                                           =========
+    private static LocalDateTime convertStrDateToLocalDateTime(String strDate) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        return LocalDate.parse(strDate, dateTimeFormatter).atTime(LocalTime.MIN);
+    }
+
+    private static LocalDate convertLocalDateTimeToLocalDate(LocalDateTime localDateTime) {
+        return localDateTime.toLocalDate();
+    }
 }
