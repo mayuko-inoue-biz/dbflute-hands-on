@@ -230,7 +230,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
         // TODO mayukorin 変数名にもう少しニュアンス(このリストの役割)を入れたいところですね by jflute (2025/01/28)
         // このリストは何が入るのですか？って聞かれたらなんて答えます？その答えを変数名に入れることができれば...
-        List<String> memberStatusCodeList = new ArrayList<>();
+        // ありがとうございます！変数名考えてみたのですが、あまり分かりやすい名前思いつかなかったです.
+        List<String> memberStatusCodeTransitionByMemberOrder = new ArrayList<>();
 
         // TODO jflute できてるので、1on1にて別の方法について一緒に考えてもらう (2025/01/28)
         for (Member member : members) {
@@ -243,20 +244,20 @@ public class HandsOn03Test extends UnitContainerTestCase {
             // 取得した会員の順に memberStatusCode を取り出して、memberStatusCodeList に加える
             // ただし、直前に追加した memberStatusCode と同じであれば、List には加えない
             // 例：[FML, FML, WDL, PRV, FML] の場合、memberStatusCodeList には [FML, WDL, PRV, FML] が入る
-            if (memberStatusCodeList.isEmpty()) {
-                memberStatusCodeList.add(memberStatusCode);
+            if (memberStatusCodeTransitionByMemberOrder.isEmpty()) {
+                memberStatusCodeTransitionByMemberOrder.add(memberStatusCode);
                 continue;
             }
-            String currentStatusCode = memberStatusCodeList.get(memberStatusCodeList.size() - 1);
+            String currentStatusCode = memberStatusCodeTransitionByMemberOrder.get(memberStatusCodeTransitionByMemberOrder.size() - 1);
             if (currentStatusCode.equals(memberStatusCode)) continue;
-            memberStatusCodeList.add(memberStatusCode);
+            memberStatusCodeTransitionByMemberOrder.add(memberStatusCode);
         }
 
         // 会員が会員ステータスごとに固まって並んでいることをチェックしていく
-        log("memberStatusCodeList: {}", memberStatusCodeList);
+        log("memberStatusCodeTransitionByMemberOrder: {}", memberStatusCodeTransitionByMemberOrder);
         // TODO done mayukorin 変数名は先頭小文字で by jflute (2025/01/28)
         List<String> uniqueMemberStatusCodeList = new ArrayList<>();
-        for (String statusCode : memberStatusCodeList) {
+        for (String statusCode : memberStatusCodeTransitionByMemberOrder) {
             log("statusCode: {}", statusCode);
             assertFalse(uniqueMemberStatusCodeList.contains(statusCode));  // UniqueMemberStatusCodeList に既に値が存在していたら、会員ステータスが飛び飛びに並んでいることになってしまう
             uniqueMemberStatusCodeList.add(statusCode);
