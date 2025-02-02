@@ -92,7 +92,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             String memberName = member.getMemberName();
             // done mayukorin ここはmemberを付けなくてもいいかなと。birthdateで十分member限定感あるので by jflute (2025/01/20)
             LocalDate birthdate = member.getBirthdate();
-            MemberStatus memberStatus = member.getMemberStatus().get();
+            MemberStatus memberStatus = member.getMemberStatus().get(); // NotNullのFKカラムなため、memberStatusはからなず存在する
             log("memberName: {}, memberBirthdate: {}, memberStatusCodeName: {}, memberNamePrefixForSearch: {}, fromBirthDateForSearch: {}", memberName, birthdate, memberStatus.getMemberStatusName(), memberNamePrefixForSearch, birthdateForSearch);
             assertTrue(memberName.startsWith(memberNamePrefixForSearch));
             // done mayukorin 細かいですが、ループの中で毎回同じ処理 plusDays(1) を実行してしまうのが無駄なので、ループ外に出しましょう by jflute (2025/01/20)
@@ -123,7 +123,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             // https://dbflute.seasar.org/ja/manual/function/ormapper/conditionbean/specify/specifycolumn.html#balancepolicy
             // を読みました。
             cb.specify().specifyMemberStatus().columnMemberStatusName();
-            cb.specify().specifyMemberServiceAsOne().columnVersionNo();
+            cb.specify().specifyMemberSecurityAsOne().columnVersionNo();
             cb.query().addOrderBy_Birthdate_Desc();
             cb.query().addOrderBy_MemberId_Asc();
         });
@@ -293,8 +293,9 @@ public class HandsOn03Test extends UnitContainerTestCase {
         });
 
         // ## Assert ##
+        assertHasAnyElement(purchases);
         purchases.forEach(purchase -> {
-            // 紐づく member・memberStatus・product は必ず存在する
+            // 紐づく member・memberStatus・product は必ず存在する。それぞれNotNullのFKカラムなため。
             Member member = purchase.getMember().get();
             MemberStatus memberStatus = member.getMemberStatus().get();
             Product product = purchase.getProduct().get();
