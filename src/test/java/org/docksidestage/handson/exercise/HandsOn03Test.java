@@ -36,7 +36,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
     private PurchaseBhv purchaseBhv;
 
     // _/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-    // TODO done mayukorin こんな感じで、スクロールしたときのクラスの見通しよくしてみましょう。タグコメントと言います by jflute (2025/01/27)
+    // done mayukorin こんな感じで、スクロールしたときのクラスの見通しよくしてみましょう。タグコメントと言います by jflute (2025/01/27)
     // ===================================================================================
     //                                                                       Silverストレッチ
     //                                                                       ==============
@@ -58,7 +58,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
     public void test_searchMemberByNamePrefixAndBirthDate() throws Exception {
         // ## Arrange ##
         String memberNamePrefixForSearch = "S";
-        // TODO done mayukorin 変数抽出でループ外に出すのOKです。一方で、Assertでしか使わない変数なので... by jflute (2025/01/27)
+        // done mayukorin 変数抽出でループ外に出すのOKです。一方で、Assertでしか使わない変数なので... by jflute (2025/01/27)
         // ArrangeじゃなくてAssertコメント配下に宣言でOKです。(ArrangeはActのための準備という感覚で)
         LocalDate birthdateForSearch = LocalDate.of(1968, 1, 1);
     
@@ -116,7 +116,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.setupSelect_MemberSecurityAsOne();
             cb.specify().columnMemberId();
             cb.specify().columnBirthdate();
-            // TODO done mayukorin ここも同じでカラムまで指定しないと意味がないです by jflute (2025/01/27)
+            // done mayukorin ここも同じでカラムまで指定しないと意味がないです by jflute (2025/01/27)
             // ちなみに、SpecifyColumnを使うか使わないかはお任せしますが、デフォルトでは不要です。
             // 現場によってはカラム指定まで細かくやるところありますが、DBFluteとしてはSpecifyColumnは追加的な機能です。
             // 教えていただき、ありがとうございます。なるほど、カラム指定した方がパフォーマンス的に良いのかなと思ったのですが、全カラム取得する場合とあまり変わらないことが多いのですね by m.inoue (2025/01/28)
@@ -129,9 +129,20 @@ public class HandsOn03Test extends UnitContainerTestCase {
         });
     
         // ## Assert ##
-        // TODO jflute 1on1でカーディナリティのフォロー予定 (2025/01/20)
+        // done jflute 1on1でカーディナリティのフォロー予定 (2025/01/20)
         // 会員ステータスは、会員からみて必ず存在する理由は？ => NotNullのFKカラムだから (物理的に存在する)
-        // 会員セキュリティは、会員からみて必ず存在する理由は？ => ？？？ (ちょい宿題)
+        // 会員セキュリティは、会員からみて必ず存在する理由は？ => 業務的な制約として1:1と決めているから by ER図
+        // (リレーションシップ線の黒丸が目印: 黒丸がないので必ず存在する1:1と言える)
+        // (さらには、テーブルコメントに「会員とは one-to-one で、会員一人につき必ず一つのセキュリティ情報がある」って書いてある)
+        //
+        // 1:1って見たとき聞いたとき...それはカーディナリティの抽象度が高い1:1なのか？細かい1:1なのか？気にする必要がある。
+        // → 必ず存在する1:1なのか？ (1 : 1)
+        // → いないかもしれない1:1なのか？ (1 : 0..1)
+        //
+        // jflute流の言葉の使い方ですが...
+        // 抽象度ファーストレベルの1:1 => 必ず存在するかどうかは気にせず、とにかく数だけ1:1であると言っている
+        // 抽象度セカンドレベルの1:1 => 必ず存在する1:1 (いないかもしれないなら 1 : 0..1 と言う)
+        //
         assertHasAnyElement(memberList);
         memberList.forEach(member -> {
             Integer memberId = member.getMemberId();
@@ -167,6 +178,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(memberList);
 
+        // done mayukorin [いいね] 素晴らし、とても良いです by jflute (2025/02/03)
+        // [1on1でのふぉろー] UnitTestだから妥協できるとは言っても、普段から意識しておくことで、大事な場面でスムーズにできる(と思う)
         // 1回の検索で、 memberList に紐づく memberSecurity を持ってくるようにした
         List<Integer> memberIds = memberList.stream().map(member -> member.getMemberId()).collect(Collectors.toList());
         ListResultBean<MemberSecurity> memberSecurities = memberSecurityBhv.selectList(cb -> {
@@ -175,7 +188,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.query().setMemberId_InScope(memberIds);
         });
 
-        // TODO done mayukorin 念のため、securitiesが空っぽでないこともアサートしておきましょう by jflute (2025/01/27)
+        // done mayukorin 念のため、securitiesが空っぽでないこともアサートしておきましょう by jflute (2025/01/27)
         assertHasAnyElement(memberSecurities);
         for (MemberSecurity memberSecurity : memberSecurities) {
             Integer memberId = memberSecurity.getMemberId();
@@ -206,7 +219,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
     // ===================================================================================
     //                                                                        Goldストレッチ
     //                                                                        ============
-    // TODO jflute section3の4は後でじっくりレビュー (2025/01/27)
+    // done jflute section3の4は後でじっくりレビュー (2025/01/27)
     /**
      * 会員ステータスの表示順カラムで会員を並べて検索 <br>
      * 会員ステータスのデータ自体は要らない <br>
@@ -228,12 +241,17 @@ public class HandsOn03Test extends UnitContainerTestCase {
         });
 
         // ## Assert ##
-        // TODO mayukorin 変数名にもう少しニュアンス(このリストの役割)を入れたいところですね by jflute (2025/01/28)
+        // done mayukorin 変数名にもう少しニュアンス(このリストの役割)を入れたいところですね by jflute (2025/01/28)
         // このリストは何が入るのですか？って聞かれたらなんて答えます？その答えを変数名に入れることができれば...
         // ありがとうございます！変数名考えてみたのですが、あまり分かりやすい名前思いつかなかったです.
+        // done mayukorin まあ、アバウト (memberStatusCodeList) よりは良いので、悪くはないですよ。 by jflute (2025/02/03)
+        // もう少しスッキリさを演出するとしたら...
+        //  e.g. statusTransitionByMemberOrder, transitionStatusList, changedStatusList
+        //     , switchedStatusList, switchedNewStatusList, switchedNextStatusList
         List<String> memberStatusCodeTransitionByMemberOrder = new ArrayList<>();
 
-        // TODO jflute できてるので、1on1にて別の方法について一緒に考えてもらう (2025/01/28)
+        // done jflute できてるので、1on1にて別の方法について一緒に考えてもらう (2025/01/28)
+        // 模範を見て少し学びました。
         for (Member member : members) {
             Integer memberId = member.getMemberId();
             String memberStatusCode = member.getMemberStatusCode();
@@ -241,6 +259,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
 
             assertTrue(member.getMemberStatus().isEmpty()); // 会員ステータスのデータが取れていないことをチェック
 
+            // done mayukorin [いいね] スーパー良いコメント by jflute (2025/02/03)
             // 取得した会員の順に memberStatusCode を取り出して、memberStatusCodeList に加える
             // ただし、直前に追加した memberStatusCode と同じであれば、List には加えない
             // 例：[FML, FML, WDL, PRV, FML] の場合、memberStatusCodeList には [FML, WDL, PRV, FML] が入る
@@ -255,7 +274,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
 
         // 会員が会員ステータスごとに固まって並んでいることをチェックしていく
         log("memberStatusCodeTransitionByMemberOrder: {}", memberStatusCodeTransitionByMemberOrder);
-        // TODO done mayukorin 変数名は先頭小文字で by jflute (2025/01/28)
+        // done mayukorin 変数名は先頭小文字で by jflute (2025/01/28)
         List<String> uniqueMemberStatusCodeList = new ArrayList<>();
         for (String statusCode : memberStatusCodeTransitionByMemberOrder) {
             log("statusCode: {}", statusCode);
@@ -285,7 +304,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.query().queryMember().setBirthdate_IsNotNull();
             cb.query().addOrderBy_PurchaseDatetime_Desc();
             cb.query().addOrderBy_PurchasePrice_Desc();
-            // TODO done mayukorin PURCHASEテーブルがPRODUCT_IDもMEMBER_IDも持っているので... by jflute (2025/01/27)
+            // done mayukorin PURCHASEテーブルがPRODUCT_IDもMEMBER_IDも持っているので... by jflute (2025/01/27)
             // 実はここは query[関連テーブル]() をやらなくても実現できてしまいます。
             // ほんとですね！教えていただき、ありがとうございます！ by m.inoue (2025/01/28)
             cb.query().addOrderBy_ProductId_Asc();
@@ -319,6 +338,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
      */
     public void test_searchMemberByFormalizedDatetimeAndNameKeyword() throws Exception {
         // ## Arrange ##
+        // TODO mayukorin 修行++のadjust...を使って10/1ぴったりのデータを作って実行してみましょう by jflute (2025/02/03)
         String fromDateStr = "2005/10/01";
         LocalDateTime fromLocalDateTime = convertStrDateToLocalDateTime(fromDateStr);
         LocalDate fromLocalDateMinusOneDay = convertLocalDateTimeToLocalDate(fromLocalDateTime).minusDays(1);
@@ -363,11 +383,13 @@ public class HandsOn03Test extends UnitContainerTestCase {
     // ===================================================================================
     //                                                                             Convert
     //                                                                           =========
+    // こっちとても良い再利用メソッド by jflute
     private static LocalDateTime convertStrDateToLocalDateTime(String strDate) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         return LocalDate.parse(strDate, dateTimeFormatter).atTime(LocalTime.MIN);
     }
 
+    // こっち少し大げさかも？でも悪くはない再利用メソッド by jflute
     private static LocalDate convertLocalDateTimeToLocalDate(LocalDateTime localDateTime) {
         return localDateTime.toLocalDate();
     }
