@@ -338,7 +338,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
      */
     public void test_searchMemberByFormalizedDatetimeAndNameKeyword() throws Exception {
         // ## Arrange ##
-        // TODO mayukorin 修行++のadjust...を使って10/1ぴったりのデータを作って実行してみましょう by jflute (2025/02/03)
+        // TODO done mayukorin 修行++のadjust...を使って10/1ぴったりのデータを作って実行してみましょう by jflute (2025/02/03)
         String fromDateStr = "2005/10/01";
         LocalDateTime fromLocalDateTime = convertStrDateToLocalDateTime(fromDateStr);
         LocalDate fromLocalDateMinusOneDay = convertLocalDateTimeToLocalDate(fromLocalDateTime).minusDays(1);
@@ -348,6 +348,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
         LocalDate toLocalDatePlusOneDay = convertLocalDateTimeToLocalDate(toLocalDateTime).plusDays(1);
 
         String nameKeyword = "vi";
+
+        adjustMember_FormalizedDatetime_FirstOnly(fromLocalDateTime, nameKeyword); // 10/1ジャストの正式会員日時を持つ会員データを作成。
 
         // ## Act ##
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
