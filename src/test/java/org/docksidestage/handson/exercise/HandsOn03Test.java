@@ -1,10 +1,12 @@
 package org.docksidestage.handson.exercise;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -383,16 +385,151 @@ public class HandsOn03Test extends UnitContainerTestCase {
     }
 
     // ===================================================================================
+    //                                                                    Platinumストレッチ
+    //                                                                        ============
+    /**
+     * 正式会員になってから一週間以内の購入を検索 <br>
+     * o 会員と会員ステータス、会員セキュリティ情報も一緒に取得 <br>
+     * o 商品と商品ステータス、商品カテゴリ、さらに上位の商品カテゴリも一緒に取得 <br>
+     * o 上位の商品カテゴリ名が取得できていることをアサート <br>
+     * o 購入日時が正式会員になってから一週間以内であることをアサート <br>
+     */
+    public void test_searchPurchaseByFormalizedDatetime() throws Exception {
+        // ## Arrange ##
+
+        // ## Act ##
+        ListResultBean<Purchase> purchases = purchaseBhv.selectList(cb -> {
+            cb.setupSelect_Member().withMemberStatus();
+            cb.setupSelect_Member().withMemberSecurityAsOne();
+            cb.setupSelect_Product().withProductStatus();
+            cb.setupSelect_Product().withProductCategory().withProductCategorySelf();
+            cb.columnQuery(colCB -> colCB.specify().columnPurchaseDatetime())
+                    .greaterEqual(colCB -> colCB.specify().specifyMember().columnFormalizedDatetime());
+            cb.columnQuery(colCB -> colCB.specify().columnPurchaseDatetime())
+                    .lessEqual(colCB -> colCB.specify().specifyMember().columnFormalizedDatetime())
+                    .convert(op -> op.addDay(7));
+        });
+
+        // ## Assert ##
+        assertHasAnyElement(purchases);
+        purchases.forEach(purchase -> {
+            LocalDateTime purchaseDatetime = purchase.getPurchaseDatetime();
+            // 紐づく member・memberStatus・product・productStatus・productCategory は必ず存在する。NotNullのFKカラムなため。
+            Member member = purchase.getMember().get();
+            LocalDateTime formalizedDatetime = member.getFormalizedDatetime();
+            MemberStatus memberStatus = member.getMemberStatus().get();
+            MemberSecurity memberSecurity = member.getMemberSecurityAsOne().get();
+            Product product = purchase.getProduct().get();
+            ProductStatus productStatus = product.getProductStatus().get();
+            ProductCategory productCategory = product.getProductCategory().get();
+            OptionalEntity<ProductCategory> optParentProductCategory = productCategory.getProductCategorySelf();
+
+            log("purchaseDatetime: {}, purchasedProduct: {}, productStatus: {}, productCategory: {}, optParentProductCategory: {}, memberFormalizedDatetime: {}, memberStatus: {}, securityVersionNumber: {}", purchaseDatetime, product.getProductName(), productStatus.getProductStatusName(), productCategory.getProductCategoryName(), optParentProductCategory, memberStatus.getMemberStatusName(), memberSecurity.getVersionNo());
+
+            assertFalse(purchaseDatetime.isBefore(formalizedDatetime)); // 購入日時が正式会員日時以降であることをアサート（正式会員日時ピッタリも含む）
+            assertFalse(purchaseDatetime.isAfter(formalizedDatetime.plusDays(7))); // 購入日時が正式会員日時の1週間以内であることをアサート（正式会員日時+7日ピッタリも含む）
+            assertNotNull(optParentProductCategory.get().getProductCategoryName());
+        });
+    }
+
+    /**
+     * 1974年までに生まれた、もしくは不明の会員を検索 <br>
+     * o 画面からの検索条件で1974年がリクエストされたと想定 <br>
+     * o Arrange で String の "1974/01/01" を一度宣言してから日付クラスに変換 <br>
+     * o その日付クラスの値を、(日付移動などせず)そのまま使って検索条件を実現 <br>
+     * o 会員ステータス名称、リマインダ質問と回答、退会理由入力テキストを取得する(ログ出力) ※1 <br>
+     * o 若い順だが生年月日が null のデータを最初に並べる <br>
+     * o 生年月日が指定された条件に合致することをアサート (1975年1月1日なら落ちるように) <br>
+     * o Arrangeで "きわどいデータ" ※2 を作ってみましょう (Behavior の updateNonstrict() ※3 を使って) <br>
+     * o 検索で含まれるはずの "きわどいデータ" が検索されてることをアサート (アサート自体の保証のため) <br>
+     * o 生まれが不明の会員が先頭になっていることをアサート <br>
+     * o ※1: ログについて、値がない項目は "none" を出力。if文使わないように。ヒント: Java8なら map() <br>
+     * o ※2: 1974年12月31日生まれの人、1975年1月1日生まれの人。前者は検索に含まれて、後者は含まれない。 テストデータに存在しない、もしくは、存在に依存するのがためらうほどのピンポイントのデータは、自分で作っちゃうというのも一つの手。 (エクササイズ 6 や 7 でやっていた adjust がまさしくそれ: 同じように adjustXxx() という感じでprivateメソッドにしましょう) <br>
+     * o ※3: 1 から 9 までの任意の会員IDを選び updateNonstrict() してみましょう。 まあ、一桁代の会員IDが存在すること自体への依存は割り切りで。最低限それだけのテストデータで用意されていないとお話にならないってことで。 <br>
+     * ※今後、"きわどいデータ" を作ってアサートを確かなものにするかどうかは自分の判断で。 <br>
+     */
+    public void test_searchMemberByBirthdate() throws Exception {
+        // ## Arrange ##
+        String birthYearForSearch = "1974/01/01";
+        LocalDate  birthYearForSearchLocalDate = convertStrToLocalDate(birthYearForSearch);
+
+        // "きわどいデータ"を作る
+        LocalDate birthdayBarelyIncludedSearchResult = convertStrToLocalDate("1974/12/31");
+        LocalDate birthdayBarelyNotIncludedSearchResult = convertStrToLocalDate("1975/01/01");
+        adjustMember_Birthdate_byMemberId(birthdayBarelyIncludedSearchResult, 1);
+        adjustMember_Birthdate_byMemberId(birthdayBarelyNotIncludedSearchResult, 2);
+    
+        // ## Act ##
+        ListResultBean<Member> members = memberBhv.selectList(cb -> {
+            cb.setupSelect_MemberStatus();
+            cb.setupSelect_MemberSecurityAsOne();
+            cb.setupSelect_MemberWithdrawalAsOne();
+            cb.query().setBirthdate_FromTo(null, birthYearForSearchLocalDate, op -> op.allowOneSide().compareAsYear().orIsNull());
+            cb.query().addOrderBy_Birthdate_Desc().withNullsFirst();
+        });
+
+        // ## Assert ##
+        assertHasAnyElement(members);
+
+        int currentOrderNumber = 0;
+        int lastNullBirthdateMemberOrderNumber = 0;
+        int firstNonNullBirthdateMemberOrderNumber = 0;
+        boolean isIncludedBirthdayBarelyIncludedSearchResult = false;
+
+        for (Member member : members) {
+            currentOrderNumber++;
+            LocalDate birthdate = member.getBirthdate();
+            MemberStatus memberStatus = member.getMemberStatus().get();
+            MemberSecurity memberSecurity = member.getMemberSecurityAsOne().get();
+            OptionalEntity<MemberWithdrawal> optMemberWithdrawalAsOne = member.getMemberWithdrawalAsOne();
+            log("member: {}, birthdate: {}, status: {}, reminder question: {}, reminder answer:{}, withdrawal reason: {}", member.getMemberName(), birthdate, memberStatus.getMemberStatusName(), memberSecurity.getReminderQuestion(), memberSecurity.getReminderAnswer(), optMemberWithdrawalAsOne.map(mw -> mw.getWithdrawalReasonInputText()).orElse("none"));
+
+            assertTrue(birthdate == null || birthdate.isBefore(birthYearForSearchLocalDate.plusYears(1)));
+
+            if (birthdate == null) { // 誕生日が不明の会員だったら
+                lastNullBirthdateMemberOrderNumber = currentOrderNumber;
+            } else { // 誕生日が不明ではない会員だったら
+                if (firstNonNullBirthdateMemberOrderNumber == 0) { // 誕生日が不明ではない会員が初めて検索結果に登場したら
+                    firstNonNullBirthdateMemberOrderNumber = currentOrderNumber;
+                }
+                if (birthdate.equals(birthdayBarelyIncludedSearchResult)) { // きわどい誕生日の会員が検索結果に登場したら
+                    isIncludedBirthdayBarelyIncludedSearchResult = true;
+                }
+            }
+        }
+        log("isIncludedBirthdayBarelyIncludedSearchResult: {}, lastNullBirthdateMemberOrderNumber: {}, firstNonNullBirthdateMemberOrderNumber: {}", isIncludedBirthdayBarelyIncludedSearchResult, lastNullBirthdateMemberOrderNumber, firstNonNullBirthdateMemberOrderNumber);
+
+        assertTrue(isIncludedBirthdayBarelyIncludedSearchResult); // かろうじて検索結果に含まれるはずの誕生日がきわどい会員がちゃんと検索結果に含まれていることをアサート
+        assertTrue(lastNullBirthdateMemberOrderNumber < firstNonNullBirthdateMemberOrderNumber); // 生まれが不明の会員が、全員生まれが不明でない会員よりも前に登場することをアサート
+    }
+
+    // ===================================================================================
     //                                                                             Convert
     //                                                                           =========
+    private static LocalDate convertStrToLocalDate(String strDate) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        return LocalDate.parse(strDate, dateTimeFormatter);
+    }
+
     // こっちとても良い再利用メソッド by jflute
     private static LocalDateTime convertStrDateToLocalDateTime(String strDate) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        return LocalDate.parse(strDate, dateTimeFormatter).atTime(LocalTime.MIN);
+        return convertStrToLocalDate(strDate).atTime(LocalTime.MIN);
     }
 
     // こっち少し大げさかも？でも悪くはない再利用メソッド by jflute
     private static LocalDate convertLocalDateTimeToLocalDate(LocalDateTime localDateTime) {
         return localDateTime.toLocalDate();
+    }
+
+    // ===================================================================================
+    //                                                                  Generate Test Data
+    //                                                                           =========
+    private void adjustMember_Birthdate_byMemberId(LocalDate birthdate, Integer memberId) {
+        assertNotNull(memberId);
+        Member member = memberBhv.selectEntityWithDeletedCheck(cb -> {
+            cb.query().setMemberId_Equal(memberId);
+        });
+        member.setBirthdate(birthdate);
+        memberBhv.updateNonstrict(member);
     }
 }
