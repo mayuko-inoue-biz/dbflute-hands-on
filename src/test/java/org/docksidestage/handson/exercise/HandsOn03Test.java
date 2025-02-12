@@ -338,7 +338,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
      */
     public void test_searchMemberByFormalizedDatetimeAndNameKeyword() throws Exception {
         // ## Arrange ##
-        // TODO done mayukorin 修行++のadjust...を使って10/1ぴったりのデータを作って実行してみましょう by jflute (2025/02/03)
+        // done mayukorin 修行++のadjust...を使って10/1ぴったりのデータを作って実行してみましょう by jflute (2025/02/03)
         String fromDateStr = "2005/10/01";
         LocalDateTime fromLocalDateTime = convertStrDateToLocalDateTime(fromDateStr);
         LocalDate fromLocalDateMinusOneDay = convertLocalDateTimeToLocalDate(fromLocalDateTime).minusDays(1);
@@ -394,8 +394,10 @@ public class HandsOn03Test extends UnitContainerTestCase {
      */
     public void test_searchPurchaseByFormalizedDatetime() throws Exception {
         // ## Arrange ##
+        // TODO mayukorin こちらも、補足に書いてあった adjust...() をやってみましょう by jflute (2025/02/12)
 
         // ## Act ##
+        // TODO jflute 1on1にて一週間の定義について議論 (2025/02/12)
         ListResultBean<Purchase> purchases = purchaseBhv.selectList(cb -> {
             cb.setupSelect_Member().withMemberStatus();
             cb.setupSelect_Member().withMemberSecurityAsOne();
@@ -412,6 +414,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         assertHasAnyElement(purchases);
         purchases.forEach(purchase -> {
             LocalDateTime purchaseDatetime = purchase.getPurchaseDatetime();
+            // TODO mayukorin [いいね] その通り！ by jflute (2025/02/12)
             // 紐づく member・memberStatus・product・productStatus・productCategory は必ず存在する。NotNullのFKカラムなため。
             Member member = purchase.getMember().get();
             LocalDateTime formalizedDatetime = member.getFormalizedDatetime();
@@ -462,6 +465,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.setupSelect_MemberStatus();
             cb.setupSelect_MemberSecurityAsOne();
             cb.setupSelect_MemberWithdrawalAsOne();
+            // TODO mayukorin orIsNull()パーフェクト！ by jflute (2025/02/12)
             cb.query().setBirthdate_FromTo(null, birthYearForSearchLocalDate, op -> op.allowOneSide().compareAsYear().orIsNull());
             cb.query().addOrderBy_Birthdate_Desc().withNullsFirst();
         });
@@ -472,6 +476,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
         int currentOrderNumber = 0;
         int lastNullBirthdateMemberOrderNumber = 0;
         int firstNonNullBirthdateMemberOrderNumber = 0;
+        // TODO mayukorin [いいね] UnitTestの素通り防止のためにちゃんと存在確認をしてるの素晴らしい by jflute (2025/02/12)
+        // TODO mayukorin [tips] isIncluded をもっと短く has.. にすることもできるかなと by jflute (2025/02/12)
         boolean isIncludedBirthdayBarelyIncludedSearchResult = false;
 
         for (Member member : members) {
@@ -480,6 +486,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             MemberStatus memberStatus = member.getMemberStatus().get();
             MemberSecurity memberSecurity = member.getMemberSecurityAsOne().get();
             OptionalEntity<MemberWithdrawal> optMemberWithdrawalAsOne = member.getMemberWithdrawalAsOne();
+            // TODO mayukorin 横長すぎるのでちょっと改行して欲しいところですね by jflute (2025/02/12)
             log("member: {}, birthdate: {}, status: {}, reminder question: {}, reminder answer:{}, withdrawal reason: {}", member.getMemberName(), birthdate, memberStatus.getMemberStatusName(), memberSecurity.getReminderQuestion(), memberSecurity.getReminderAnswer(), optMemberWithdrawalAsOne.map(mw -> mw.getWithdrawalReasonInputText()).orElse("none"));
 
             assertTrue(birthdate == null || birthdate.isBefore(birthYearForSearchLocalDate.plusYears(1)));
