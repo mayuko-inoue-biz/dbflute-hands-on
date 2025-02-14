@@ -397,8 +397,9 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Arrange ##
         // TODO done mayukorin こちらも、補足に書いてあった adjust...() をやってみましょう by jflute (2025/02/12)
         // 検索結果が増えなかった
-        // 現在のコードでは正式会員になった日から、分単位で1週間後までとしている。
-        // そのため、正式会員になった日から日単位では1週間後だが、分単位では1週間後以降の場合は、検索結果に含まれない
+        // 現在のコードの1週間後の定義：正式会員になった日から、分単位で1週間後。
+        // そのため、正式会員になった日から日単位では1週間後だが、分単位では1週間後以降の場合は、検索結果に含まれない。
+        // adjust で更新したデータは上のケースに当てはまる（handyDate.addDay(7).moveToDayTerminal().moveToSecondJust()）。
         adjustPurchase_PurchaseDatetime_fromFormalizedDatetimeInWeek();
 
         // ## Act ##
