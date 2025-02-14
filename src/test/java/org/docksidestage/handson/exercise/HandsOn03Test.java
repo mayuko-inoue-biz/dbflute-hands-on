@@ -516,6 +516,58 @@ public class HandsOn03Test extends UnitContainerTestCase {
         assertTrue(lastNullBirthdateMemberOrderNumber < firstNonNullBirthdateMemberOrderNumber); // 生まれが不明の会員が、全員生まれが不明でない会員よりも前に登場することをアサート
     }
 
+    /**
+     * 2005年6月に正式会員になった会員を先に並べて生年月日のない会員を検索 <br>
+     * o 画面からの検索条件で2005年6月がリクエストされたと想定 <br>
+     * o Arrange で String の "2005/06/01" を一度宣言してから日付クラスに変換 <br>
+     * o その日付クラスの値を、(日付移動などせず)そのまま使って検索条件を実現 <br>
+     * o 第二ソートキーは会員IDの降順 <br>
+     * o 検索された会員の生年月日が存在しないことをアサート <br>
+     * o 2005年6月に正式会員になった会員が先に並んでいることをアサート (先頭だけじゃなく全体をチェック) <br>
+     */
+    public void test_searchMemberByFormalizedDatetimeByMonth() throws Exception {
+        // TODO m.inoue  きわどいデータは後でやってみる (2025/02/14)
+        // ## Arrange ##
+        String fromMonthStr = "2005/06/01";
+        LocalDate fromMonthLocalDate = convertStrToLocalDate(fromMonthStr);
+
+
+        // ## Act ##
+        ListResultBean<Member> members = memberBhv.selectList(cb -> {
+            cb.query().setBirthdate_IsNull();
+            cb.query().addOrderBy_FormalizedDatetime_Asc().withManualOrder(op -> {
+                op.when_FromTo(fromMonthLocalDate, fromMonthLocalDate, iop -> iop.compareAsMonth());
+            });
+            cb.query().addOrderBy_MemberId_Desc();
+        });
+
+        // ## Assert ##
+        assertHasAnyElement(members);
+
+        int currentOrderNumber = 0;
+        int lastJunFormalizedMemberOrderNumber = 0;
+        int firstNotJunFormalizedMemberOrderNumber = 0;
+
+        for (Member member : members) {
+            currentOrderNumber++;
+
+            log("memberId: {}, formalizedDatetime: {}, birthday: {}, ", member.getMemberId(), member.getFormalizedDatetime(), member.getBirthdate());
+
+            assertNull(member.getBirthdate());
+
+            if (member.getFormalizedDatetime() != null && member.getFormalizedDatetime().getMonthValue() == fromMonthLocalDate.getMonthValue()) { // 2005年6月に正式会員になった会員だったら
+                lastJunFormalizedMemberOrderNumber = currentOrderNumber;
+            } else { // 2005年6月に正式会員になった会員ではなかったら
+                if (firstNotJunFormalizedMemberOrderNumber == 0) { // 上の会員が初めて検索結果に登場したら
+                    firstNotJunFormalizedMemberOrderNumber = currentOrderNumber;
+                }
+            }
+        }
+        log("lastJunFormalizedMemberOrderNumber: {}, firstNotJunFormalizedMemberOrderNumber: {}", lastJunFormalizedMemberOrderNumber, firstNotJunFormalizedMemberOrderNumber);
+
+        assertTrue(lastJunFormalizedMemberOrderNumber < firstNotJunFormalizedMemberOrderNumber); // 2005年6月に正式会員になった会員が、そうではない会員よりも前に登場することをアサート
+    }
+
     // ===================================================================================
     //                                                                             Convert
     //                                                                           =========
