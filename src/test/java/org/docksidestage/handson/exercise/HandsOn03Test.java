@@ -391,10 +391,15 @@ public class HandsOn03Test extends UnitContainerTestCase {
      * o 商品と商品ステータス、商品カテゴリ、さらに上位の商品カテゴリも一緒に取得 <br>
      * o 上位の商品カテゴリ名が取得できていることをアサート <br>
      * o 購入日時が正式会員になってから一週間以内であることをアサート <br>
+     * ※修行++: 実装できたら、こんどはスーパークラスのメソッド adjustPurchase_PurchaseDatetime_...() を呼び出し、調整されたデータによって検索結果が一件増えるかどうか確認してみましょう。 もし増えないなら、なぜ増えないのか？しっかり分析して、コード上のコメントで分析結果を書き出してみましょう。 そして、一週間以内という解釈を無理のない程度に変えて、増えるようにしてみましょう。 もともと増えたのであれば、なぜ増えたのか？が把握できていたらOKです。
      */
     public void test_searchPurchaseByFormalizedDatetime() throws Exception {
         // ## Arrange ##
-        // TODO mayukorin こちらも、補足に書いてあった adjust...() をやってみましょう by jflute (2025/02/12)
+        // TODO done mayukorin こちらも、補足に書いてあった adjust...() をやってみましょう by jflute (2025/02/12)
+        // 検索結果が増えなかった
+        // 現在のコードでは正式会員になった日から、分単位で1週間後までとしている。
+        // そのため、正式会員になった日から日単位では1週間後だが、分単位では1週間後以降の場合は、検索結果に含まれない
+        adjustPurchase_PurchaseDatetime_fromFormalizedDatetimeInWeek();
 
         // ## Act ##
         // TODO jflute 1on1にて一週間の定義について議論 (2025/02/12)
@@ -414,7 +419,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         assertHasAnyElement(purchases);
         purchases.forEach(purchase -> {
             LocalDateTime purchaseDatetime = purchase.getPurchaseDatetime();
-            // TODO mayukorin [いいね] その通り！ by jflute (2025/02/12)
+            // TODO done mayukorin [いいね] その通り！ by jflute (2025/02/12)
             // 紐づく member・memberStatus・product・productStatus・productCategory は必ず存在する。NotNullのFKカラムなため。
             Member member = purchase.getMember().get();
             LocalDateTime formalizedDatetime = member.getFormalizedDatetime();
@@ -425,7 +430,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
             ProductCategory productCategory = product.getProductCategory().get();
             OptionalEntity<ProductCategory> optParentProductCategory = productCategory.getProductCategorySelf();
 
-            log("purchaseDatetime: {}, purchasedProduct: {}, productStatus: {}, productCategory: {}, optParentProductCategory: {}, memberFormalizedDatetime: {}, memberStatus: {}, securityVersionNumber: {}", purchaseDatetime, product.getProductName(), productStatus.getProductStatusName(), productCategory.getProductCategoryName(), optParentProductCategory, memberStatus.getMemberStatusName(), memberSecurity.getVersionNo());
+            log("purchaseDatetime: {}, purchasedProduct: {}, productStatus: {}, productCategory: {}, optParentProductCategory: {}, memberFormalizedDatetime: {}, memberStatus: {}, securityVersionNumber: {}",
+                    purchaseDatetime, product.getProductName(), productStatus.getProductStatusName(), productCategory.getProductCategoryName(), optParentProductCategory, member.getFormalizedDatetime(), memberStatus.getMemberStatusName(), memberSecurity.getVersionNo());
 
             assertFalse(purchaseDatetime.isBefore(formalizedDatetime)); // 購入日時が正式会員日時以降であることをアサート（正式会員日時ピッタリも含む）
             assertFalse(purchaseDatetime.isAfter(formalizedDatetime.plusDays(7))); // 購入日時が正式会員日時の1週間以内であることをアサート（正式会員日時+7日ピッタリも含む）
@@ -465,7 +471,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.setupSelect_MemberStatus();
             cb.setupSelect_MemberSecurityAsOne();
             cb.setupSelect_MemberWithdrawalAsOne();
-            // TODO mayukorin orIsNull()パーフェクト！ by jflute (2025/02/12)
+            // TODO done mayukorin orIsNull()パーフェクト！ by jflute (2025/02/12)
             cb.query().setBirthdate_FromTo(null, birthYearForSearchLocalDate, op -> op.allowOneSide().compareAsYear().orIsNull());
             cb.query().addOrderBy_Birthdate_Desc().withNullsFirst();
         });
@@ -476,9 +482,9 @@ public class HandsOn03Test extends UnitContainerTestCase {
         int currentOrderNumber = 0;
         int lastNullBirthdateMemberOrderNumber = 0;
         int firstNonNullBirthdateMemberOrderNumber = 0;
-        // TODO mayukorin [いいね] UnitTestの素通り防止のためにちゃんと存在確認をしてるの素晴らしい by jflute (2025/02/12)
-        // TODO mayukorin [tips] isIncluded をもっと短く has.. にすることもできるかなと by jflute (2025/02/12)
-        boolean isIncludedBirthdayBarelyIncludedSearchResult = false;
+        // TODO done mayukorin [いいね] UnitTestの素通り防止のためにちゃんと存在確認をしてるの素晴らしい by jflute (2025/02/12)
+        // TODO done mayukorin [tips] isIncluded をもっと短く has.. にすることもできるかなと by jflute (2025/02/12)
+        boolean hasBirthdayBarelyIncludedSearchResult = false;
 
         for (Member member : members) {
             currentOrderNumber++;
@@ -486,8 +492,10 @@ public class HandsOn03Test extends UnitContainerTestCase {
             MemberStatus memberStatus = member.getMemberStatus().get();
             MemberSecurity memberSecurity = member.getMemberSecurityAsOne().get();
             OptionalEntity<MemberWithdrawal> optMemberWithdrawalAsOne = member.getMemberWithdrawalAsOne();
-            // TODO mayukorin 横長すぎるのでちょっと改行して欲しいところですね by jflute (2025/02/12)
-            log("member: {}, birthdate: {}, status: {}, reminder question: {}, reminder answer:{}, withdrawal reason: {}", member.getMemberName(), birthdate, memberStatus.getMemberStatusName(), memberSecurity.getReminderQuestion(), memberSecurity.getReminderAnswer(), optMemberWithdrawalAsOne.map(mw -> mw.getWithdrawalReasonInputText()).orElse("none"));
+            // TODO done mayukorin 横長すぎるのでちょっと改行して欲しいところですね by jflute (2025/02/12)
+            log("member: {}, birthdate: {}, status: {}, reminder question: {}, reminder answer:{}, withdrawal reason: {}",
+                    member.getMemberName(), birthdate, memberStatus.getMemberStatusName(),
+                    memberSecurity.getReminderQuestion(), memberSecurity.getReminderAnswer(), optMemberWithdrawalAsOne.map(mw -> mw.getWithdrawalReasonInputText()).orElse("none"));
 
             assertTrue(birthdate == null || birthdate.isBefore(birthYearForSearchLocalDate.plusYears(1)));
 
@@ -498,13 +506,13 @@ public class HandsOn03Test extends UnitContainerTestCase {
                     firstNonNullBirthdateMemberOrderNumber = currentOrderNumber;
                 }
                 if (birthdate.equals(birthdayBarelyIncludedSearchResult)) { // きわどい誕生日の会員が検索結果に登場したら
-                    isIncludedBirthdayBarelyIncludedSearchResult = true;
+                    hasBirthdayBarelyIncludedSearchResult = true;
                 }
             }
         }
-        log("isIncludedBirthdayBarelyIncludedSearchResult: {}, lastNullBirthdateMemberOrderNumber: {}, firstNonNullBirthdateMemberOrderNumber: {}", isIncludedBirthdayBarelyIncludedSearchResult, lastNullBirthdateMemberOrderNumber, firstNonNullBirthdateMemberOrderNumber);
+        log("isIncludedBirthdayBarelyIncludedSearchResult: {}, lastNullBirthdateMemberOrderNumber: {}, firstNonNullBirthdateMemberOrderNumber: {}", hasBirthdayBarelyIncludedSearchResult, lastNullBirthdateMemberOrderNumber, firstNonNullBirthdateMemberOrderNumber);
 
-        assertTrue(isIncludedBirthdayBarelyIncludedSearchResult); // かろうじて検索結果に含まれるはずの誕生日がきわどい会員がちゃんと検索結果に含まれていることをアサート
+        assertTrue(hasBirthdayBarelyIncludedSearchResult); // かろうじて検索結果に含まれるはずの誕生日がきわどい会員がちゃんと検索結果に含まれていることをアサート
         assertTrue(lastNullBirthdateMemberOrderNumber < firstNonNullBirthdateMemberOrderNumber); // 生まれが不明の会員が、全員生まれが不明でない会員よりも前に登場することをアサート
     }
 
