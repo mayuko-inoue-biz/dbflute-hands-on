@@ -395,7 +395,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
      */
     public void test_searchPurchaseByFormalizedDatetime() throws Exception {
         // ## Arrange ##
-        // TODO done mayukorin こちらも、補足に書いてあった adjust...() をやってみましょう by jflute (2025/02/12)
+        // done mayukorin こちらも、補足に書いてあった adjust...() をやってみましょう by jflute (2025/02/12)
         // 検索結果が増えなかった
         // 現在のコードの1週間後の定義：正式会員になった日から、分単位で1週間後。
         // そのため、正式会員になった日から日単位では1週間後だが、分単位では1週間後以降の場合は、検索結果に含まれない。
@@ -403,7 +403,20 @@ public class HandsOn03Test extends UnitContainerTestCase {
         adjustPurchase_PurchaseDatetime_fromFormalizedDatetimeInWeek();
 
         // ## Act ##
-        // TODO jflute 1on1にて一週間の定義について議論 (2025/02/12)
+        // done jflute 1on1にて一週間の定義について議論 (2025/02/12)
+        // [1on1でのふぉろー]
+        // いまの実装は、「7×24 + 1秒」になってる？はず。以下の図だと、Kを含むスタイル。
+        //
+        // 10/3                    10/10     10/11
+        //  13h                      0h  13h   0h
+        //   |                       |    |    |
+        //   |       D               | I  |    | P
+        // A |                       |H  J|L   |O
+        //   |C                  E   G    K    N
+        //   B                      F|    |   M|
+        //   |                       |         |
+        //
+        // TODO mayukorin 修行++: "M" まで含むスタイルに変えてみてください ("N" は含まないように) by jflute (2025/02/17)
         ListResultBean<Purchase> purchases = purchaseBhv.selectList(cb -> {
             cb.setupSelect_Member().withMemberStatus();
             cb.setupSelect_Member().withMemberSecurityAsOne();
@@ -420,7 +433,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         assertHasAnyElement(purchases);
         purchases.forEach(purchase -> {
             LocalDateTime purchaseDatetime = purchase.getPurchaseDatetime();
-            // TODO done mayukorin [いいね] その通り！ by jflute (2025/02/12)
+            // done mayukorin [いいね] その通り！ by jflute (2025/02/12)
             // 紐づく member・memberStatus・product・productStatus・productCategory は必ず存在する。NotNullのFKカラムなため。
             Member member = purchase.getMember().get();
             LocalDateTime formalizedDatetime = member.getFormalizedDatetime();
@@ -459,6 +472,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
     public void test_searchMemberByBirthdate() throws Exception {
         // ## Arrange ##
         String birthYearForSearch = "1974/01/01";
+        // TODO mayukorin なんか二ます空いてる by jflute (2025/02/17)
         LocalDate  birthYearForSearchLocalDate = convertStrToLocalDate(birthYearForSearch);
 
         // "きわどいデータ"を作る
@@ -472,7 +486,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.setupSelect_MemberStatus();
             cb.setupSelect_MemberSecurityAsOne();
             cb.setupSelect_MemberWithdrawalAsOne();
-            // TODO done mayukorin orIsNull()パーフェクト！ by jflute (2025/02/12)
+            // done mayukorin orIsNull()パーフェクト！ by jflute (2025/02/12)
             cb.query().setBirthdate_FromTo(null, birthYearForSearchLocalDate, op -> op.allowOneSide().compareAsYear().orIsNull());
             cb.query().addOrderBy_Birthdate_Desc().withNullsFirst();
         });
@@ -480,11 +494,12 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(members);
 
+        // TODO mayukorin [見比べ課題] 模範の実装を見比べてみて、頭の中で他のやり方も学んでみてください by jflute (2025/02/17)
         int currentOrderNumber = 0;
         int lastNullBirthdateMemberOrderNumber = 0;
         int firstNonNullBirthdateMemberOrderNumber = 0;
-        // TODO done mayukorin [いいね] UnitTestの素通り防止のためにちゃんと存在確認をしてるの素晴らしい by jflute (2025/02/12)
-        // TODO done mayukorin [tips] isIncluded をもっと短く has.. にすることもできるかなと by jflute (2025/02/12)
+        // done mayukorin [いいね] UnitTestの素通り防止のためにちゃんと存在確認をしてるの素晴らしい by jflute (2025/02/12)
+        // done mayukorin [tips] isIncluded をもっと短く has.. にすることもできるかなと by jflute (2025/02/12)
         boolean hasBirthdayBarelyIncludedSearchResult = false;
 
         for (Member member : members) {
@@ -493,7 +508,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
             MemberStatus memberStatus = member.getMemberStatus().get();
             MemberSecurity memberSecurity = member.getMemberSecurityAsOne().get();
             OptionalEntity<MemberWithdrawal> optMemberWithdrawalAsOne = member.getMemberWithdrawalAsOne();
-            // TODO done mayukorin 横長すぎるのでちょっと改行して欲しいところですね by jflute (2025/02/12)
+            // done mayukorin 横長すぎるのでちょっと改行して欲しいところですね by jflute (2025/02/12)
+            // TODO mayukorin map()のところ、独立改行があると嬉しいかなと by jflute (2025/02/17)
             log("member: {}, birthdate: {}, status: {}, reminder question: {}, reminder answer:{}, withdrawal reason: {}",
                     member.getMemberName(), birthdate, memberStatus.getMemberStatusName(),
                     memberSecurity.getReminderQuestion(), memberSecurity.getReminderAnswer(), optMemberWithdrawalAsOne.map(mw -> mw.getWithdrawalReasonInputText()).orElse("none"));
@@ -511,6 +527,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
                 }
             }
         }
+        // TODO mayukorin ラベルの変数名 by jflute (2025/02/17)
         log("isIncludedBirthdayBarelyIncludedSearchResult: {}, lastNullBirthdateMemberOrderNumber: {}, firstNonNullBirthdateMemberOrderNumber: {}", hasBirthdayBarelyIncludedSearchResult, lastNullBirthdateMemberOrderNumber, firstNonNullBirthdateMemberOrderNumber);
 
         assertTrue(hasBirthdayBarelyIncludedSearchResult); // かろうじて検索結果に含まれるはずの誕生日がきわどい会員がちゃんと検索結果に含まれていることをアサート
@@ -537,6 +554,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
             cb.query().setBirthdate_IsNull();
             cb.query().addOrderBy_FormalizedDatetime_Asc().withManualOrder(op -> {
+                // TODO mayukorin 識別するなら、もっと大げさに識別したほうが安全かなと e.g. innerOp  by jflute (2025/02/17)
                 op.when_FromTo(fromMonthLocalDate, fromMonthLocalDate, iop -> iop.compareAsMonth());
             });
             cb.query().addOrderBy_MemberId_Desc();
@@ -545,6 +563,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(members);
 
+        // TODO mayukorin [見比べ課題] 模範の実装と見比べて学んでみてください by jflute (2025/02/17)
         int currentOrderNumber = 0;
         int lastJunFormalizedMemberOrderNumber = 0;
         int firstNotJunFormalizedMemberOrderNumber = 0;
@@ -552,10 +571,13 @@ public class HandsOn03Test extends UnitContainerTestCase {
         for (Member member : members) {
             currentOrderNumber++;
 
+            // TODO mayukorin member.getFormalizedDatetime()出してくれると嬉しい by jflute (2025/02/17)
+            // TODO mayukorin カラム名は birthdate なので、ラベルも合わせたほうがいいかなと by jflute (2025/02/17)
             log("memberId: {}, formalizedDatetime: {}, birthday: {}, ", member.getMemberId(), member.getFormalizedDatetime(), member.getBirthdate());
 
             assertNull(member.getBirthdate());
 
+            // TODO mayukorin [いいね] if/else に人間向きの条件説明があって読むの早くなって嬉しい by jflute (2025/02/17)
             if (member.getFormalizedDatetime() != null && member.getFormalizedDatetime().getMonthValue() == fromMonthLocalDate.getMonthValue()) { // 2005年6月に正式会員になった会員だったら
                 lastJunFormalizedMemberOrderNumber = currentOrderNumber;
             } else { // 2005年6月に正式会員になった会員ではなかったら
