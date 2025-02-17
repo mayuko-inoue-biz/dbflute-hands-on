@@ -562,7 +562,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
 
         // ## Assert ##
         assertHasAnyElement(members);
-
+       
         // TODO mayukorin [見比べ課題] 模範の実装と見比べて学んでみてください by jflute (2025/02/17)
         int currentOrderNumber = 0;
         int lastJunFormalizedMemberOrderNumber = 0;
@@ -590,6 +590,15 @@ public class HandsOn03Test extends UnitContainerTestCase {
 
         assertTrue(lastJunFormalizedMemberOrderNumber < firstNotJunFormalizedMemberOrderNumber); // 2005年6月に正式会員になった会員が、そうではない会員よりも前に登場することをアサート
     }
+
+    // [1on1での雑談]
+    //        ・推論の種類
+    //       　・逆行推論
+    //       　・演繹推論
+    //       　・帰納推論
+    //       ・逆行推論結構大事
+    // TODO mayukorin [読み物課題] 問題分析と問題解決を分けることがハマらない第一歩 by jflute (2025/02/17)
+    // https://jflute.hatenadiary.jp/entry/20170712/analysissolving
 
     // ===================================================================================
     //                                                                             Convert
