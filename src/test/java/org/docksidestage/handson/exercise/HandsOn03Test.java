@@ -552,12 +552,6 @@ public class HandsOn03Test extends UnitContainerTestCase {
         String fromMonthStr = "2005/06/01";
         LocalDate fromMonthLocalDate = convertStrToLocalDate(fromMonthStr);
 
-        // "きわどいデータ"を作る
-        LocalDate birthdayBarelyIncludedSearchResult = convertStrToLocalDate("1974/12/31");
-        LocalDate birthdayBarelyNotIncludedSearchResult = convertStrToLocalDate("1975/01/01");
-        adjustMember_Birthdate_byMemberId(birthdayBarelyIncludedSearchResult, 1);
-
-
         // ## Act ##
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
             cb.query().setBirthdate_IsNull();
