@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.dbflute.cbean.result.ListResultBean;
+import org.dbflute.cbean.result.PagingResultBean;
 import org.dbflute.exception.NonSpecifiedColumnAccessException;
 import org.dbflute.optional.OptionalEntity;
 import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
@@ -604,6 +605,62 @@ public class HandsOn03Test extends UnitContainerTestCase {
     // TODO done mayukorin [読み物課題] 問題分析と問題解決を分けることがハマらない第一歩 by jflute (2025/02/17)
     // https://jflute.hatenadiary.jp/entry/20170712/analysissolving
     // 私も問題解決いきなりしようとしてた気がします。身にしみます...
+
+    // ===================================================================================
+    //                                                                         ページング検索
+    //                                                                           =========
+    /**
+     * 全ての会員をページング検索 <br>
+     * o 会員ステータス名称も取得 <br>
+     * o 会員IDの昇順で並べる <br>
+     * o ページサイズは 3、ページ番号は 1 で検索すること <br>
+     * o 会員ID、会員名称、会員ステータス名称をログに出力 <br>
+     * o SQLのログでカウント検索時と実データ検索時の違いを確認 <br>
+     * o 総レコード件数が会員テーブルの全件であることをアサート <br>
+     * o 総ページ数が期待通りのページ数(計算で導出)であることをアサート <br>
+     * o 検索結果のページサイズ、ページ番号が指定されたものであることをアサート <br>
+     * o 検索結果が指定されたページサイズ分のデータだけであることをアサート <br>
+     * o pageRangeを 3 にして PageNumberList を取得し、[1, 2, 3, 4]であることをアサート <br>
+     * o 前のページが存在しないことをアサート
+     * o 次のページが存在することをアサート
+     */
+    public void test_pagingSearch() throws Exception {
+        // ## Arrange ##
+        int pageSize = 3;
+        int pageNumber = 1;
+    
+        // ## Act ##
+        PagingResultBean<Member> members = memberBhv.selectPage(cb -> {
+            cb.setupSelect_MemberStatus();
+            cb.query().addOrderBy_MemberId_Asc();
+            cb.paging(pageSize, pageNumber);
+        });
+
+        // ## Assert ##
+        int expectedMemberCount = memberBhv.selectCount(cb -> {
+            cb.setupSelect_MemberStatus();
+            cb.query().addOrderBy_MemberId_Asc();
+        });
+        int expectedPageCount = (expectedMemberCount + (pageSize-1))/pageSize;
+        int pageRangeSize = 3;
+
+        members.forEach(member -> {
+            MemberStatus memberStatus = member.getMemberStatus().get();
+            log("memberId: {}, name: {}, status: {}", member.getMemberId(), member.getMemberName(), memberStatus.getMemberStatusName());
+        });
+
+        assertEquals(expectedMemberCount, members.getAllRecordCount());
+        assertEquals(expectedPageCount, members.getAllPageCount());
+        assertEquals(pageSize, members.getPageSize());
+        assertEquals(pageNumber, members.getCurrentPageNumber());
+        assertEquals(pageSize, members.size());
+
+        List<Integer> pageNumberList = members.pageRange(op -> op.rangeSize(pageRangeSize)).createPageNumberList();
+        assertEquals(newArrayList(1, 2, 3, 4), pageNumberList);
+
+        assertFalse(members.existsPreviousPage());
+        assertTrue(members.existsNextPage());
+    }
 
     // ===================================================================================
     //                                                                             Convert
