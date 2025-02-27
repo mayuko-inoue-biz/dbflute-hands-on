@@ -416,7 +416,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
         //   B                      F|    |   M|
         //   |                       |         |
         //
-        // TODO mayukorin 修行++: "M" まで含むスタイルに変えてみてください ("N" は含まないように) by jflute (2025/02/17)
+        // TODO done mayukorin 修行++: "M" まで含むスタイルに変えてみてください ("N" は含まないように) by jflute (2025/02/17)
+        // 2件から3件に増えました！
         ListResultBean<Purchase> purchases = purchaseBhv.selectList(cb -> {
             cb.setupSelect_Member().withMemberStatus();
             cb.setupSelect_Member().withMemberSecurityAsOne();
@@ -425,8 +426,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.columnQuery(colCB -> colCB.specify().columnPurchaseDatetime())
                     .greaterEqual(colCB -> colCB.specify().specifyMember().columnFormalizedDatetime());
             cb.columnQuery(colCB -> colCB.specify().columnPurchaseDatetime())
-                    .lessEqual(colCB -> colCB.specify().specifyMember().columnFormalizedDatetime())
-                    .convert(op -> op.addDay(7));
+                    .lessThan(colCB -> colCB.specify().specifyMember().columnFormalizedDatetime())
+                    .convert(op -> op.truncTime().addDay(8));
         });
 
         // ## Assert ##
@@ -448,7 +449,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
                     purchaseDatetime, product.getProductName(), productStatus.getProductStatusName(), productCategory.getProductCategoryName(), optParentProductCategory, member.getFormalizedDatetime(), memberStatus.getMemberStatusName(), memberSecurity.getVersionNo());
 
             assertFalse(purchaseDatetime.isBefore(formalizedDatetime)); // 購入日時が正式会員日時以降であることをアサート（正式会員日時ピッタリも含む）
-            assertFalse(purchaseDatetime.isAfter(formalizedDatetime.plusDays(7))); // 購入日時が正式会員日時の1週間以内であることをアサート（正式会員日時+7日ピッタリも含む）
+            assertTrue(purchaseDatetime.isBefore(convertLocalDateTimeToLocalDate(formalizedDatetime).plusDays(8).atStartOfDay())); // 購入日時が、M以内であることをアサート
             assertNotNull(optParentProductCategory.get().getProductCategoryName());
         });
     }
@@ -472,8 +473,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
     public void test_searchMemberByBirthdate() throws Exception {
         // ## Arrange ##
         String birthYearForSearch = "1974/01/01";
-        // TODO mayukorin なんか二ます空いてる by jflute (2025/02/17)
-        LocalDate  birthYearForSearchLocalDate = convertStrToLocalDate(birthYearForSearch);
+        // TODO done mayukorin なんか二ます空いてる by jflute (2025/02/17)
+        LocalDate birthYearForSearchLocalDate = convertStrToLocalDate(birthYearForSearch);
 
         // "きわどいデータ"を作る
         LocalDate birthdayBarelyIncludedSearchResult = convertStrToLocalDate("1974/12/31");
@@ -494,7 +495,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(members);
 
-        // TODO mayukorin [見比べ課題] 模範の実装を見比べてみて、頭の中で他のやり方も学んでみてください by jflute (2025/02/17)
+        // TODO done mayukorin [見比べ課題] 模範の実装を見比べてみて、頭の中で他のやり方も学んでみてください by jflute (2025/02/17)
+        // 「生まれが不明の会員が先頭になっていること」をasseretすれば良いだけだから、先頭のmemberのbirthdateがnullかどうかだけ、見れば良いだけなのですね！
         int currentOrderNumber = 0;
         int lastNullBirthdateMemberOrderNumber = 0;
         int firstNonNullBirthdateMemberOrderNumber = 0;
@@ -509,10 +511,11 @@ public class HandsOn03Test extends UnitContainerTestCase {
             MemberSecurity memberSecurity = member.getMemberSecurityAsOne().get();
             OptionalEntity<MemberWithdrawal> optMemberWithdrawalAsOne = member.getMemberWithdrawalAsOne();
             // done mayukorin 横長すぎるのでちょっと改行して欲しいところですね by jflute (2025/02/12)
-            // TODO mayukorin map()のところ、独立改行があると嬉しいかなと by jflute (2025/02/17)
+            // TODO done mayukorin map()のところ、独立改行があると嬉しいかなと by jflute (2025/02/17)
             log("member: {}, birthdate: {}, status: {}, reminder question: {}, reminder answer:{}, withdrawal reason: {}",
                     member.getMemberName(), birthdate, memberStatus.getMemberStatusName(),
-                    memberSecurity.getReminderQuestion(), memberSecurity.getReminderAnswer(), optMemberWithdrawalAsOne.map(mw -> mw.getWithdrawalReasonInputText()).orElse("none"));
+                    memberSecurity.getReminderQuestion(), memberSecurity.getReminderAnswer(),
+                    optMemberWithdrawalAsOne.map(mw -> mw.getWithdrawalReasonInputText()).orElse("none"));
 
             assertTrue(birthdate == null || birthdate.isBefore(birthYearForSearchLocalDate.plusYears(1)));
 
@@ -527,8 +530,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
                 }
             }
         }
-        // TODO mayukorin ラベルの変数名 by jflute (2025/02/17)
-        log("isIncludedBirthdayBarelyIncludedSearchResult: {}, lastNullBirthdateMemberOrderNumber: {}, firstNonNullBirthdateMemberOrderNumber: {}", hasBirthdayBarelyIncludedSearchResult, lastNullBirthdateMemberOrderNumber, firstNonNullBirthdateMemberOrderNumber);
+        // TODO done mayukorin ラベルの変数名 by jflute (2025/02/17)
+        log("hasBirthdayBarelyIncludedSearchResult: {}, lastNullBirthdateMemberOrderNumber: {}, firstNonNullBirthdateMemberOrderNumber: {}", hasBirthdayBarelyIncludedSearchResult, lastNullBirthdateMemberOrderNumber, firstNonNullBirthdateMemberOrderNumber);
 
         assertTrue(hasBirthdayBarelyIncludedSearchResult); // かろうじて検索結果に含まれるはずの誕生日がきわどい会員がちゃんと検索結果に含まれていることをアサート
         assertTrue(lastNullBirthdateMemberOrderNumber < firstNonNullBirthdateMemberOrderNumber); // 生まれが不明の会員が、全員生まれが不明でない会員よりも前に登場することをアサート
@@ -549,13 +552,18 @@ public class HandsOn03Test extends UnitContainerTestCase {
         String fromMonthStr = "2005/06/01";
         LocalDate fromMonthLocalDate = convertStrToLocalDate(fromMonthStr);
 
+        // "きわどいデータ"を作る
+        LocalDate birthdayBarelyIncludedSearchResult = convertStrToLocalDate("1974/12/31");
+        LocalDate birthdayBarelyNotIncludedSearchResult = convertStrToLocalDate("1975/01/01");
+        adjustMember_Birthdate_byMemberId(birthdayBarelyIncludedSearchResult, 1);
+
 
         // ## Act ##
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
             cb.query().setBirthdate_IsNull();
             cb.query().addOrderBy_FormalizedDatetime_Asc().withManualOrder(op -> {
-                // TODO mayukorin 識別するなら、もっと大げさに識別したほうが安全かなと e.g. innerOp  by jflute (2025/02/17)
-                op.when_FromTo(fromMonthLocalDate, fromMonthLocalDate, iop -> iop.compareAsMonth());
+                // TODO done mayukorin 識別するなら、もっと大げさに識別したほうが安全かなと e.g. innerOp  by jflute (2025/02/17)
+                op.when_FromTo(fromMonthLocalDate, fromMonthLocalDate, innerOp -> innerOp.compareAsMonth());
             });
             cb.query().addOrderBy_MemberId_Desc();
         });
@@ -563,22 +571,24 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(members);
        
-        // TODO mayukorin [見比べ課題] 模範の実装と見比べて学んでみてください by jflute (2025/02/17)
+        // TODO done mayukorin [見比べ課題] 模範の実装と見比べて学んでみてください by jflute (2025/02/17)
+        // 模範だと、2005年6月じゃない人が初めて登場してからそれ以降に2005年6月の人が登場しないかどうか、passedBorderで見てるのですね！
         int currentOrderNumber = 0;
         int lastJunFormalizedMemberOrderNumber = 0;
         int firstNotJunFormalizedMemberOrderNumber = 0;
 
         for (Member member : members) {
             currentOrderNumber++;
+            LocalDateTime formalizedDatetime = member.getFormalizedDatetime();
 
-            // TODO mayukorin member.getFormalizedDatetime()出してくれると嬉しい by jflute (2025/02/17)
-            // TODO mayukorin カラム名は birthdate なので、ラベルも合わせたほうがいいかなと by jflute (2025/02/17)
-            log("memberId: {}, formalizedDatetime: {}, birthday: {}, ", member.getMemberId(), member.getFormalizedDatetime(), member.getBirthdate());
+            // TODO done mayukorin member.getFormalizedDatetime()出してくれると嬉しい by jflute (2025/02/17)
+            // TODO done mayukorin カラム名は birthdate なので、ラベルも合わせたほうがいいかなと by jflute (2025/02/17)
+            log("memberId: {}, formalizedDatetime: {}, birthdate: {}, ", member.getMemberId(), formalizedDatetime, member.getBirthdate());
 
             assertNull(member.getBirthdate());
 
-            // TODO mayukorin [いいね] if/else に人間向きの条件説明があって読むの早くなって嬉しい by jflute (2025/02/17)
-            if (member.getFormalizedDatetime() != null && member.getFormalizedDatetime().getMonthValue() == fromMonthLocalDate.getMonthValue()) { // 2005年6月に正式会員になった会員だったら
+            // TODO done mayukorin [いいね] if/else に人間向きの条件説明があって読むの早くなって嬉しい by jflute (2025/02/17)
+            if (formalizedDatetime != null && formalizedDatetime.getMonthValue() == fromMonthLocalDate.getMonthValue()) { // 2005年6月に正式会員になった会員だったら
                 lastJunFormalizedMemberOrderNumber = currentOrderNumber;
             } else { // 2005年6月に正式会員になった会員ではなかったら
                 if (firstNotJunFormalizedMemberOrderNumber == 0) { // 上の会員が初めて検索結果に登場したら
@@ -597,8 +607,9 @@ public class HandsOn03Test extends UnitContainerTestCase {
     //       　・演繹推論
     //       　・帰納推論
     //       ・逆行推論結構大事
-    // TODO mayukorin [読み物課題] 問題分析と問題解決を分けることがハマらない第一歩 by jflute (2025/02/17)
+    // TODO done mayukorin [読み物課題] 問題分析と問題解決を分けることがハマらない第一歩 by jflute (2025/02/17)
     // https://jflute.hatenadiary.jp/entry/20170712/analysissolving
+    // 私も問題解決いきなりしようとしてた気がします。身にしみます...
 
     // ===================================================================================
     //                                                                             Convert
