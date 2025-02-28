@@ -663,6 +663,9 @@ public class HandsOn03Test extends UnitContainerTestCase {
         assertTrue(members.existsNextPage());
     }
 
+    // TODO mayukorin [読み物課題] times の "正常性バイアス" の話に派生して、少し "仮説キープ力" のお話を by jflute (2025/02/28)
+    // 自分の中でデマを広げさせない: https://jflute.hatenadiary.jp/entry/20110619/nodema
+    
     // ===================================================================================
     //                                                                             Convert
     //                                                                           =========
