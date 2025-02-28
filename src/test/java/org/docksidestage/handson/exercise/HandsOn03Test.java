@@ -417,7 +417,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         //   B                      F|    |   M|
         //   |                       |         |
         //
-        // TODO done mayukorin 修行++: "M" まで含むスタイルに変えてみてください ("N" は含まないように) by jflute (2025/02/17)
+        // done mayukorin 修行++: "M" まで含むスタイルに変えてみてください ("N" は含まないように) by jflute (2025/02/17)
         // 2件から3件に増えました！
         ListResultBean<Purchase> purchases = purchaseBhv.selectList(cb -> {
             cb.setupSelect_Member().withMemberStatus();
@@ -474,7 +474,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
     public void test_searchMemberByBirthdate() throws Exception {
         // ## Arrange ##
         String birthYearForSearch = "1974/01/01";
-        // TODO done mayukorin なんか二ます空いてる by jflute (2025/02/17)
+        // done mayukorin なんか二ます空いてる by jflute (2025/02/17)
         LocalDate birthYearForSearchLocalDate = convertStrToLocalDate(birthYearForSearch);
 
         // "きわどいデータ"を作る
@@ -496,7 +496,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(members);
 
-        // TODO done mayukorin [見比べ課題] 模範の実装を見比べてみて、頭の中で他のやり方も学んでみてください by jflute (2025/02/17)
+        // done mayukorin [見比べ課題] 模範の実装を見比べてみて、頭の中で他のやり方も学んでみてください by jflute (2025/02/17)
         // 「生まれが不明の会員が先頭になっていること」をasseretすれば良いだけだから、先頭のmemberのbirthdateがnullかどうかだけ、見れば良いだけなのですね！
         int currentOrderNumber = 0;
         int lastNullBirthdateMemberOrderNumber = 0;
@@ -512,7 +512,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             MemberSecurity memberSecurity = member.getMemberSecurityAsOne().get();
             OptionalEntity<MemberWithdrawal> optMemberWithdrawalAsOne = member.getMemberWithdrawalAsOne();
             // done mayukorin 横長すぎるのでちょっと改行して欲しいところですね by jflute (2025/02/12)
-            // TODO done mayukorin map()のところ、独立改行があると嬉しいかなと by jflute (2025/02/17)
+            // done mayukorin map()のところ、独立改行があると嬉しいかなと by jflute (2025/02/17)
             log("member: {}, birthdate: {}, status: {}, reminder question: {}, reminder answer:{}, withdrawal reason: {}",
                     member.getMemberName(), birthdate, memberStatus.getMemberStatusName(),
                     memberSecurity.getReminderQuestion(), memberSecurity.getReminderAnswer(),
@@ -531,7 +531,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
                 }
             }
         }
-        // TODO done mayukorin ラベルの変数名 by jflute (2025/02/17)
+        // done mayukorin ラベルの変数名 by jflute (2025/02/17)
         log("hasBirthdayBarelyIncludedSearchResult: {}, lastNullBirthdateMemberOrderNumber: {}, firstNonNullBirthdateMemberOrderNumber: {}", hasBirthdayBarelyIncludedSearchResult, lastNullBirthdateMemberOrderNumber, firstNonNullBirthdateMemberOrderNumber);
 
         assertTrue(hasBirthdayBarelyIncludedSearchResult); // かろうじて検索結果に含まれるはずの誕生日がきわどい会員がちゃんと検索結果に含まれていることをアサート
@@ -557,7 +557,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
             cb.query().setBirthdate_IsNull();
             cb.query().addOrderBy_FormalizedDatetime_Asc().withManualOrder(op -> {
-                // TODO done mayukorin 識別するなら、もっと大げさに識別したほうが安全かなと e.g. innerOp  by jflute (2025/02/17)
+                // done mayukorin 識別するなら、もっと大げさに識別したほうが安全かなと e.g. innerOp  by jflute (2025/02/17)
                 op.when_FromTo(fromMonthLocalDate, fromMonthLocalDate, innerOp -> innerOp.compareAsMonth());
             });
             cb.query().addOrderBy_MemberId_Desc();
@@ -566,7 +566,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(members);
        
-        // TODO done mayukorin [見比べ課題] 模範の実装と見比べて学んでみてください by jflute (2025/02/17)
+        // done mayukorin [見比べ課題] 模範の実装と見比べて学んでみてください by jflute (2025/02/17)
         // 模範だと、2005年6月じゃない人が初めて登場してからそれ以降に2005年6月の人が登場しないかどうか、passedBorderで見てるのですね！
         int currentOrderNumber = 0;
         int lastJunFormalizedMemberOrderNumber = 0;
@@ -576,13 +576,13 @@ public class HandsOn03Test extends UnitContainerTestCase {
             currentOrderNumber++;
             LocalDateTime formalizedDatetime = member.getFormalizedDatetime();
 
-            // TODO done mayukorin member.getFormalizedDatetime()出してくれると嬉しい by jflute (2025/02/17)
-            // TODO done mayukorin カラム名は birthdate なので、ラベルも合わせたほうがいいかなと by jflute (2025/02/17)
+            // done mayukorin member.getFormalizedDatetime()出してくれると嬉しい by jflute (2025/02/17)
+            // done mayukorin カラム名は birthdate なので、ラベルも合わせたほうがいいかなと by jflute (2025/02/17)
             log("memberId: {}, formalizedDatetime: {}, birthdate: {}, ", member.getMemberId(), formalizedDatetime, member.getBirthdate());
 
             assertNull(member.getBirthdate());
 
-            // TODO done mayukorin [いいね] if/else に人間向きの条件説明があって読むの早くなって嬉しい by jflute (2025/02/17)
+            // done mayukorin [いいね] if/else に人間向きの条件説明があって読むの早くなって嬉しい by jflute (2025/02/17)
             if (formalizedDatetime != null && formalizedDatetime.getMonthValue() == fromMonthLocalDate.getMonthValue()) { // 2005年6月に正式会員になった会員だったら
                 lastJunFormalizedMemberOrderNumber = currentOrderNumber;
             } else { // 2005年6月に正式会員になった会員ではなかったら
@@ -626,6 +626,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
      */
     public void test_pagingSearch() throws Exception {
         // ## Arrange ##
+        // TODO jflute 完璧なので1on1にてページング自体の少しフォローをするだけ (2025/02/28)
         int pageSize = 3;
         int pageNumber = 1;
     
@@ -685,6 +686,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
     //                                                                           =========
     private void adjustMember_Birthdate_byMemberId(LocalDate birthdate, Integer memberId) {
         assertNotNull(memberId);
+        // TODO mayukorin 事前selectせずに、new Member()でset/setして更新で大丈夫です by jflute (2025/02/28)
         Member member = memberBhv.selectEntityWithDeletedCheck(cb -> {
             cb.query().setMemberId_Equal(memberId);
         });
