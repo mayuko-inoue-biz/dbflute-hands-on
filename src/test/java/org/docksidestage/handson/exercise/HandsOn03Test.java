@@ -689,10 +689,9 @@ public class HandsOn03Test extends UnitContainerTestCase {
     //                                                                           =========
     private void adjustMember_Birthdate_byMemberId(LocalDate birthdate, Integer memberId) {
         assertNotNull(memberId);
-        // TODO mayukorin 事前selectせずに、new Member()でset/setして更新で大丈夫です by jflute (2025/02/28)
-        Member member = memberBhv.selectEntityWithDeletedCheck(cb -> {
-            cb.query().setMemberId_Equal(memberId);
-        });
+        // TODO done mayukorin 事前selectせずに、new Member()でset/setして更新で大丈夫です by jflute (2025/02/28)
+        Member member = new Member();
+        member.setMemberId(memberId);
         member.setBirthdate(birthdate);
         memberBhv.updateNonstrict(member);
     }
