@@ -4,8 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -665,6 +664,68 @@ public class HandsOn03Test extends UnitContainerTestCase {
 
     // done mayukorin [読み物課題] times の "正常性バイアス" の話に派生して、少し "仮説キープ力" のお話を by jflute (2025/02/28)
     // 自分の中でデマを広げさせない: https://jflute.hatenadiary.jp/entry/20110619/nodema
+
+    // ===================================================================================
+    //                                                                          カーソル検索
+    //                                                                           =========
+    /**
+     * 会員ステータスの表示順カラムで会員を並べてカーソル検索 <br>
+     * o 会員ステータスの "表示順" カラムの昇順で並べる <br>
+     * o 会員ステータスのデータも取得 <br>
+     * o その次には、会員の会員IDの降順で並べる <br>
+     * o 会員ステータスが取れていることをアサート <br>
+     * o 会員が会員ステータスごとに固まって並んでいることをアサート <br>
+     * o 検索したデータをまるごとメモリ上に持ってはいけない <br>
+     * o (要は、検索結果レコード件数と同サイズのリストや配列の作成はダメ) <br>
+     */
+    public void test_cursorSearch() throws Exception {
+        // ## Arrange ##
+    
+        // ## Act, Assert ##
+        List<String> memberStatusList = new ArrayList<>();
+
+        memberBhv.selectCursor(cb -> {
+            cb.setupSelect_MemberStatus();
+            cb.query().queryMemberStatus().addOrderBy_DisplayOrder_Asc();
+            cb.query().addOrderBy_MemberId_Desc();
+        }, member -> {
+            MemberStatus memberStatus = member.getMemberStatus().get();
+
+            log("memberId: {}, name: {}, status: {}, displayOrder: {}", member.getMemberId(), member.getMemberName(), memberStatus.getMemberStatusName(), memberStatus.getDisplayOrder());
+
+            assertNotNull(memberStatus.getMemberStatusName());
+
+            if (memberStatusList.isEmpty()) { // 最初のmember
+                memberStatusList.add(memberStatus.getMemberStatusCode());
+            } else if (!Objects.equals(memberStatus.getMemberStatusCode(),
+                                memberStatusList.get(memberStatusList.size() - 1))) { // 1つ前のmemberとstatusが違っていたら
+                assertFalse(memberStatusList.contains(memberStatus.getMemberStatusCode()));
+                memberStatusList.add(memberStatus.getMemberStatusCode());
+            }
+        });
+    }
+    
+    public void test_innerJoinAutoDetect() throws Exception {
+        // ## Arrange ##
+    
+        // ## Act ##
+        // outer join
+        memberBhv.selectList(cb -> {
+           cb.setupSelect_MemberWithdrawalAsOne();
+        });
+
+        // memberWithdrawalに条件をつけたら、inner joinにしてくれた（検索条件アプローチ）
+        memberBhv.selectList(cb -> {
+            cb.setupSelect_MemberWithdrawalAsOne();
+            cb.query().queryMemberWithdrawalAsOne().setWithdrawalReasonInputText_LikeSearch("a", op -> op.likeContain());
+        });
+
+        // inner join（構造的アプローチ）
+        memberBhv.selectList(cb -> {
+            cb.setupSelect_MemberStatus();
+        });
+        // ## Assert ##
+    }
     
     // ===================================================================================
     //                                                                             Convert
