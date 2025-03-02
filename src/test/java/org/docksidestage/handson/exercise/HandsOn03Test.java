@@ -340,11 +340,11 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Arrange ##
         // done mayukorin 修行++のadjust...を使って10/1ぴったりのデータを作って実行してみましょう by jflute (2025/02/03)
         String fromDateStr = "2005/10/01";
-        LocalDateTime fromLocalDateTime = convertStrDateToLocalDateTime(fromDateStr);
+        LocalDateTime fromLocalDateTime = convertStrToLocalDateTime(fromDateStr);
         LocalDate fromLocalDateMinusOneDay = convertLocalDateTimeToLocalDate(fromLocalDateTime).minusDays(1);
 
         String toDateStr = "2005/10/03";
-        LocalDateTime toLocalDateTime = convertStrDateToLocalDateTime(toDateStr);
+        LocalDateTime toLocalDateTime = convertStrToLocalDateTime(toDateStr);
         LocalDate toLocalDatePlusOneDay = convertLocalDateTimeToLocalDate(toLocalDateTime).plusDays(1);
 
         String nameKeyword = "vi";
@@ -547,10 +547,16 @@ public class HandsOn03Test extends UnitContainerTestCase {
      * o 2005年6月に正式会員になった会員が先に並んでいることをアサート (先頭だけじゃなく全体をチェック) <br>
      */
     public void test_searchMemberByFormalizedDatetimeByMonth() throws Exception {
-        // TODO m.inoue  きわどいデータは後でやってみる (2025/02/14)
+        // TODO done m.inoue きわどいデータは後でやってみる (2025/02/14)
         // ## Arrange ##
         String fromMonthStr = "2005/06/01";
         LocalDate fromMonthLocalDate = convertStrToLocalDate(fromMonthStr);
+
+        // "きわどいデータ"を作る
+        LocalDateTime formalizedDatetimeBarelyIncludedJun = convertStrToLocalDateTime("2005/06/01");
+        LocalDateTime formalizedDatetimeBarelyNotIncludedJun = convertStrToLocalDateTime("2005/05/31");
+        adjust_Member_FormalizedDatetimeAndNullBirthdate_byMemberId(formalizedDatetimeBarelyIncludedJun, 1);
+        adjust_Member_FormalizedDatetimeAndNullBirthdate_byMemberId(formalizedDatetimeBarelyNotIncludedJun, 2);
 
         // ## Act ##
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
@@ -584,9 +590,15 @@ public class HandsOn03Test extends UnitContainerTestCase {
             // done mayukorin [いいね] if/else に人間向きの条件説明があって読むの早くなって嬉しい by jflute (2025/02/17)
             if (formalizedDatetime != null && formalizedDatetime.getMonthValue() == fromMonthLocalDate.getMonthValue()) { // 2005年6月に正式会員になった会員だったら
                 lastJunFormalizedMemberOrderNumber = currentOrderNumber;
+                if (formalizedDatetime.equals(formalizedDatetimeBarelyIncludedJun)) { // ギリギリ2005年6月に正式会員になった会員だったら
+                    assertEquals(0, firstNotJunFormalizedMemberOrderNumber); // その会員は、2005年6月に正式会員になってない会員よりも先に登場することをアサート
+                }
             } else { // 2005年6月に正式会員になった会員ではなかったら
                 if (firstNotJunFormalizedMemberOrderNumber == 0) { // 上の会員が初めて検索結果に登場したら
                     firstNotJunFormalizedMemberOrderNumber = currentOrderNumber;
+                }
+                if (formalizedDatetime != null && formalizedDatetime.equals(formalizedDatetimeBarelyNotIncludedJun)) { // ギリギリ2005年6月に正式会員になっていない会員だったら
+                    assertTrue(currentOrderNumber > lastJunFormalizedMemberOrderNumber); // その会員は、2005年6月に正式会員になった会員よりも後に登場することをアサート
                 }
             }
         }
@@ -736,7 +748,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
     }
 
     // こっちとても良い再利用メソッド by jflute
-    private static LocalDateTime convertStrDateToLocalDateTime(String strDate) {
+    private static LocalDateTime convertStrToLocalDateTime(String strDate) {
         return convertStrToLocalDate(strDate).atTime(LocalTime.MIN);
     }
 
@@ -754,6 +766,17 @@ public class HandsOn03Test extends UnitContainerTestCase {
         Member member = new Member();
         member.setMemberId(memberId);
         member.setBirthdate(birthdate);
+        memberBhv.updateNonstrict(member);
+    }
+
+    private void adjust_Member_FormalizedDatetimeAndNullBirthdate_byMemberId(LocalDateTime formalizedDatetime, Integer memberId) {
+        assertNotNull(memberId);
+
+        Member member = new Member();
+        member.setMemberId(memberId);
+        member.setFormalizedDatetime(formalizedDatetime);
+        member.setBirthdate(null);
+
         memberBhv.updateNonstrict(member);
     }
 }
