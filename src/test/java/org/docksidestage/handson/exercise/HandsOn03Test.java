@@ -547,7 +547,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
      * o 2005年6月に正式会員になった会員が先に並んでいることをアサート (先頭だけじゃなく全体をチェック) <br>
      */
     public void test_searchMemberByFormalizedDatetimeByMonth() throws Exception {
-        // TODO done m.inoue きわどいデータは後でやってみる (2025/02/14)
+        // done m.inoue きわどいデータは後でやってみる (2025/02/14)
         // ## Arrange ##
         String fromMonthStr = "2005/06/01";
         LocalDate fromMonthLocalDate = convertStrToLocalDate(fromMonthStr);
@@ -637,7 +637,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
      */
     public void test_pagingSearch() throws Exception {
         // ## Arrange ##
-        // TODO jflute 完璧なので1on1にてページング自体の少しフォローをするだけ (2025/02/28)
+        // done jflute 完璧なので1on1にてページング自体の少しフォローをするだけ (2025/02/28)
         int pageSize = 3;
         int pageNumber = 1;
     
@@ -696,6 +696,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Act, Assert ##
         List<String> memberStatusList = new ArrayList<>();
 
+        // TODO jflute 1on1にて、カーソル検索の使い所の話をする (2025/03/07)
         memberBhv.selectCursor(cb -> {
             cb.setupSelect_MemberStatus();
             cb.query().queryMemberStatus().addOrderBy_DisplayOrder_Asc();
@@ -707,6 +708,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
 
             assertNotNull(memberStatus.getMemberStatusName());
 
+            // TODO mayukorin getMemberStatusCode()は変数に取って欲しいかな by jflute (2025/03/07)
             if (memberStatusList.isEmpty()) { // 最初のmember
                 memberStatusList.add(memberStatus.getMemberStatusCode());
             } else if (!Objects.equals(memberStatus.getMemberStatusCode(),
@@ -719,6 +721,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
     
     public void test_innerJoinAutoDetect() throws Exception {
         // ## Arrange ##
+        // TODO jflute 1on1にて、外部結合と内部結合、ConditionBeanは概念的には外部結合話をする (2025/03/07)
     
         // ## Act ##
         // outer join
@@ -739,6 +742,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
     }
     
+    // TODO jflute 1on1にて、MySQLのトランザクション分離レベルの話をする (2025/03/07)
+
     // ===================================================================================
     //                                                                             Convert
     //                                                                           =========
@@ -762,7 +767,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
     //                                                                           =========
     private void adjustMember_Birthdate_byMemberId(LocalDate birthdate, Integer memberId) {
         assertNotNull(memberId);
-        // TODO done mayukorin 事前selectせずに、new Member()でset/setして更新で大丈夫です by jflute (2025/02/28)
+        // done mayukorin 事前selectせずに、new Member()でset/setして更新で大丈夫です by jflute (2025/02/28)
         Member member = new Member();
         member.setMemberId(memberId);
         member.setBirthdate(birthdate);
