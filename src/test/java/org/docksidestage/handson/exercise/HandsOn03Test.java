@@ -703,18 +703,19 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.query().addOrderBy_MemberId_Desc();
         }, member -> {
             MemberStatus memberStatus = member.getMemberStatus().get();
+            String memberStatusCode = memberStatus.getMemberStatusCode();
 
             log("memberId: {}, name: {}, status: {}, displayOrder: {}", member.getMemberId(), member.getMemberName(), memberStatus.getMemberStatusName(), memberStatus.getDisplayOrder());
 
             assertNotNull(memberStatus.getMemberStatusName());
 
-            // TODO mayukorin getMemberStatusCode()は変数に取って欲しいかな by jflute (2025/03/07)
+            // TODO done mayukorin getMemberStatusCode()は変数に取って欲しいかな by jflute (2025/03/07)
             if (memberStatusList.isEmpty()) { // 最初のmember
-                memberStatusList.add(memberStatus.getMemberStatusCode());
-            } else if (!Objects.equals(memberStatus.getMemberStatusCode(),
+                memberStatusList.add(memberStatusCode);
+            } else if (!Objects.equals(memberStatusCode,
                                 memberStatusList.get(memberStatusList.size() - 1))) { // 1つ前のmemberとstatusが違っていたら
-                assertFalse(memberStatusList.contains(memberStatus.getMemberStatusCode()));
-                memberStatusList.add(memberStatus.getMemberStatusCode());
+                assertFalse(memberStatusList.contains(memberStatusCode));
+                memberStatusList.add(memberStatusCode);
             }
         });
     }
