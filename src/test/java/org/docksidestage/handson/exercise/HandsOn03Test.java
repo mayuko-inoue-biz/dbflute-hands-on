@@ -696,33 +696,41 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Act, Assert ##
         List<String> memberStatusList = new ArrayList<>();
 
-        // TODO jflute 1on1にて、カーソル検索の使い所の話をする (2025/03/07)
+        // done jflute 1on1にて、カーソル検索の使い所の話をする (2025/03/07)
+        // イメージは合っていた。使い所がわからなかったので、現場のプログラムで探してみた。
+        // 逆にselectCursor()だけだと？MySQLとの接続が続いている状態のまま画面にデータを渡すか？
         memberBhv.selectCursor(cb -> {
             cb.setupSelect_MemberStatus();
             cb.query().queryMemberStatus().addOrderBy_DisplayOrder_Asc();
             cb.query().addOrderBy_MemberId_Desc();
         }, member -> {
             MemberStatus memberStatus = member.getMemberStatus().get();
-            String memberStatusCode = memberStatus.getMemberStatusCode();
+            String current = memberStatus.getMemberStatusCode();
 
             log("memberId: {}, name: {}, status: {}, displayOrder: {}", member.getMemberId(), member.getMemberName(), memberStatus.getMemberStatusName(), memberStatus.getDisplayOrder());
 
             assertNotNull(memberStatus.getMemberStatusName());
 
-            // TODO done mayukorin getMemberStatusCode()は変数に取って欲しいかな by jflute (2025/03/07)
+            // done mayukorin getMemberStatusCode()は変数に取って欲しいかな by jflute (2025/03/07)
+            // (自分だったら、previousも出して、previous感を変数で表現する話)
             if (memberStatusList.isEmpty()) { // 最初のmember
-                memberStatusList.add(memberStatusCode);
-            } else if (!Objects.equals(memberStatusCode,
+                memberStatusList.add(current);
+            } else if (!Objects.equals(current,
                                 memberStatusList.get(memberStatusList.size() - 1))) { // 1つ前のmemberとstatusが違っていたら
-                assertFalse(memberStatusList.contains(memberStatusCode));
-                memberStatusList.add(memberStatusCode);
+                assertFalse(memberStatusList.contains(current));
+                memberStatusList.add(current);
             }
         });
     }
     
     public void test_innerJoinAutoDetect() throws Exception {
         // ## Arrange ##
-        // TODO jflute 1on1にて、外部結合と内部結合、ConditionBeanは概念的には外部結合話をする (2025/03/07)
+        // done jflute 1on1にて、外部結合と内部結合、ConditionBeanは概念的には外部結合話をする (2025/03/07)
+        // 内部結合(inner join): 結合先がいなかったら、自分も消える (いる場合は変わらない)
+        // 外部結合(left outer join): 結合先がいなくても、自分は残る (いる場合は変わらない)
+        //
+        // SetupSelect(Relation) - 結合方式は...外部結合"的"!? | DBFlute
+        // https://dbflute.seasar.org/ja/manual/function/ormapper/conditionbean/setupselect/index.html#joinway
     
         // ## Act ##
         // outer join
