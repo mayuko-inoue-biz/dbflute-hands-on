@@ -67,6 +67,11 @@ public class HandsOn04Test extends UnitContainerTestCase {
             assertTrue(purchase.isPaymentCompleteFlgFalse()); // 区分値を定義したら、判定メソッドも自動生成してくれるのか！ by mayukorin
         });
     }
+    
+    // [1on1でのふぉろー] 現場での区分値も照らし合わせてみた
+    // o アプリ区分値のお話
+    // o dfpropファイル分割のお話
+    // o commentのお話 (おうむ返しコメント残念話)
 
     /**
      * 会員退会情報も取得して会員を検索 <br>
@@ -79,7 +84,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
     
         // ## Act ##
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
-            cb.setupSelect_MemberWithdrawalAsOne();
+            //cb.setupSelect_MemberWithdrawalAsOne();
         });
 
         // ## Assert ##
@@ -90,13 +95,24 @@ public class HandsOn04Test extends UnitContainerTestCase {
 
             // if (member.getMemberStatusCode().equals("WDL")) { // 退会会員
             if (member.isMemberStatusCode退会会員()) {
-                // TODO mayukorin [いいね] 退会情報がそもそも取得してなかったら、退会会員でない会員の方アサートが意味ないですもんね by jflute (2025/03/17)
+//              // TODO mayukorin [いいね] 退会情報がそもそも取得してなかったら、退会会員でない会員の方アサートが意味ないですもんね by jflute (2025/03/17)
+                // [1on1でのふぉろー] setupSelectし忘れてたら？のお話
+                // ただ、まゆこりんさんの実装だと、たまたま？意図して？ちゃんと落ちる。
+                // expected: RelationEntityNotFoundException but: NonSetupSelectRelationAccessException
+                // アサートしている例外がちゃんとピンポイントだから。
+                // ということで、assertNotNull(op... 自体は、setupSelectしていることを保証する重要なアサートでした。
+                // (アサートを保証するアサートみたいな)
+                
                 // TODO mayukorin 厳密には、会員退会情報を持ってない場合は、get()の時点で落ちるので... by jflute (2025/03/17)
                 // optMemberWithdrawalがpresentかどうかをアサートする方が論理的には合っています。
                 assertNotNull(optMemberWithdrawal.get().getWithdrawalReason()); // 会員退会情報を持っていることをアサート（仮に持ってない場合（データ不備）落ちるように）
             } else { // 退会会員でない会員
                 // TODO mayukorin テストデータが偏っていたら、ここの分岐に入る保証がない by jflute (2025/03/17)
                 assertException(RelationEntityNotFoundException.class, () -> optMemberWithdrawal.get()); // 会員退会情報を持っていないことをアサート
+
+                // setupSelectされているからこそ、ちゃんと業務的なアサートになる
+                // (し忘れると、そもそも誰もwithdrawalを持ってないので、意味のないアサートになっちゃう)
+                //assertFalse(optMemberWithdrawal.isPresent()); // わかりやすく説明するために追加 by jflute
             }
         });
     }
@@ -116,6 +132,8 @@ public class HandsOn04Test extends UnitContainerTestCase {
     
         // ## Act ##
         // TODO mayukorin 修行++: 同率首位の人がいたら一緒に検索するようにしてみましょう by jflute (2025/03/17)
+        // [1on1でのふぉろー] fetchFirst(1)も業務で使うときあるけど...order byがユニークじゃないのでランダム性があるのは良くない。
+        // もし、fetchFirst(1)やるなら、第二ソートキーとしてIDを割り切りで入れるとか。(order byのユニーク性という概念)
         OptionalEntity<Member> optMember = memberBhv.selectEntity(cb -> {
             cb.setupSelect_MemberStatus();
             cb.query().setMemberStatusCode_Equal_仮会員();
@@ -180,6 +198,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
             cb.setupSelect_Member().withMemberWithdrawalAsOne().withWithdrawalReason();
             cb.query().queryProduct().setProductStatusCode_Equal_生産販売可能();
             cb.query().addOrderBy_PurchasePrice_Desc();
+            // TODO mayukorin 謎の空行 by jflute (2025/03/17)
 
         });
 
