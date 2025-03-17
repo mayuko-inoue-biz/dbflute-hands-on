@@ -55,12 +55,14 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(purchases);
         purchases.forEach(purchase -> {
+            // TODO mayukorin [いいね] うむ by jflute (2025/03/17)
             // NotNullのFKカラムなため、以下は必ず存在する
             Product product = purchase.getProduct().get();
             Member member = purchase.getMember().get();
 
             log("unpaid product: {}, member: {}, paymentCompleteFlg: {}", product.getProductName(), member.getMemberName(), purchase.getPaymentCompleteFlg());
 
+            // TODO mayukorin [いいね] yes, ぜひ判定メソッドうまく使いこなしてくださいませ by jflute (2025/03/17)
 //            assertEquals(0, purchase.getPaymentCompleteFlg());
             assertTrue(purchase.isPaymentCompleteFlgFalse()); // 区分値を定義したら、判定メソッドも自動生成してくれるのか！ by mayukorin
         });
@@ -88,8 +90,12 @@ public class HandsOn04Test extends UnitContainerTestCase {
 
             // if (member.getMemberStatusCode().equals("WDL")) { // 退会会員
             if (member.isMemberStatusCode退会会員()) {
+                // TODO mayukorin [いいね] 退会情報がそもそも取得してなかったら、退会会員でない会員の方アサートが意味ないですもんね by jflute (2025/03/17)
+                // TODO mayukorin 厳密には、会員退会情報を持ってない場合は、get()の時点で落ちるので... by jflute (2025/03/17)
+                // optMemberWithdrawalがpresentかどうかをアサートする方が論理的には合っています。
                 assertNotNull(optMemberWithdrawal.get().getWithdrawalReason()); // 会員退会情報を持っていることをアサート（仮に持ってない場合（データ不備）落ちるように）
             } else { // 退会会員でない会員
+                // TODO mayukorin テストデータが偏っていたら、ここの分岐に入る保証がない by jflute (2025/03/17)
                 assertException(RelationEntityNotFoundException.class, () -> optMemberWithdrawal.get()); // 会員退会情報を持っていないことをアサート
             }
         });
@@ -109,6 +115,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Arrange ##
     
         // ## Act ##
+        // TODO mayukorin 修行++: 同率首位の人がいたら一緒に検索するようにしてみましょう by jflute (2025/03/17)
         OptionalEntity<Member> optMember = memberBhv.selectEntity(cb -> {
             cb.setupSelect_MemberStatus();
             cb.query().setMemberStatusCode_Equal_仮会員();
@@ -142,6 +149,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
                     purchaseCB.query().setPaymentCompleteFlg_Equal_True();
                 });
             });
+            // TODO mayukorin 外側の条件が一つ足りない。紛れが起きてしまいます by jflute (2025/03/17)
             cb.query().setPaymentCompleteFlg_Equal_True();
             cb.query().addOrderBy_PurchaseDatetime_Desc();
         });
@@ -181,6 +189,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
             Product product = purchase.getProduct().get();
             Member member = purchase.getMember().get();
             OptionalEntity<MemberWithdrawal> optMemberWithdrawalAsOne = member.getMemberWithdrawalAsOne();
+            // TODO mayukorin どこかで改行するか...map()のところを変数に切り出すか...してもらえるとありがたいです by jflute (2025/03/17)
             log("purchase; {}, productStatus: {}, withdrawal reason: {}", product.getProductName(), product.getProductStatus().get().getProductStatusName(), optMemberWithdrawalAsOne.map(mw -> mw.getWithdrawalReason().map(wr -> wr.getWithdrawalReasonText()).orElse("none")).orElse("none"));
             assertTrue(product.isProductStatusCode生産販売可能());
         });
