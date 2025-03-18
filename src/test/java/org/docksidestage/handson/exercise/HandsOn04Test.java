@@ -7,10 +7,7 @@ import org.dbflute.exception.RelationEntityNotFoundException;
 import org.dbflute.optional.OptionalEntity;
 import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
 import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
-import org.docksidestage.handson.dbflute.exentity.Member;
-import org.docksidestage.handson.dbflute.exentity.MemberWithdrawal;
-import org.docksidestage.handson.dbflute.exentity.Product;
-import org.docksidestage.handson.dbflute.exentity.Purchase;
+import org.docksidestage.handson.dbflute.exentity.*;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
 /**
@@ -55,14 +52,14 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(purchases);
         purchases.forEach(purchase -> {
-            // TODO mayukorin [いいね] うむ by jflute (2025/03/17)
+            // TODO done mayukorin [いいね] うむ by jflute (2025/03/17)
             // NotNullのFKカラムなため、以下は必ず存在する
             Product product = purchase.getProduct().get();
             Member member = purchase.getMember().get();
 
             log("unpaid product: {}, member: {}, paymentCompleteFlg: {}", product.getProductName(), member.getMemberName(), purchase.getPaymentCompleteFlg());
 
-            // TODO mayukorin [いいね] yes, ぜひ判定メソッドうまく使いこなしてくださいませ by jflute (2025/03/17)
+            // TODO done mayukorin [いいね] yes, ぜひ判定メソッドうまく使いこなしてくださいませ by jflute (2025/03/17)
 //            assertEquals(0, purchase.getPaymentCompleteFlg());
             assertTrue(purchase.isPaymentCompleteFlgFalse()); // 区分値を定義したら、判定メソッドも自動生成してくれるのか！ by mayukorin
         });
@@ -84,18 +81,19 @@ public class HandsOn04Test extends UnitContainerTestCase {
     
         // ## Act ##
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
-            //cb.setupSelect_MemberWithdrawalAsOne();
+            cb.setupSelect_MemberWithdrawalAsOne();
         });
 
         // ## Assert ##
+        boolean isExistsWDLMember = false;
         assertHasAnyElement(members);
-        members.forEach(member -> {
+        for(Member member : members) {
             OptionalEntity<MemberWithdrawal> optMemberWithdrawal = member.getMemberWithdrawalAsOne();
             log("member: {}, memberWithdrawal: {}", member.getMemberName(), optMemberWithdrawal);
 
             // if (member.getMemberStatusCode().equals("WDL")) { // 退会会員
             if (member.isMemberStatusCode退会会員()) {
-//              // TODO mayukorin [いいね] 退会情報がそもそも取得してなかったら、退会会員でない会員の方アサートが意味ないですもんね by jflute (2025/03/17)
+//              // TODO done mayukorin [いいね] 退会情報がそもそも取得してなかったら、退会会員でない会員の方アサートが意味ないですもんね by jflute (2025/03/17)
                 // [1on1でのふぉろー] setupSelectし忘れてたら？のお話
                 // ただ、まゆこりんさんの実装だと、たまたま？意図して？ちゃんと落ちる。
                 // expected: RelationEntityNotFoundException but: NonSetupSelectRelationAccessException
@@ -103,18 +101,22 @@ public class HandsOn04Test extends UnitContainerTestCase {
                 // ということで、assertNotNull(op... 自体は、setupSelectしていることを保証する重要なアサートでした。
                 // (アサートを保証するアサートみたいな)
                 
-                // TODO mayukorin 厳密には、会員退会情報を持ってない場合は、get()の時点で落ちるので... by jflute (2025/03/17)
+                // TODO done mayukorin 厳密には、会員退会情報を持ってない場合は、get()の時点で落ちるので... by jflute (2025/03/17)
                 // optMemberWithdrawalがpresentかどうかをアサートする方が論理的には合っています。
-                assertNotNull(optMemberWithdrawal.get().getWithdrawalReason()); // 会員退会情報を持っていることをアサート（仮に持ってない場合（データ不備）落ちるように）
+//                assertNotNull(optMemberWithdrawal.get().getWithdrawalReason()); // 会員退会情報を持っていることをアサート（仮に持ってない場合（データ不備）落ちるように）
+                assertTrue(optMemberWithdrawal.isPresent());
             } else { // 退会会員でない会員
-                // TODO mayukorin テストデータが偏っていたら、ここの分岐に入る保証がない by jflute (2025/03/17)
+                // TODO done mayukorin テストデータが偏っていたら、ここの分岐に入る保証がない by jflute (2025/03/17)
+                // ほんとですね！素通り防止忘れてました！ありがとうございます！ by mayukorin
                 assertException(RelationEntityNotFoundException.class, () -> optMemberWithdrawal.get()); // 会員退会情報を持っていないことをアサート
+                isExistsWDLMember = true;
 
                 // setupSelectされているからこそ、ちゃんと業務的なアサートになる
                 // (し忘れると、そもそも誰もwithdrawalを持ってないので、意味のないアサートになっちゃう)
                 //assertFalse(optMemberWithdrawal.isPresent()); // わかりやすく説明するために追加 by jflute
             }
-        });
+        }
+        assertTrue(isExistsWDLMember);
     }
 
     // ====================================================================================
@@ -131,20 +133,31 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Arrange ##
     
         // ## Act ##
-        // TODO mayukorin 修行++: 同率首位の人がいたら一緒に検索するようにしてみましょう by jflute (2025/03/17)
+        // TODO done mayukorin 修行++: 同率首位の人がいたら一緒に検索するようにしてみましょう by jflute (2025/03/17)
         // [1on1でのふぉろー] fetchFirst(1)も業務で使うときあるけど...order byがユニークじゃないのでランダム性があるのは良くない。
         // もし、fetchFirst(1)やるなら、第二ソートキーとしてIDを割り切りで入れるとか。(order byのユニーク性という概念)
-        OptionalEntity<Member> optMember = memberBhv.selectEntity(cb -> {
+//        OptionalEntity<Member> optMember = memberBhv.selectEntity(cb -> {
+//            cb.setupSelect_MemberStatus();
+//            cb.query().setMemberStatusCode_Equal_仮会員();
+//            cb.query().addOrderBy_Birthdate_Desc();
+//            cb.fetchFirst(1);
+//        });
+        ListResultBean<Member> members = memberBhv.selectList(cb -> {
             cb.setupSelect_MemberStatus();
             cb.query().setMemberStatusCode_Equal_仮会員();
-            cb.query().addOrderBy_Birthdate_Desc();
-            cb.fetchFirst(1);
+            cb.query().scalar_Equal().max(memberCB -> { // 「あるカラムと そのカラムの導出値(最大値や合計値) との比較で絞り込む」と書いてあるから、今回は specify() した Birthdate と比較する by mayukorin
+                memberCB.specify().columnBirthdate();
+                memberCB.query().setMemberStatusCode_Equal_仮会員();
+            });
         });
 
         // ## Assert ##
-        Member member = optMember.get();
-        log("member: {}, birthday: {}, memberStatus: {}", member.getMemberName(), member.getBirthdate(), member.getMemberStatus().get().getMemberStatusName());
-        assertTrue(member.isMemberStatusCode仮会員());
+        assertHasAnyElement(members);
+        members.forEach(member -> {
+            MemberStatus memberStatus = member.getMemberStatus().get();
+            log("member: {}, birthday: {}, memberStatus: {}", member.getMemberName(), member.getBirthdate(), memberStatus.getMemberStatusName());
+            assertTrue(member.isMemberStatusCode仮会員());
+        });
     }
 
     /**
@@ -167,7 +180,9 @@ public class HandsOn04Test extends UnitContainerTestCase {
                     purchaseCB.query().setPaymentCompleteFlg_Equal_True();
                 });
             });
-            // TODO mayukorin 外側の条件が一つ足りない。紛れが起きてしまいます by jflute (2025/03/17)
+            // TODO done mayukorin 外側の条件が一つ足りない。紛れが起きてしまいます by jflute (2025/03/17)
+            // ありがとうございます！同じ誕生日の正式会員ではない会員の購入が入ってしまう可能性があるということですね！ by mayukorin
+            cb.query().queryMember().setMemberStatusCode_Equal_正式会員();
             cb.query().setPaymentCompleteFlg_Equal_True();
             cb.query().addOrderBy_PurchaseDatetime_Desc();
         });
@@ -176,8 +191,9 @@ public class HandsOn04Test extends UnitContainerTestCase {
         assertHasAnyElement(purchases);
         purchases.forEach(purchase -> {
             Member member = purchase.getMember().get();
+            MemberStatus memberStatus = member.getMemberStatus().get();
             log("purchase; {}, paymentCompleteFlg: {}, purchaseDatetime: {}, member: {}, birthday: {}, memberStatusCode: {}",
-                    purchase.getPurchaseId(), purchase.getPaymentCompleteFlgAsFlg(), purchase.getPurchaseDatetime(), member.getMemberName(), member.getBirthdate(), member.getMemberStatus().get().getMemberStatusName());
+                    purchase.getPurchaseId(), purchase.getPaymentCompleteFlgAsFlg(), purchase.getPurchaseDatetime(), member.getMemberName(), member.getBirthdate(), memberStatus.getMemberStatusName());
             assertTrue(member.isMemberStatusCode正式会員());
         });
     }
@@ -198,18 +214,20 @@ public class HandsOn04Test extends UnitContainerTestCase {
             cb.setupSelect_Member().withMemberWithdrawalAsOne().withWithdrawalReason();
             cb.query().queryProduct().setProductStatusCode_Equal_生産販売可能();
             cb.query().addOrderBy_PurchasePrice_Desc();
-            // TODO mayukorin 謎の空行 by jflute (2025/03/17)
-
+            // TODO done mayukorin 謎の空行 by jflute (2025/03/17)
         });
 
         // ## Assert ##
         assertHasAnyElement(purchases);
         purchases.forEach(purchase -> {
             Product product = purchase.getProduct().get();
+            ProductStatus productStatus = product.getProductStatus().get();
             Member member = purchase.getMember().get();
             OptionalEntity<MemberWithdrawal> optMemberWithdrawalAsOne = member.getMemberWithdrawalAsOne();
-            // TODO mayukorin どこかで改行するか...map()のところを変数に切り出すか...してもらえるとありがたいです by jflute (2025/03/17)
-            log("purchase; {}, productStatus: {}, withdrawal reason: {}", product.getProductName(), product.getProductStatus().get().getProductStatusName(), optMemberWithdrawalAsOne.map(mw -> mw.getWithdrawalReason().map(wr -> wr.getWithdrawalReasonText()).orElse("none")).orElse("none"));
+            String withdrawalReasonText = optMemberWithdrawalAsOne.map(mw -> mw.getWithdrawalReason().map(wr -> wr.getWithdrawalReasonText()).orElse("none"))
+                    .orElse("none"); // 値がない場合は none
+            // TODO done mayukorin どこかで改行するか...map()のところを変数に切り出すか...してもらえるとありがたいです by jflute (2025/03/17)
+            log("purchase; {}, productStatus: {}, withdrawal reason: {}", product.getProductName(), productStatus.getProductStatusName(), withdrawalReasonText);
             assertTrue(product.isProductStatusCode生産販売可能());
         });
     }
