@@ -11,6 +11,7 @@ import org.docksidestage.handson.dbflute.cbean.cq.bs.BsMemberCQ;
  * This class remains when re-generating.
  * </p>
  * @author DBFlute(AutoGenerator)
+ * @author mayukorin
  */
 public class MemberCQ extends BsMemberCQ {
 
@@ -33,4 +34,14 @@ public class MemberCQ extends BsMemberCQ {
     //                                                                       Arrange Query
     //                                                                       =============
     // You can make your arranged query methods here. e.g. public void arrangeXxx()
+    /**
+     * 銀行振込で購入を支払ったことのある会員
+     */
+    public void arrangeBankTransferPaidMember() {
+        existsPurchase(purchaseCB -> {
+            purchaseCB.query().existsPurchasePayment(purchasePaymentCB -> {
+                purchasePaymentCB.query().setPaymentMethodCode_Equal_BankTransfer();
+            });
+        });
+    }
 }

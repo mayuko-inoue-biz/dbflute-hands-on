@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 import org.dbflute.cbean.result.ListResultBean;
 import org.dbflute.exception.RelationEntityNotFoundException;
 import org.dbflute.optional.OptionalEntity;
+import org.docksidestage.handson.dbflute.allcommon.CDef;
 import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
 import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
 import org.docksidestage.handson.dbflute.exentity.*;
@@ -230,5 +231,114 @@ public class HandsOn04Test extends UnitContainerTestCase {
             log("purchase; {}, productStatus: {}, withdrawal reason: {}", product.getProductName(), productStatus.getProductStatusName(), withdrawalReasonText);
             assertTrue(product.isProductStatusCode生産販売可能());
         });
+    }
+
+    /**
+     * 正式会員と退会会員の会員を検索 <br>
+     * o 会員ステータスの表示順で並べる <br>
+     * o 会員が正式会員と退会会員であることをアサート <br>
+     * o 両方とも存在していることをアサート <br>
+     * o (検索されたデータに対して)Entity上だけで正式会員を退会会員に変更する <br>
+     * o 変更した後、Entityが退会会員に変更されていることをアサート <br>
+     * o 変更した後、データベース上は退会会員に変更されて "いない" ことをアサート ※1 <br>
+     * ※1: DBFluteは、Entityのデータを変更しても、updateをしない限りDBは不変である。(Thanks, nakano)
+     */
+    public void test_searchFMLAndRPVMember() throws Exception {
+        // ## Arrange ##
+
+        // ## Act ##
+        ListResultBean<Member> members = memberBhv.selectList(cb -> {
+            cb.orScopeQuery(orCB -> {
+                orCB.query().setMemberStatusCode_Equal_正式会員();
+                orCB.query().setMemberStatusCode_Equal_退会会員();
+            });
+            cb.query().queryMemberStatus().addOrderBy_DisplayOrder_Asc();
+        });
+
+        // ## Assert ##
+        boolean isExistsFMLMember = false;
+        boolean isExistsWDLMember = false;
+        Member fmlMemberToChangeOnEntity = null;
+
+        assertHasAnyElement(members);
+
+        for(Member member : members)  {
+            log("member: {}, status", member.getMemberName(), member.getMemberStatusCode());
+
+            assertTrue(member.isMemberStatusCode正式会員() || member.isMemberStatusCode退会会員());
+
+            if (member.isMemberStatusCode正式会員()) {
+                if (!isExistsFMLMember) {
+                    fmlMemberToChangeOnEntity = member; // 「Entity上だけで正式会員を退会会員に変更する」用の会員をセット
+                }
+                isExistsFMLMember = true;
+            } else if (member.isMemberStatusCode退会会員()) { // 何回も isMemberStatus 呼び出してるの微妙...？ by mayukorin
+                isExistsWDLMember = true;
+            }
+        }
+
+        assertTrue(isExistsFMLMember);
+        assertTrue(isExistsWDLMember);
+
+        fmlMemberToChangeOnEntity.setMemberStatusCode_退会会員(); // Entity上だけで正式会員を退会会員に変更する
+        assertTrue(fmlMemberToChangeOnEntity.isMemberStatusCode退会会員()); // Entityが退会会員に変更されていることをアサート
+
+        // 変更した後、データベース上は退会会員に変更されて "いない" ことをアサート
+        Integer fmlMemberIdChangeOnEntity = fmlMemberToChangeOnEntity.getMemberId();
+        Member fmlMemberChangeOnEntitySelectedFromDB = memberBhv.selectEntity(cb -> {
+            cb.query().setMemberId_Equal(fmlMemberIdChangeOnEntity);
+        }).get();
+        assertFalse(fmlMemberChangeOnEntitySelectedFromDB.isMemberStatusCode退会会員());
+    }
+
+    /**
+     * 銀行振込で購入を支払ったことのある、会員ステータスごとに一番若い会員を検索 <br>
+     * o 正式会員で一番若い、仮会員で一番若い、という風にそれぞれのステータスで若い会員を検索 <br>
+     * o 一回の ConditionBean による検索で会員たちを検索すること (PartitionBy...) <br>
+     * o ログのSQLを見て、検索が妥当であることを目視で確認すること <br>
+     * o (検索されたデータに対して)Entity上だけで正式会員を退会会員に変更する <br>
+     * o 検索結果が想定されるステータスの件数以上であることをアサート <br>
+     * o ひとまず動作する実装ができたら、ArrangeQueryを活用してみましょう <br>
+     */
+    public void test_searchYoungestMemberByStatusUsingBankTransfer() throws Exception {
+        // ## Arrange ##
+    
+        // ## Act ##
+        boolean isExistsFMLMember = false;
+        boolean isExistsWDLMember = false;
+        boolean isExistsRPVMember = false;
+
+        ListResultBean<Member> members = memberBhv.selectList(cb -> {
+            cb.query().scalar_Equal().max(memberCB -> {
+                memberCB.specify().columnBirthdate();
+                memberCB.query().arrangeBankTransferPaidMember();
+            }).partitionBy(colCB -> {
+                colCB.specify().columnMemberStatusCode();
+            });
+            cb.query().arrangeBankTransferPaidMember();
+            // CBインスタンスは再利用しない!?を読んだ
+            // https://dbflute.seasar.org/ja/manual/function/genbafit/implfit/whererecycle/index.html
+            // 「どういう風に絞り込むか？は再利用できることが多い一方で、何を取得するか？は一概に共通化できない。」
+            // 確かに。by mayukorin
+        });
+
+        // ## Assert ##
+        assertHasAnyElement(members);
+        for(Member member : members) {
+           log("member: {}, status: {}, birthday: {}", member.getMemberName(), member.getMemberStatusCode(), member.getBirthdate());
+           if (member.isMemberStatusCode正式会員()) {
+               isExistsFMLMember = true;
+           } else if (member.isMemberStatusCode退会会員()) {
+               isExistsWDLMember = true;
+           } else {
+               isExistsRPVMember = true;
+           }
+        }
+
+        assertTrue(members.size() >= CDef.MemberStatus.listAll().size());
+
+        assertTrue(isExistsFMLMember);
+        assertTrue(isExistsWDLMember);
+        assertTrue(isExistsRPVMember); // これ入れるんだったら上の、members.size() >= CDef.MemberStatus.listAll().size() は不要かも by mayukorin
     }
 }
