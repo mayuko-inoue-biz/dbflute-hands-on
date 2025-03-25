@@ -53,14 +53,14 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(purchases);
         purchases.forEach(purchase -> {
-            // TODO done mayukorin [いいね] うむ by jflute (2025/03/17)
+            // done mayukorin [いいね] うむ by jflute (2025/03/17)
             // NotNullのFKカラムなため、以下は必ず存在する
             Product product = purchase.getProduct().get();
             Member member = purchase.getMember().get();
 
             log("unpaid product: {}, member: {}, paymentCompleteFlg: {}", product.getProductName(), member.getMemberName(), purchase.getPaymentCompleteFlg());
 
-            // TODO done mayukorin [いいね] yes, ぜひ判定メソッドうまく使いこなしてくださいませ by jflute (2025/03/17)
+            // done mayukorin [いいね] yes, ぜひ判定メソッドうまく使いこなしてくださいませ by jflute (2025/03/17)
 //            assertEquals(0, purchase.getPaymentCompleteFlg());
             assertTrue(purchase.isPaymentCompleteFlgFalse()); // 区分値を定義したら、判定メソッドも自動生成してくれるのか！ by mayukorin
         });
@@ -86,15 +86,29 @@ public class HandsOn04Test extends UnitContainerTestCase {
         });
 
         // ## Assert ##
+        // TODO mayukorin existsがあれば、isなくてもいいです (慣習として) by jflute (2025/03/25)
+        // booleanを表現する単語として、三単現の動詞であれば、booleanっぽくなる。
+        //  e.g. exists, has が代表選手、他だと e.g. can, may の助動詞も使われる。
+        // そしてデフォルトがisみたいな感じ。(いい言葉が思い浮かばなかったらisみたいな!?)
+        // まあ、isは状態を示すものなので、状態がしっくり来る場合は積極的に使う。
         boolean isExistsWDLMember = false;
         assertHasAnyElement(members);
+
+        // [1on1でのふぉろー] リストを分割して、それぞれでチェックを掛けるっていうのもアリ。
+        // そうすることで、全体としては処理が増えるけど、個別で処理がシンプルになって簡単に考えやすくなるかもしれない。
+        //wdlMemberList
+        //assertHasAnyElement(wdlMemberList);
+        //
+        //otherMemberList
+        //assertHasAnyElement(otherMemberList);
+
         for(Member member : members) {
             OptionalEntity<MemberWithdrawal> optMemberWithdrawal = member.getMemberWithdrawalAsOne();
             log("member: {}, memberWithdrawal: {}", member.getMemberName(), optMemberWithdrawal);
 
             // if (member.getMemberStatusCode().equals("WDL")) { // 退会会員
             if (member.isMemberStatusCode退会会員()) {
-//              // TODO done mayukorin [いいね] 退会情報がそもそも取得してなかったら、退会会員でない会員の方アサートが意味ないですもんね by jflute (2025/03/17)
+//              // done mayukorin [いいね] 退会情報がそもそも取得してなかったら、退会会員でない会員の方アサートが意味ないですもんね by jflute (2025/03/17)
                 // [1on1でのふぉろー] setupSelectし忘れてたら？のお話
                 // ただ、まゆこりんさんの実装だと、たまたま？意図して？ちゃんと落ちる。
                 // expected: RelationEntityNotFoundException but: NonSetupSelectRelationAccessException
@@ -102,12 +116,13 @@ public class HandsOn04Test extends UnitContainerTestCase {
                 // ということで、assertNotNull(op... 自体は、setupSelectしていることを保証する重要なアサートでした。
                 // (アサートを保証するアサートみたいな)
                 
-                // TODO done mayukorin 厳密には、会員退会情報を持ってない場合は、get()の時点で落ちるので... by jflute (2025/03/17)
+                // done mayukorin 厳密には、会員退会情報を持ってない場合は、get()の時点で落ちるので... by jflute (2025/03/17)
                 // optMemberWithdrawalがpresentかどうかをアサートする方が論理的には合っています。
 //                assertNotNull(optMemberWithdrawal.get().getWithdrawalReason()); // 会員退会情報を持っていることをアサート（仮に持ってない場合（データ不備）落ちるように）
                 assertTrue(optMemberWithdrawal.isPresent());
+                // TODO mayukorin setupSelectをし忘れてて、かつ、退会会員が一人もいなかったら by jflute (2025/03/25)
             } else { // 退会会員でない会員
-                // TODO done mayukorin テストデータが偏っていたら、ここの分岐に入る保証がない by jflute (2025/03/17)
+                // done mayukorin テストデータが偏っていたら、ここの分岐に入る保証がない by jflute (2025/03/17)
                 // ほんとですね！素通り防止忘れてました！ありがとうございます！ by mayukorin
                 assertException(RelationEntityNotFoundException.class, () -> optMemberWithdrawal.get()); // 会員退会情報を持っていないことをアサート
                 isExistsWDLMember = true;
@@ -118,6 +133,15 @@ public class HandsOn04Test extends UnitContainerTestCase {
             }
         }
         assertTrue(isExistsWDLMember);
+        
+        // [1on1でのふぉろー]
+        // o 論理をわかってて省く人と、よくわかってなくて自然と省いちゃっただけの人
+        // o 省くならわかってて省いて欲しい
+
+        // [1on1でのふぉろー]
+        // o 英語の文法、どこまで反映する話
+        // o EntityAlreadyDeletedExceptionの最初の失敗談のお話
+        // o 英語の新聞の見出しのお話
     }
 
     // ====================================================================================
@@ -134,7 +158,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Arrange ##
     
         // ## Act ##
-        // TODO done mayukorin 修行++: 同率首位の人がいたら一緒に検索するようにしてみましょう by jflute (2025/03/17)
+        // done mayukorin 修行++: 同率首位の人がいたら一緒に検索するようにしてみましょう by jflute (2025/03/17)
         // [1on1でのふぉろー] fetchFirst(1)も業務で使うときあるけど...order byがユニークじゃないのでランダム性があるのは良くない。
         // もし、fetchFirst(1)やるなら、第二ソートキーとしてIDを割り切りで入れるとか。(order byのユニーク性という概念)
 //        OptionalEntity<Member> optMember = memberBhv.selectEntity(cb -> {
@@ -181,7 +205,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
                     purchaseCB.query().setPaymentCompleteFlg_Equal_True();
                 });
             });
-            // TODO done mayukorin 外側の条件が一つ足りない。紛れが起きてしまいます by jflute (2025/03/17)
+            // done mayukorin 外側の条件が一つ足りない。紛れが起きてしまいます by jflute (2025/03/17)
             // ありがとうございます！同じ誕生日の正式会員ではない会員の購入が入ってしまう可能性があるということですね！ by mayukorin
             cb.query().queryMember().setMemberStatusCode_Equal_正式会員();
             cb.query().setPaymentCompleteFlg_Equal_True();
@@ -215,7 +239,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
             cb.setupSelect_Member().withMemberWithdrawalAsOne().withWithdrawalReason();
             cb.query().queryProduct().setProductStatusCode_Equal_生産販売可能();
             cb.query().addOrderBy_PurchasePrice_Desc();
-            // TODO done mayukorin 謎の空行 by jflute (2025/03/17)
+            // done mayukorin 謎の空行 by jflute (2025/03/17)
         });
 
         // ## Assert ##
@@ -225,9 +249,15 @@ public class HandsOn04Test extends UnitContainerTestCase {
             ProductStatus productStatus = product.getProductStatus().get();
             Member member = purchase.getMember().get();
             OptionalEntity<MemberWithdrawal> optMemberWithdrawalAsOne = member.getMemberWithdrawalAsOne();
+            // [1on1でのふぉろー] 頭文字省略語のお話
+            // 個人的には、mwってなんだ？少しだけ読み手に負担を掛ける気がしている。
+            // SQLの方の話も先取り
+            // SQLのエリアス名、頭文字省略は...うーん
+            // https://jflute.hatenadiary.jp/entry/20140908/sqlalias
+            // ↑こういうこと考えながら名前って考える
             String withdrawalReasonText = optMemberWithdrawalAsOne.map(mw -> mw.getWithdrawalReason().map(wr -> wr.getWithdrawalReasonText()).orElse("none"))
                     .orElse("none"); // 値がない場合は none
-            // TODO done mayukorin どこかで改行するか...map()のところを変数に切り出すか...してもらえるとありがたいです by jflute (2025/03/17)
+            // done mayukorin どこかで改行するか...map()のところを変数に切り出すか...してもらえるとありがたいです by jflute (2025/03/17)
             log("purchase; {}, productStatus: {}, withdrawal reason: {}", product.getProductName(), productStatus.getProductStatusName(), withdrawalReasonText);
             assertTrue(product.isProductStatusCode生産販売可能());
         });
@@ -248,6 +278,8 @@ public class HandsOn04Test extends UnitContainerTestCase {
 
         // ## Act ##
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
+            // TODO mayukorin 修行++: InScopeを使ったやり方もやってみてください by jflute (2025/03/25)
+            // 同じカラムで、複数の等値条件だったら、SQLだと in が使えます。(DBFluteではInScope)
             cb.orScopeQuery(orCB -> {
                 orCB.query().setMemberStatusCode_Equal_正式会員();
                 orCB.query().setMemberStatusCode_Equal_退会会員();
@@ -273,6 +305,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
                 }
                 isExistsFMLMember = true;
             } else if (member.isMemberStatusCode退会会員()) { // 何回も isMemberStatus 呼び出してるの微妙...？ by mayukorin
+                // ↑ふぉろー: isメソッドは中身の処理は簡易なので、何度も呼び出してもパフォーマンス上問題はないです by jflute
                 isExistsWDLMember = true;
             }
         }
@@ -289,8 +322,24 @@ public class HandsOn04Test extends UnitContainerTestCase {
             cb.query().setMemberId_Equal(fmlMemberIdChangeOnEntity);
         }).get();
         assertFalse(fmlMemberChangeOnEntitySelectedFromDB.isMemberStatusCode退会会員());
+        
+        // [1on1でのふぉろー]
+        // o Entityをいくら変更しても、DBは変わらない
+        // o あくまで Behavior で update やってはじめてDBが変わる
+        // o EntityはJavaのメモリ上の入れ物という感じ
+        //
+        // o 世の中、そうじゃないO/Rマッパーもあります
+        // o setterで値を書き換えたら、裏側で(タイミングは色々だけど)updateを自動で走らすものもある
+        // o その場合、EntityはDBと直結した入れ物みたいな感覚
+        //
+        // o DBFluteは、updateという振る舞いを開発者に意識してもらう、タイミングを明確にしてもらう
+        // o DBFluteは、updateによるわかりやすさを重視している (setだけだと追うのが大変)
+        //
+        // o フレームワークの思想で、フレームワークの仕様が変わる
+        // o そのフレームワークは何を大事にしているのか？それを理解すると機能が理解しやすくなる
     }
 
+    // TODO jflute 次回1on1ここから (2025/03/25)
     /**
      * 銀行振込で購入を支払ったことのある、会員ステータスごとに一番若い会員を検索 <br>
      * o 正式会員で一番若い、仮会員で一番若い、という風にそれぞれのステータスで若い会員を検索 <br>
