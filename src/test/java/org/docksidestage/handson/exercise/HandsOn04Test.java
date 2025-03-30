@@ -450,10 +450,10 @@ public class HandsOn04Test extends UnitContainerTestCase {
      * o 未払いの購入か支払済みの購入かを簡単に切り替えられるようにする <br>
      * o それを判断するprivateメソッドを作成して、戻り値のtrue/falseで切り替える <br>
      * o とりあえず未払いの購入を求められているので、そのメソッドの戻り値はfalse固定で <br>
-     * o 姉妹コードの設定によって生成されたメソッドを利用
-     * o 正式会員日時の降順(nullを後に並べる)、会員IDの昇順で並べる
-     * o 会員が未払いの購入を持っていることをアサート
-     * o Assertでの検索が一回になるようにしてみましょう (LoadReferrer)
+     * o 姉妹コードの設定によって生成されたメソッドを利用 <br>
+     * o 正式会員日時の降順(nullを後に並べる)、会員IDの昇順で並べる <br>
+     * o 会員が未払いの購入を持っていることをアサート <br>
+     * o Assertでの検索が一回になるようにしてみましょう (LoadReferrer) <br>
      */
     public void test_searchMemberWithUnpaidPurchase() throws Exception {
         // ## Arrange ##
@@ -476,5 +476,62 @@ public class HandsOn04Test extends UnitContainerTestCase {
             List<Purchase> purchaseList = member.getPurchaseList();
             assertHasAnyElement(purchaseList);
         });
+    }
+
+    // ====================================================================================
+    //                                                                        独自の属性を追加
+    //                                                                           ==========
+    /**
+     * 会員ステータスの表示順カラムで会員を並べて検索 <br>
+     * o 会員ステータスの "表示順" カラムの昇順で並べる <br>
+     * o 会員ステータスのデータ自体は要らない <br>
+     * o その次には、会員の会員IDの降順で並べる <br>
+     * o 会員ステータスのデータが取れていないことをアサート <br>
+     * o 会員が会員ステータスの表示順ごとに並んでいることをアサート <br>
+     */
+    public void test_searchMemberWithDisplayOrder() throws Exception {
+        // ## Arrange ##
+
+        // ## Act ##
+        ListResultBean<Member> members = memberBhv.selectList(cb -> {
+            cb.query().queryMemberStatus().addOrderBy_DisplayOrder_Asc();
+            cb.query().addOrderBy_MemberId_Desc();
+        });
+
+        // ## Assert ##
+        assertHasAnyElement(members);
+
+        List<String> statusCodeTransition = new ArrayList<>();
+        for(Member member : members) {
+            assertFalse(member.getMemberStatus().isPresent());
+            String nowStatusCode = member.getMemberStatusCode();
+            log("nowStatusCode: {}", member.getMemberStatusCode());
+
+            // 1. まず、会員ステータスごとに固まって並んでいることをアサートする
+            if (statusCodeTransition.isEmpty()) { // 1番目の会員
+                statusCodeTransition.add(nowStatusCode);
+                continue;
+            }
+            String prevStatusCode = statusCodeTransition.get(statusCodeTransition.size() - 1);
+            if (prevStatusCode.equals(nowStatusCode)) continue; // 1個前の会員と同じ会員ステータス
+            // 1個前の会員と異なる会員ステータスの場合
+            assertFalse(statusCodeTransition.contains(nowStatusCode)); // 会員ステータスごとに固まって並んでいることをアサート
+            statusCodeTransition.add(nowStatusCode);
+        }
+
+        // 2. 最後に、その固まって並んでいる会員ステータスが会員ステータスの表示順であることをアサートする（会員ステータスが違うのに、subItemのdisplayOrderが同じになってしまっているケースを検知したい）
+        Integer prevDisplayOrder = null;
+        for (String statusCode : statusCodeTransition) {
+            int nowDisplayOrder = Integer.parseInt(CDef.MemberStatus.codeOf(statusCode).displayOrder());
+            log("prevDisplayOrder: {}, nowDisplayOrder: {}", prevDisplayOrder, nowDisplayOrder);
+
+            if (prevDisplayOrder == null) {
+                prevDisplayOrder = nowDisplayOrder; // 1番目の会員ステータス
+                continue;
+            }
+
+            assertTrue(prevDisplayOrder < nowDisplayOrder);
+            prevDisplayOrder = nowDisplayOrder;
+        }
     }
 }
