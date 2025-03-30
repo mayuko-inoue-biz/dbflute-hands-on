@@ -441,4 +441,40 @@ public class HandsOn04Test extends UnitContainerTestCase {
             assertTrue(member.isMemberStatusCode_ServiceAvailable());
         }
     }
+
+    // ====================================================================================
+    //                                                                        姉妹コードの利用
+    //                                                                           ==========
+    /**
+     * 未払い購入のある会員を検索 <br>
+     * o 未払いの購入か支払済みの購入かを簡単に切り替えられるようにする <br>
+     * o それを判断するprivateメソッドを作成して、戻り値のtrue/falseで切り替える <br>
+     * o とりあえず未払いの購入を求められているので、そのメソッドの戻り値はfalse固定で <br>
+     * o 姉妹コードの設定によって生成されたメソッドを利用
+     * o 正式会員日時の降順(nullを後に並べる)、会員IDの昇順で並べる
+     * o 会員が未払いの購入を持っていることをアサート
+     * o Assertでの検索が一回になるようにしてみましょう (LoadReferrer)
+     */
+    public void test_searchMemberWithUnpaidPurchase() throws Exception {
+        // ## Arrange ##
+
+        // ## Act ##
+        ListResultBean<Member> members = memberBhv.selectList(cb -> {
+            cb.query().existsPurchase(purchaseCB -> {
+                purchaseCB.query().setPaymentCompleteFlg_Equal_AsBoolean(false);// TODO m.inoue 「未払いの購入か支払済みの購入かを簡単に切り替えられるようにする」ってどういうことか考える。何に応じて切り替えれば良いのか (2025/03/30)
+            });
+            cb.query().addOrderBy_Birthdate_Asc().withNullsLast();
+        });
+
+        memberBhv.loadPurchase(members, purchaseCB -> {
+            purchaseCB.query().setPaymentCompleteFlg_Equal_AsBoolean(false); // 未払いの購入のみ取得
+        });
+
+        // ## Assert ##
+        assertHasAnyElement(members);
+        members.forEach(member -> {
+            List<Purchase> purchaseList = member.getPurchaseList();
+            assertHasAnyElement(purchaseList);
+        });
+    }
 }
