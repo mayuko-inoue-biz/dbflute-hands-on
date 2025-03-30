@@ -1,5 +1,8 @@
 package org.docksidestage.handson.exercise;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.dbflute.cbean.result.ListResultBean;
@@ -86,12 +89,13 @@ public class HandsOn04Test extends UnitContainerTestCase {
         });
 
         // ## Assert ##
-        // TODO mayukorin existsがあれば、isなくてもいいです (慣習として) by jflute (2025/03/25)
+        // TODO done mayukorin existsがあれば、isなくてもいいです (慣習として) by jflute (2025/03/25)
         // booleanを表現する単語として、三単現の動詞であれば、booleanっぽくなる。
         //  e.g. exists, has が代表選手、他だと e.g. can, may の助動詞も使われる。
         // そしてデフォルトがisみたいな感じ。(いい言葉が思い浮かばなかったらisみたいな!?)
         // まあ、isは状態を示すものなので、状態がしっくり来る場合は積極的に使う。
-        boolean isExistsWDLMember = false;
+        boolean existsWDLMember = false;
+        boolean existsNotWDLMember = false;
         assertHasAnyElement(members);
 
         // [1on1でのふぉろー] リストを分割して、それぞれでチェックを掛けるっていうのもアリ。
@@ -120,19 +124,21 @@ public class HandsOn04Test extends UnitContainerTestCase {
                 // optMemberWithdrawalがpresentかどうかをアサートする方が論理的には合っています。
 //                assertNotNull(optMemberWithdrawal.get().getWithdrawalReason()); // 会員退会情報を持っていることをアサート（仮に持ってない場合（データ不備）落ちるように）
                 assertTrue(optMemberWithdrawal.isPresent());
-                // TODO mayukorin setupSelectをし忘れてて、かつ、退会会員が一人もいなかったら by jflute (2025/03/25)
+                existsWDLMember = true;
+                // TODO done mayukorin setupSelectをし忘れてて、かつ、退会会員が一人もいなかったら by jflute (2025/03/25)
             } else { // 退会会員でない会員
                 // done mayukorin テストデータが偏っていたら、ここの分岐に入る保証がない by jflute (2025/03/17)
                 // ほんとですね！素通り防止忘れてました！ありがとうございます！ by mayukorin
                 assertException(RelationEntityNotFoundException.class, () -> optMemberWithdrawal.get()); // 会員退会情報を持っていないことをアサート
-                isExistsWDLMember = true;
+                existsNotWDLMember = true;
 
                 // setupSelectされているからこそ、ちゃんと業務的なアサートになる
                 // (し忘れると、そもそも誰もwithdrawalを持ってないので、意味のないアサートになっちゃう)
                 //assertFalse(optMemberWithdrawal.isPresent()); // わかりやすく説明するために追加 by jflute
             }
         }
-        assertTrue(isExistsWDLMember);
+        assertTrue(existsWDLMember);
+        assertTrue(existsNotWDLMember);
         
         // [1on1でのふぉろー]
         // o 論理をわかってて省く人と、よくわかってなくて自然と省いちゃっただけの人
@@ -275,21 +281,25 @@ public class HandsOn04Test extends UnitContainerTestCase {
      */
     public void test_searchFMLAndRPVMember() throws Exception {
         // ## Arrange ##
+        List<CDef.MemberStatus> statusList = new ArrayList<>();
+        statusList.add(CDef.MemberStatus.正式会員);
+        statusList.add(CDef.MemberStatus.退会会員);
 
         // ## Act ##
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
-            // TODO mayukorin 修行++: InScopeを使ったやり方もやってみてください by jflute (2025/03/25)
+            // TODO done mayukorin 修行++: InScopeを使ったやり方もやってみてください by jflute (2025/03/25)
             // 同じカラムで、複数の等値条件だったら、SQLだと in が使えます。(DBFluteではInScope)
-            cb.orScopeQuery(orCB -> {
-                orCB.query().setMemberStatusCode_Equal_正式会員();
-                orCB.query().setMemberStatusCode_Equal_退会会員();
-            });
+//            cb.orScopeQuery(orCB -> {
+//                orCB.query().setMemberStatusCode_Equal_正式会員();
+//                orCB.query().setMemberStatusCode_Equal_退会会員();
+//            });
+            cb.query().setMemberStatusCode_InScope_AsMemberStatus(statusList);
             cb.query().queryMemberStatus().addOrderBy_DisplayOrder_Asc();
         });
 
         // ## Assert ##
-        boolean isExistsFMLMember = false;
-        boolean isExistsWDLMember = false;
+        boolean existsFMLMember = false;
+        boolean existsWDLMember = false;
         Member fmlMemberToChangeOnEntity = null;
 
         assertHasAnyElement(members);
@@ -300,18 +310,18 @@ public class HandsOn04Test extends UnitContainerTestCase {
             assertTrue(member.isMemberStatusCode正式会員() || member.isMemberStatusCode退会会員());
 
             if (member.isMemberStatusCode正式会員()) {
-                if (!isExistsFMLMember) {
+                if (!existsFMLMember) {
                     fmlMemberToChangeOnEntity = member; // 「Entity上だけで正式会員を退会会員に変更する」用の会員をセット
                 }
-                isExistsFMLMember = true;
+                existsFMLMember = true;
             } else if (member.isMemberStatusCode退会会員()) { // 何回も isMemberStatus 呼び出してるの微妙...？ by mayukorin
                 // ↑ふぉろー: isメソッドは中身の処理は簡易なので、何度も呼び出してもパフォーマンス上問題はないです by jflute
-                isExistsWDLMember = true;
+                existsWDLMember = true;
             }
         }
 
-        assertTrue(isExistsFMLMember);
-        assertTrue(isExistsWDLMember);
+        assertTrue(existsFMLMember);
+        assertTrue(existsWDLMember);
 
         fmlMemberToChangeOnEntity.setMemberStatusCode_退会会員(); // Entity上だけで正式会員を退会会員に変更する
         assertTrue(fmlMemberToChangeOnEntity.isMemberStatusCode退会会員()); // Entityが退会会員に変更されていることをアサート
@@ -353,9 +363,9 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Arrange ##
     
         // ## Act ##
-        boolean isExistsFMLMember = false;
-        boolean isExistsWDLMember = false;
-        boolean isExistsRPVMember = false;
+        boolean existsFMLMember = false;
+        boolean existsWDLMember = false;
+        boolean existsRPVMember = false;
 
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
             cb.query().scalar_Equal().max(memberCB -> {
@@ -376,18 +386,18 @@ public class HandsOn04Test extends UnitContainerTestCase {
         for(Member member : members) {
            log("member: {}, status: {}, birthday: {}", member.getMemberName(), member.getMemberStatusCode(), member.getBirthdate());
            if (member.isMemberStatusCode正式会員()) {
-               isExistsFMLMember = true;
+               existsFMLMember = true;
            } else if (member.isMemberStatusCode退会会員()) {
-               isExistsWDLMember = true;
+               existsWDLMember = true;
            } else {
-               isExistsRPVMember = true;
+               existsRPVMember = true;
            }
         }
 
         assertTrue(members.size() >= CDef.MemberStatus.listAll().size());
 
-        assertTrue(isExistsFMLMember);
-        assertTrue(isExistsWDLMember);
-        assertTrue(isExistsRPVMember); // これ入れるんだったら上の、members.size() >= CDef.MemberStatus.listAll().size() は不要かも by mayukorin
+        assertTrue(existsFMLMember);
+        assertTrue(existsWDLMember);
+        assertTrue(existsRPVMember); // これ入れるんだったら上の、members.size() >= CDef.MemberStatus.listAll().size() は不要かも by mayukorin
     }
 }
