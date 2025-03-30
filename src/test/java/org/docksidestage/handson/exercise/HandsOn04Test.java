@@ -400,4 +400,45 @@ public class HandsOn04Test extends UnitContainerTestCase {
         assertTrue(existsWDLMember);
         assertTrue(existsRPVMember); // これ入れるんだったら上の、members.size() >= CDef.MemberStatus.listAll().size() は不要かも by mayukorin
     }
+
+    // ====================================================================================
+    //                                                                      区分値の追加と変更
+    //                                                                           ==========
+//    ハンズオン区分値を追加してメソッドとして使えることを確認した。その後、ハンズオン区分値を削除してエラーになることを確認したのでコメントアウトした
+//    public void test_searchNewClassification() throws Exception {
+//        // ## Arrange ##
+//
+//        // ## Act ##
+//        memberBhv.selectList(cb -> {
+//            cb.query().setMemberStatusCode_Equal_ハンズオン();
+//        });
+//
+//        // ## Assert ##
+//    }
+
+    // ====================================================================================
+    //                                                                        グルーピング判定
+    //                                                                           ==========
+    /**
+     * サービスが利用できる会員を検索 <br>
+     * o グルーピングの設定によって生成されたメソッドを利用 <br>
+     * o 会員ステータスの表示順で並べる <br>
+     * o 会員が "サービスが利用できる会員" であることをアサート <br>
+     */
+    public void test_searchServiceAvailableMember() throws Exception {
+        // ## Arrange ##
+    
+        // ## Act ##
+        ListResultBean<Member> members = memberBhv.selectList(cb -> {
+            cb.setupSelect_MemberStatus();
+            cb.query().setMemberStatusCode_InScope_ServiceAvailable();
+            cb.query().queryMemberStatus().addOrderBy_DisplayOrder_Asc();
+        });
+
+        // ## Assert ##
+        assertHasAnyElement(members);
+        for(Member member : members) {
+            assertTrue(member.isMemberStatusCode_ServiceAvailable());
+        }
+    }
 }

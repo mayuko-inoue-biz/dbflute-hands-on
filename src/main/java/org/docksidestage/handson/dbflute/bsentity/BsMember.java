@@ -101,7 +101,7 @@ public abstract class BsMember extends AbstractEntity implements DomainEntity {
     /**
      * Get the value of memberStatusCode as the classification of MemberStatus. <br>
      * MEMBER_STATUS_CODE: {IX, NotNull, CHAR(3), FK to member_status, classification=MemberStatus} <br>
-     * 入会から退会までの会員のステータスを示す
+     * status of member from entry to withdrawal
      * <p>It's treated as case insensitive and if the code value is null, it returns null.</p>
      * @return The instance of classification definition (as ENUM type). (NullAllowed: when the column value is null)
      */
@@ -112,7 +112,7 @@ public abstract class BsMember extends AbstractEntity implements DomainEntity {
     /**
      * Set the value of memberStatusCode as the classification of MemberStatus. <br>
      * MEMBER_STATUS_CODE: {IX, NotNull, CHAR(3), FK to member_status, classification=MemberStatus} <br>
-     * 入会から退会までの会員のステータスを示す
+     * status of member from entry to withdrawal
      * @param cdef The instance of classification definition (as ENUM type). (NullAllowed: if null, null value is set to the column)
      */
     public void setMemberStatusCodeAsMemberStatus(CDef.MemberStatus cdef) {
@@ -180,6 +180,16 @@ public abstract class BsMember extends AbstractEntity implements DomainEntity {
     public boolean isMemberStatusCode仮会員() {
         CDef.MemberStatus cdef = getMemberStatusCodeAsMemberStatus();
         return cdef != null ? cdef.equals(CDef.MemberStatus.仮会員) : false;
+    }
+
+    /**
+     * サービスが利用できる会員 <br>
+     * The group elements:[正式会員, 仮会員]
+     * @return The determination, true or false.
+     */
+    public boolean isMemberStatusCode_ServiceAvailable() {
+        CDef.MemberStatus cdef = getMemberStatusCodeAsMemberStatus();
+        return cdef != null && cdef.isServiceAvailable();
     }
 
     // ===================================================================================
