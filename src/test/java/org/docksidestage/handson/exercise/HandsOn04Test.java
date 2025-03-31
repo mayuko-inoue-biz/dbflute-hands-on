@@ -504,6 +504,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
         List<String> statusCodeTransition = new ArrayList<>();
         for(Member member : members) {
             assertFalse(member.getMemberStatus().isPresent());
+
             String nowStatusCode = member.getMemberStatusCode();
             log("nowStatusCode: {}", member.getMemberStatusCode());
 
@@ -515,11 +516,12 @@ public class HandsOn04Test extends UnitContainerTestCase {
             String prevStatusCode = statusCodeTransition.get(statusCodeTransition.size() - 1);
             if (prevStatusCode.equals(nowStatusCode)) continue; // 1個前の会員と同じ会員ステータス
             // 1個前の会員と異なる会員ステータスの場合
-            assertFalse(statusCodeTransition.contains(nowStatusCode)); // 会員ステータスごとに固まって並んでいることをアサート
+            assertFalse(statusCodeTransition.contains(nowStatusCode)); // 既出の会員ステータスでないことをアサート
             statusCodeTransition.add(nowStatusCode);
         }
 
-        // 2. 最後に、その固まって並んでいる会員ステータスが会員ステータスの表示順であることをアサートする（会員ステータスが違うのに、subItemのdisplayOrderが同じになってしまっているケースを検知したい）
+        // 2. 最後に、その固まって並んでいる会員ステータスが会員ステータスの表示順であることをアサートする
+        // 2段階でアサートしている理由：会員ステータスが違うのにsubItemのdisplayOrderが同じになってしまっているケースを検知するため。
         Integer prevDisplayOrder = null;
         for (String statusCode : statusCodeTransition) {
             int nowDisplayOrder = Integer.parseInt(CDef.MemberStatus.codeOf(statusCode).displayOrder());
