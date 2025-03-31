@@ -89,7 +89,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
         });
 
         // ## Assert ##
-        // TODO done mayukorin existsがあれば、isなくてもいいです (慣習として) by jflute (2025/03/25)
+        // done mayukorin existsがあれば、isなくてもいいです (慣習として) by jflute (2025/03/25)
         // booleanを表現する単語として、三単現の動詞であれば、booleanっぽくなる。
         //  e.g. exists, has が代表選手、他だと e.g. can, may の助動詞も使われる。
         // そしてデフォルトがisみたいな感じ。(いい言葉が思い浮かばなかったらisみたいな!?)
@@ -125,7 +125,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
 //                assertNotNull(optMemberWithdrawal.get().getWithdrawalReason()); // 会員退会情報を持っていることをアサート（仮に持ってない場合（データ不備）落ちるように）
                 assertTrue(optMemberWithdrawal.isPresent());
                 existsWDLMember = true;
-                // TODO done mayukorin setupSelectをし忘れてて、かつ、退会会員が一人もいなかったら by jflute (2025/03/25)
+                // done mayukorin setupSelectをし忘れてて、かつ、退会会員が一人もいなかったら by jflute (2025/03/25)
             } else { // 退会会員でない会員
                 // done mayukorin テストデータが偏っていたら、ここの分岐に入る保証がない by jflute (2025/03/17)
                 // ほんとですね！素通り防止忘れてました！ありがとうございます！ by mayukorin
@@ -287,7 +287,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
 
         // ## Act ##
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
-            // TODO done mayukorin 修行++: InScopeを使ったやり方もやってみてください by jflute (2025/03/25)
+            // done mayukorin 修行++: InScopeを使ったやり方もやってみてください by jflute (2025/03/25)
             // 同じカラムで、複数の等値条件だったら、SQLだと in が使えます。(DBFluteではInScope)
 //            cb.orScopeQuery(orCB -> {
 //                orCB.query().setMemberStatusCode_Equal_正式会員();
@@ -363,6 +363,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Arrange ##
     
         // ## Act ##
+        // TODO mayukorin Assertだけでしか使わない変数であれば、Assert配下で宣言しましょう (変数のスコープは短く) by jflute (2025/03/31)
         boolean existsFMLMember = false;
         boolean existsWDLMember = false;
         boolean existsRPVMember = false;
@@ -394,6 +395,8 @@ public class HandsOn04Test extends UnitContainerTestCase {
            }
         }
 
+        // TODO mayukorin 厳密には、すべてのステータスが会員テーブルに存在しているとは限らないので... by jflute (2025/03/31)
+        // ActでのSQLは、正当に3よりも小さいレコード数になり得るので、ちょっと件数の期待値を導出する方法を変えてみましょう。
         assertTrue(members.size() >= CDef.MemberStatus.listAll().size());
 
         assertTrue(existsFMLMember);
@@ -416,6 +419,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
 //        // ## Assert ##
 //    }
 
+    // TODO jflute 1on1にて現場でのグルーピングとかsubItemとか一緒に見てみる (2025/03/31)
     // ====================================================================================
     //                                                                        グルーピング判定
     //                                                                           ==========
@@ -435,6 +439,23 @@ public class HandsOn04Test extends UnitContainerTestCase {
             cb.query().queryMemberStatus().addOrderBy_DisplayOrder_Asc();
         });
 
+        // TODO mayukorin [お知らせ]【この機能大事】by jflute (2025/03/31)
+        // _/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+        // if (正式会員 || 仮会員) {
+        // }
+        // ってな感じのif文を書こうとしたら...
+        // ちょっと待った！
+        // その条件を業務的な一言で表せる？
+        // 例えば「ログイン可能な会員」というニュアンスでの分岐なのであれば、
+        // if (ログイン可能な会員) {
+        // }
+        // というif文にしたい。それが、groupingMap
+        // ログイン可能な会員が増えても変更しやすいように。
+        // http://dbflute.seasar.org/ja/manual/function/genbafit/implfit/whererecycle/#oneword
+        //
+        // これ、別に区分値の話だけではなく、"プログラムの再利用" という面で非常に大切な思考。
+        // いかに抽象化して、具体的な手法に依存しないようにプログラムを書くかがポイント。
+        // _/_/_/_/_/_/_/_/_/_/
         // ## Assert ##
         assertHasAnyElement(members);
         for(Member member : members) {
@@ -461,6 +482,8 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Act ##
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
             cb.query().existsPurchase(purchaseCB -> {
+                // TODO mayukorin [ふぉろー] その次の要件の「それを判断するprivateメソッドを作成して、戻り値のtrue/falseで切り替える」と... by jflute (2025/03/31)
+                // 「とりあえず未払いの購入を求められているので、そのメソッドの戻り値はfalse固定で」がポイントですね。
                 purchaseCB.query().setPaymentCompleteFlg_Equal_AsBoolean(false);// TODO m.inoue 「未払いの購入か支払済みの購入かを簡単に切り替えられるようにする」ってどういうことか考える。何に応じて切り替えれば良いのか (2025/03/30)
             });
             cb.query().addOrderBy_FormalizedDatetime_Desc().withNullsLast();
