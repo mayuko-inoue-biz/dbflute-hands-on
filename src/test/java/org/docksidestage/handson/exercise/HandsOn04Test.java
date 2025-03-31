@@ -463,7 +463,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
             cb.query().existsPurchase(purchaseCB -> {
                 purchaseCB.query().setPaymentCompleteFlg_Equal_AsBoolean(false);// TODO m.inoue 「未払いの購入か支払済みの購入かを簡単に切り替えられるようにする」ってどういうことか考える。何に応じて切り替えれば良いのか (2025/03/30)
             });
-            cb.query().addOrderBy_Birthdate_Asc().withNullsLast();
+            cb.query().addOrderBy_FormalizedDatetime_Desc().withNullsLast();
         });
 
         memberBhv.loadPurchase(members, purchaseCB -> {
