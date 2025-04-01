@@ -380,6 +380,8 @@ public class HandsOn04Test extends UnitContainerTestCase {
             // https://dbflute.seasar.org/ja/manual/function/genbafit/implfit/whererecycle/index.html
             // 「どういう風に絞り込むか？は再利用できることが多い一方で、何を取得するか？は一概に共通化できない。」
             // 確かに。by mayukorin
+            // [1on1でのふぉろー] ページに書いてあること改めて説明。
+            // あと現場での抽象テーブルの歴史的なお話。
         });
 
         // ## Assert ##
