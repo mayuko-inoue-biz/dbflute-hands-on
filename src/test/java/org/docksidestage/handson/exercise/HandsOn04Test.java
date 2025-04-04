@@ -1,7 +1,9 @@
 package org.docksidestage.handson.exercise;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -363,10 +365,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Arrange ##
     
         // ## Act ##
-        // TODO mayukorin Assertだけでしか使わない変数であれば、Assert配下で宣言しましょう (変数のスコープは短く) by jflute (2025/03/31)
-        boolean existsFMLMember = false;
-        boolean existsWDLMember = false;
-        boolean existsRPVMember = false;
+        // TODO done mayukorin Assertだけでしか使わない変数であれば、Assert配下で宣言しましょう (変数のスコープは短く) by jflute (2025/03/31)
 
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
             cb.query().scalar_Equal().max(memberCB -> {
@@ -385,25 +384,24 @@ public class HandsOn04Test extends UnitContainerTestCase {
         });
 
         // ## Assert ##
+        // 検索結果のmemberが、memberStatusごとに必ず存在するとは限らないので
+//        boolean existsFMLMember = false;
+//        boolean existsWDLMember = false;
+//        boolean existsRPVMember = false;
+
+        Set<String> existsMemberStatus = new HashSet<>(); // 検索結果のmemberに登場するmemberStatusの種類
         assertHasAnyElement(members);
         for(Member member : members) {
            log("member: {}, status: {}, birthday: {}", member.getMemberName(), member.getMemberStatusCode(), member.getBirthdate());
-           if (member.isMemberStatusCode正式会員()) {
-               existsFMLMember = true;
-           } else if (member.isMemberStatusCode退会会員()) {
-               existsWDLMember = true;
-           } else {
-               existsRPVMember = true;
-           }
+           existsMemberStatus.add(member.getMemberStatusCode());
         }
 
-        // TODO mayukorin 厳密には、すべてのステータスが会員テーブルに存在しているとは限らないので... by jflute (2025/03/31)
+        // TODO done mayukorin 厳密には、すべてのステータスが会員テーブルに存在しているとは限らないので... by jflute (2025/03/31)
         // ActでのSQLは、正当に3よりも小さいレコード数になり得るので、ちょっと件数の期待値を導出する方法を変えてみましょう。
-        assertTrue(members.size() >= CDef.MemberStatus.listAll().size());
-
-        assertTrue(existsFMLMember);
-        assertTrue(existsWDLMember);
-        assertTrue(existsRPVMember); // これ入れるんだったら上の、members.size() >= CDef.MemberStatus.listAll().size() は不要かも by mayukorin
+        assertTrue(members.size() >= existsMemberStatus.size());
+//        assertTrue(existsFMLMember);
+//        assertTrue(existsWDLMember);
+//        assertTrue(existsRPVMember); // これ入れるんだったら上の、members.size() >= CDef.MemberStatus.listAll().size() は不要かも by mayukorin
     }
 
     // ====================================================================================
@@ -441,7 +439,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
             cb.query().queryMemberStatus().addOrderBy_DisplayOrder_Asc();
         });
 
-        // TODO mayukorin [お知らせ]【この機能大事】by jflute (2025/03/31)
+        // TODO done mayukorin [お知らせ]【この機能大事】by jflute (2025/03/31)
         // _/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
         // if (正式会員 || 仮会員) {
         // }
@@ -458,6 +456,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // これ、別に区分値の話だけではなく、"プログラムの再利用" という面で非常に大切な思考。
         // いかに抽象化して、具体的な手法に依存しないようにプログラムを書くかがポイント。
         // _/_/_/_/_/_/_/_/_/_/
+        // ありがとうございます！抽象的な切り口で再利用の関数を作ることができれば、中身の処理が変わったとしても呼び出し側は気にしなくて良かったり、別の呼び出し元でも利用できるといったメリットがあるってことですよね！ by mayukorin
         // ## Assert ##
         assertHasAnyElement(members);
         for(Member member : members) {
