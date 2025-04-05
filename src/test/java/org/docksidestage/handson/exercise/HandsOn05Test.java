@@ -6,10 +6,7 @@ import org.dbflute.cbean.result.ListResultBean;
 import org.docksidestage.handson.dbflute.exbhv.MemberAddressBhv;
 import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
 import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
-import org.docksidestage.handson.dbflute.exentity.Member;
-import org.docksidestage.handson.dbflute.exentity.MemberAddress;
-import org.docksidestage.handson.dbflute.exentity.Purchase;
-import org.docksidestage.handson.dbflute.exentity.Region;
+import org.docksidestage.handson.dbflute.exentity.*;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
 /**
@@ -112,6 +109,36 @@ public class HandsOn05Test extends UnitContainerTestCase {
                     member.getMemberStatus().get().getMemberStatusName(), memberAddress.getAddress());
 
             assertTrue(memberAddress.getRegion().get().isRegionId千葉());
+        });
+    }
+
+    // ====================================================================================
+    //                                                          導出的one-to-oneを利用した実装
+    //                                                                           =========
+    /**
+     * 最終ログイン時の会員ステータスを取得して会員を検索 <br>
+     * o SetupSelectのJavaDocに自分で設定したcommentが表示されることを目視確認 <br>
+     * o 会員名称と最終ログイン日時と最終ログイン時の会員ステータス名称をログに出す <br>
+     * o 最終ログイン日時が取得できてることをアサート <br>
+     */
+    public void test_searchMemberWithLastLoginMemberStatus() throws Exception {
+        // ## Arrange ##
+    
+        // ## Act ##
+        ListResultBean<Member> members = memberBhv.selectList(cb -> {
+            cb.setupSelect_MemberLoginAsLatest().withMemberStatus();
+        });
+
+        // ## Assert ##
+        assertHasAnyElement(members);
+        members.forEach(member -> {
+            // TODO m.inoue これも、searchCurrentMemberAddress と同じ問題で、最終ログイン時がない会員も取ってきてるので、例外になっている。「最終ログイン時がある会員においてちゃんと最終ログインが取得できていること」を確かめれば良い？ (2025/04/05)
+            MemberLogin memberLoginAsLatest = member.getMemberLoginAsLatest().get();
+            MemberStatus memberStatusAsLatest = memberLoginAsLatest.getMemberStatus().get();
+
+            log("memberName: {}, lastLoginDatetime: {}, lastLoginMemberStatusName: {}",
+                    member.getMemberName(), memberLoginAsLatest.getLoginDatetime(), memberStatusAsLatest.getMemberStatusName());
+            assertNotNull(memberLoginAsLatest.getLoginDatetime());
         });
     }
 }
