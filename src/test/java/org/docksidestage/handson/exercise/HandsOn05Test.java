@@ -48,6 +48,7 @@ public class HandsOn05Test extends UnitContainerTestCase {
         assertHasAnyElement(memberAddresses);
         memberAddresses.forEach(memberAddress -> {
             // Not Null の FK カラムなため、member・region は 必ず存在する
+            // TODO mayukorin [いいね] yes !!! by jflute (2025/04/08)
             Member member = memberAddress.getMember().get();
             Region region = memberAddress.getRegion().get();
 
@@ -79,7 +80,8 @@ public class HandsOn05Test extends UnitContainerTestCase {
         members.forEach(member -> {
             log("memberName: {}, memberAddress: {}",
                     member.getMemberName(), member.getMemberAddressAsValid());
-            // TODO jflute「会員と共に現在の住所を取得して検索」は、現住所が存在する会員を取得するイメージでしょうか？ 今の実装だと「会員と現住所が存在したら取得」になってしまっていて、assert で落ちるなと思ってますby m.inoue (2025/04/05)
+            // TODO done jflute「会員と共に現在の住所を取得して検索」は、現住所が存在する会員を取得するイメージでしょうか？ 今の実装だと「会員と現住所が存在したら取得」になってしまっていて、assert で落ちるなと思ってますby m.inoue (2025/04/05)
+            // TODO mayukorin [へんじ] いえ、「共に現在の住所」ということでくっつけるだけです。なので住所が存在しない人も検索対象です by jflute (2025/04/08)
             assertTrue(member.getMemberAddressAsValid().isPresent());
         });
     }

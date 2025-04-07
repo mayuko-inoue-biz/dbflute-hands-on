@@ -365,7 +365,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Arrange ##
     
         // ## Act ##
-        // TODO done mayukorin Assertだけでしか使わない変数であれば、Assert配下で宣言しましょう (変数のスコープは短く) by jflute (2025/03/31)
+        // done mayukorin Assertだけでしか使わない変数であれば、Assert配下で宣言しましょう (変数のスコープは短く) by jflute (2025/03/31)
 
         ListResultBean<Member> youngestMembersPerStatusWithBankTransferPaid = memberBhv.selectList(cb -> {
             cb.query().scalar_Equal().max(memberCB -> {
@@ -401,8 +401,10 @@ public class HandsOn04Test extends UnitContainerTestCase {
         for(Member member : youngestMembersPerStatusWithBankTransferPaid) {
             log("member: {}, status: {}, birthday: {}", member.getMemberName(), member.getMemberStatusCode(), member.getBirthdate());
         }
-        // TODO done mayukorin 厳密には、すべてのステータスが会員テーブルに存在しているとは限らないので... by jflute (2025/03/31)
+        // done mayukorin 厳密には、すべてのステータスが会員テーブルに存在しているとは限らないので... by jflute (2025/03/31)
         // ActでのSQLは、正当に3よりも小さいレコード数になり得るので、ちょっと件数の期待値を導出する方法を変えてみましょう。
+        // TODO mayukorin 修行++: 良いと思います。一方で、その期待値をselectで一発で取得することもできます by jflute (2025/04/08)
+        // Behaviorのメソッドを調べてみてください
         assertTrue(youngestMembersPerStatusWithBankTransferPaid.size() >= statusesOfBankTransferPaidMember.size()); // 検索結果が想定されるステータスの件数以上であることをアサート。同い年で一番若い会員がいる場合、想定されるステータスの件数より多くなる
 //        assertTrue(existsFMLMember);
 //        assertTrue(existsWDLMember);
@@ -444,7 +446,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
             cb.query().queryMemberStatus().addOrderBy_DisplayOrder_Asc();
         });
 
-        // TODO done mayukorin [お知らせ]【この機能大事】by jflute (2025/03/31)
+        // done mayukorin [お知らせ]【この機能大事】by jflute (2025/03/31)
         // _/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
         // if (正式会員 || 仮会員) {
         // }
