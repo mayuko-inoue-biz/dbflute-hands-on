@@ -367,7 +367,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Act ##
         // TODO done mayukorin Assertだけでしか使わない変数であれば、Assert配下で宣言しましょう (変数のスコープは短く) by jflute (2025/03/31)
 
-        ListResultBean<Member> members = memberBhv.selectList(cb -> {
+        ListResultBean<Member> youngestMembersPerStatusWithBankTransferPaid = memberBhv.selectList(cb -> {
             cb.query().scalar_Equal().max(memberCB -> {
                 memberCB.specify().columnBirthdate();
                 memberCB.query().arrangeBankTransferPaidMember();
@@ -388,17 +388,22 @@ public class HandsOn04Test extends UnitContainerTestCase {
 //        boolean existsFMLMember = false;
 //        boolean existsWDLMember = false;
 //        boolean existsRPVMember = false;
+        assertHasAnyElement(youngestMembersPerStatusWithBankTransferPaid);
 
-        Set<String> existsMemberStatus = new HashSet<>(); // 検索結果のmemberに登場するmemberStatusの種類
-        assertHasAnyElement(members);
-        for(Member member : members) {
-           log("member: {}, status: {}, birthday: {}", member.getMemberName(), member.getMemberStatusCode(), member.getBirthdate());
-           existsMemberStatus.add(member.getMemberStatusCode());
+        Set<String> statusesOfBankTransferPaidMember = new HashSet<>(); // 銀行振込で購入を支払ったことのある会員が存在する会員ステータス
+        ListResultBean<Member> allMembersWithBankTransferPaid = memberBhv.selectList(cb -> {
+            cb.query().arrangeBankTransferPaidMember();
+        });
+        for(Member member : allMembersWithBankTransferPaid) {
+            statusesOfBankTransferPaidMember.add(member.getMemberStatusCode());
         }
 
+        for(Member member : youngestMembersPerStatusWithBankTransferPaid) {
+            log("member: {}, status: {}, birthday: {}", member.getMemberName(), member.getMemberStatusCode(), member.getBirthdate());
+        }
         // TODO done mayukorin 厳密には、すべてのステータスが会員テーブルに存在しているとは限らないので... by jflute (2025/03/31)
         // ActでのSQLは、正当に3よりも小さいレコード数になり得るので、ちょっと件数の期待値を導出する方法を変えてみましょう。
-        assertTrue(members.size() >= existsMemberStatus.size());
+        assertTrue(youngestMembersPerStatusWithBankTransferPaid.size() >= statusesOfBankTransferPaidMember.size()); // 検索結果が想定されるステータスの件数以上であることをアサート。同い年で一番若い会員がいる場合、想定されるステータスの件数より多くなる
 //        assertTrue(existsFMLMember);
 //        assertTrue(existsWDLMember);
 //        assertTrue(existsRPVMember); // これ入れるんだったら上の、members.size() >= CDef.MemberStatus.listAll().size() は不要かも by mayukorin
