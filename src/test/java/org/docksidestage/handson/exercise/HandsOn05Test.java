@@ -9,6 +9,7 @@ import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
 import org.docksidestage.handson.dbflute.exentity.*;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
+// TODO mayukorin additionalForeignKeyMap.dfprop, 一部インデントがおかしい by jflute (2025/04/08)
 /**
  * DBFluteハンズオン05のためのクラス
  * @author mayukorin
@@ -117,6 +118,7 @@ public class HandsOn05Test extends UnitContainerTestCase {
     // ====================================================================================
     //                                                          導出的one-to-oneを利用した実装
     //                                                                           =========
+    // [1on1でのふぉろー] 現場での導出的one-to-oneを一緒に見た
     /**
      * 最終ログイン時の会員ステータスを取得して会員を検索 <br>
      * o SetupSelectのJavaDocに自分で設定したcommentが表示されることを目視確認 <br>
@@ -143,4 +145,6 @@ public class HandsOn05Test extends UnitContainerTestCase {
             assertNotNull(memberLoginAsLatest.getLoginDatetime());
         });
     }
+    
+    // TODO jflute 業務的many-to-oneの話もする (2025/04/08)
 }

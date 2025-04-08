@@ -351,7 +351,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // o そのフレームワークは何を大事にしているのか？それを理解すると機能が理解しやすくなる
     }
 
-    // TODO jflute 次回1on1ここから (2025/03/25)
+    // done jflute 次回1on1ここから (2025/03/25)
     /**
      * 銀行振込で購入を支払ったことのある、会員ステータスごとに一番若い会員を検索 <br>
      * o 正式会員で一番若い、仮会員で一番若い、という風にそれぞれのステータスで若い会員を検索 <br>
@@ -426,7 +426,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
 //        // ## Assert ##
 //    }
 
-    // TODO jflute 1on1にて現場でのグルーピングとかsubItemとか一緒に見てみる (2025/03/31)
+    // done jflute 1on1にて現場でのグルーピングとかsubItemとか一緒に見てみる (2025/03/31)
     // ====================================================================================
     //                                                                        グルーピング判定
     //                                                                           ==========
@@ -464,6 +464,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // いかに抽象化して、具体的な手法に依存しないようにプログラムを書くかがポイント。
         // _/_/_/_/_/_/_/_/_/_/
         // ありがとうございます！抽象的な切り口で再利用の関数を作ることができれば、中身の処理が変わったとしても呼び出し側は気にしなくて良かったり、別の呼び出し元でも利用できるといったメリットがあるってことですよね！ by mayukorin
+        // [1on1でのふぉろー] 現場での groupingMap を一緒に見てみた。
         // ## Assert ##
         assertHasAnyElement(members);
         for(Member member : members) {
@@ -522,6 +523,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
      */
     public void test_searchMemberWithDisplayOrder() throws Exception {
         // ## Arrange ##
+        // [1on1でのふぉろー] 現場でのsubItemを一緒に見てみた。
 
         // ## Act ##
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
