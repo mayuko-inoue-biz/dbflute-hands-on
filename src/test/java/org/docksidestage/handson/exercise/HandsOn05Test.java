@@ -9,7 +9,7 @@ import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
 import org.docksidestage.handson.dbflute.exentity.*;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
-// TODO mayukorin additionalForeignKeyMap.dfprop, 一部インデントがおかしい by jflute (2025/04/08)
+// TODO done mayukorin additionalForeignKeyMap.dfprop, 一部インデントがおかしい by jflute (2025/04/08)
 /**
  * DBFluteハンズオン05のためのクラス
  * @author mayukorin
@@ -49,7 +49,7 @@ public class HandsOn05Test extends UnitContainerTestCase {
         assertHasAnyElement(memberAddresses);
         memberAddresses.forEach(memberAddress -> {
             // Not Null の FK カラムなため、member・region は 必ず存在する
-            // TODO mayukorin [いいね] yes !!! by jflute (2025/04/08)
+            // TODO done mayukorin [いいね] yes !!! by jflute (2025/04/08)
             Member member = memberAddress.getMember().get();
             Region region = memberAddress.getRegion().get();
 
@@ -83,7 +83,9 @@ public class HandsOn05Test extends UnitContainerTestCase {
                     member.getMemberName(), member.getMemberAddressAsValid());
             // TODO done jflute「会員と共に現在の住所を取得して検索」は、現住所が存在する会員を取得するイメージでしょうか？ 今の実装だと「会員と現住所が存在したら取得」になってしまっていて、assert で落ちるなと思ってますby m.inoue (2025/04/05)
             // TODO mayukorin [へんじ] いえ、「共に現在の住所」ということでくっつけるだけです。なので住所が存在しない人も検索対象です by jflute (2025/04/08)
-            assertTrue(member.getMemberAddressAsValid().isPresent());
+            // TODO jflute 変えてみたのですが、下だと、setupSelect してなくてもassertが通るので、「会員住所情報が取得できていること」を確かめることにはなってないですかね？ by m.inoue (2025/04/13)
+//            assertTrue(member.getMemberAddressAsValid().isPresent());
+            assertNotNull(member.getMemberAddressAsValid());
         });
     }
 

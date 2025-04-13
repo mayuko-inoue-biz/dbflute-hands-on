@@ -12,6 +12,7 @@ import org.dbflute.exception.RelationEntityNotFoundException;
 import org.dbflute.optional.OptionalEntity;
 import org.docksidestage.handson.dbflute.allcommon.CDef;
 import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
+import org.docksidestage.handson.dbflute.exbhv.MemberStatusBhv;
 import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
 import org.docksidestage.handson.dbflute.exentity.*;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
@@ -29,6 +30,8 @@ public class HandsOn04Test extends UnitContainerTestCase {
     private PurchaseBhv purchaseBhv;
     @Resource
     private MemberBhv memberBhv;
+    @Resource
+    private MemberStatusBhv memberStatusBhv;
 
     // =================================`==================================================
     //                                                                       ベタベタのやり方
@@ -390,22 +393,27 @@ public class HandsOn04Test extends UnitContainerTestCase {
 //        boolean existsRPVMember = false;
         assertHasAnyElement(youngestMembersPerStatusWithBankTransferPaid);
 
-        Set<String> statusesOfBankTransferPaidMember = new HashSet<>(); // 銀行振込で購入を支払ったことのある会員が存在する会員ステータス
-        ListResultBean<Member> allMembersWithBankTransferPaid = memberBhv.selectList(cb -> {
-            cb.query().arrangeBankTransferPaidMember();
+//        Set<String> statusesOfBankTransferPaidMember = new HashSet<>(); // 銀行振込で購入を支払ったことのある会員が存在する会員ステータス
+//        ListResultBean<Member> allMembersWithBankTransferPaid = memberBhv.selectList(cb -> {
+//            cb.query().arrangeBankTransferPaidMember();
+//        });
+//        for(Member member : allMembersWithBankTransferPaid) {
+//            statusesOfBankTransferPaidMember.add(member.getMemberStatusCode());
+//        }
+        int statusCount = memberStatusBhv.selectCount(cb -> {
+            cb.query().existsMember(memberCB -> {
+                memberCB.query().arrangeBankTransferPaidMember();
+            });
         });
-        for(Member member : allMembersWithBankTransferPaid) {
-            statusesOfBankTransferPaidMember.add(member.getMemberStatusCode());
-        }
 
         for(Member member : youngestMembersPerStatusWithBankTransferPaid) {
             log("member: {}, status: {}, birthday: {}", member.getMemberName(), member.getMemberStatusCode(), member.getBirthdate());
         }
         // done mayukorin 厳密には、すべてのステータスが会員テーブルに存在しているとは限らないので... by jflute (2025/03/31)
         // ActでのSQLは、正当に3よりも小さいレコード数になり得るので、ちょっと件数の期待値を導出する方法を変えてみましょう。
-        // TODO mayukorin 修行++: 良いと思います。一方で、その期待値をselectで一発で取得することもできます by jflute (2025/04/08)
+        // TODO done mayukorin 修行++: 良いと思います。一方で、その期待値をselectで一発で取得することもできます by jflute (2025/04/08)
         // Behaviorのメソッドを調べてみてください
-        assertTrue(youngestMembersPerStatusWithBankTransferPaid.size() >= statusesOfBankTransferPaidMember.size()); // 検索結果が想定されるステータスの件数以上であることをアサート。同い年で一番若い会員がいる場合、想定されるステータスの件数より多くなる
+        assertTrue(youngestMembersPerStatusWithBankTransferPaid.size() >= statusCount); // 検索結果が想定されるステータスの件数以上であることをアサート。同い年で一番若い会員がいる場合、想定されるステータスの件数より多くなる
 //        assertTrue(existsFMLMember);
 //        assertTrue(existsWDLMember);
 //        assertTrue(existsRPVMember); // これ入れるんだったら上の、members.size() >= CDef.MemberStatus.listAll().size() は不要かも by mayukorin
@@ -491,9 +499,9 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Act ##
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
             cb.query().existsPurchase(purchaseCB -> {
-                // TODO mayukorin [ふぉろー] その次の要件の「それを判断するprivateメソッドを作成して、戻り値のtrue/falseで切り替える」と... by jflute (2025/03/31)
+                // TODO done mayukorin [ふぉろー] その次の要件の「それを判断するprivateメソッドを作成して、戻り値のtrue/falseで切り替える」と... by jflute (2025/03/31)
                 // 「とりあえず未払いの購入を求められているので、そのメソッドの戻り値はfalse固定で」がポイントですね。
-                purchaseCB.query().setPaymentCompleteFlg_Equal_AsBoolean(false);// TODO m.inoue 「未払いの購入か支払済みの購入かを簡単に切り替えられるようにする」ってどういうことか考える。何に応じて切り替えれば良いのか (2025/03/30)
+                purchaseCB.query().setPaymentCompleteFlg_Equal_AsBoolean(isPaymentComplete());// TODO done m.inoue 「未払いの購入か支払済みの購入かを簡単に切り替えられるようにする」ってどういうことか考える。何に応じて切り替えれば良いのか (2025/03/30)
             });
             cb.query().addOrderBy_FormalizedDatetime_Desc().withNullsLast();
         });
@@ -568,5 +576,12 @@ public class HandsOn04Test extends UnitContainerTestCase {
             assertTrue(prevDisplayOrder < nowDisplayOrder);
             prevDisplayOrder = nowDisplayOrder;
         }
+    }
+
+    // ===================================================================================
+    //                                                                          判定メソッド
+    //                                                                           =========
+    private boolean isPaymentComplete() {
+        return false;
     }
 }
