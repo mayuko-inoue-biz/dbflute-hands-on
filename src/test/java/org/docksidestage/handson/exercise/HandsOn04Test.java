@@ -17,6 +17,8 @@ import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
 import org.docksidestage.handson.dbflute.exentity.*;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
+// TODO mayukorin セクション４最後のtodo, importの警告 by jflute (2025/04/15)
+
 /**
  * DBFluteハンズオン04のためのクラス
  * @author mayukorin
@@ -366,7 +368,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
      */
     public void test_searchYoungestMemberByStatusUsingBankTransfer() throws Exception {
         // ## Arrange ##
-    
+
         // ## Act ##
         // done mayukorin Assertだけでしか使わない変数であれば、Assert配下で宣言しましょう (変数のスコープは短く) by jflute (2025/03/31)
 
@@ -405,13 +407,20 @@ public class HandsOn04Test extends UnitContainerTestCase {
                 memberCB.query().arrangeBankTransferPaidMember();
             });
         });
+        // [1on1でのふぉろー] 一応、selectScalar()の紹介
+        //Integer countDistinct = memberBhv.selectScalar(Integer.class).countDistinct(cb -> {
+        //    cb.specify().columnMemberStatusCode();
+        //    cb.query().arrangeBankTransferPaidMember();
+        //});
+        // 暗黙の区分値だったら、selectScalar()じゃないといけないけど...
+        // それってつまり、テーブル区分値って便利なものという証拠でもある
 
         for(Member member : youngestMembersPerStatusWithBankTransferPaid) {
             log("member: {}, status: {}, birthday: {}", member.getMemberName(), member.getMemberStatusCode(), member.getBirthdate());
         }
         // done mayukorin 厳密には、すべてのステータスが会員テーブルに存在しているとは限らないので... by jflute (2025/03/31)
         // ActでのSQLは、正当に3よりも小さいレコード数になり得るので、ちょっと件数の期待値を導出する方法を変えてみましょう。
-        // TODO done mayukorin 修行++: 良いと思います。一方で、その期待値をselectで一発で取得することもできます by jflute (2025/04/08)
+        // done mayukorin 修行++: 良いと思います。一方で、その期待値をselectで一発で取得することもできます by jflute (2025/04/08)
         // Behaviorのメソッドを調べてみてください
         assertTrue(youngestMembersPerStatusWithBankTransferPaid.size() >= statusCount); // 検索結果が想定されるステータスの件数以上であることをアサート。同い年で一番若い会員がいる場合、想定されるステータスの件数より多くなる
 //        assertTrue(existsFMLMember);
@@ -499,9 +508,9 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Act ##
         ListResultBean<Member> members = memberBhv.selectList(cb -> {
             cb.query().existsPurchase(purchaseCB -> {
-                // TODO done mayukorin [ふぉろー] その次の要件の「それを判断するprivateメソッドを作成して、戻り値のtrue/falseで切り替える」と... by jflute (2025/03/31)
+                // done mayukorin [ふぉろー] その次の要件の「それを判断するprivateメソッドを作成して、戻り値のtrue/falseで切り替える」と... by jflute (2025/03/31)
                 // 「とりあえず未払いの購入を求められているので、そのメソッドの戻り値はfalse固定で」がポイントですね。
-                purchaseCB.query().setPaymentCompleteFlg_Equal_AsBoolean(isPaymentComplete());// TODO done m.inoue 「未払いの購入か支払済みの購入かを簡単に切り替えられるようにする」ってどういうことか考える。何に応じて切り替えれば良いのか (2025/03/30)
+                purchaseCB.query().setPaymentCompleteFlg_Equal_AsBoolean(isPaymentComplete());// done m.inoue 「未払いの購入か支払済みの購入かを簡単に切り替えられるようにする」ってどういうことか考える。何に応じて切り替えれば良いのか (2025/03/30)
             });
             cb.query().addOrderBy_FormalizedDatetime_Desc().withNullsLast();
         });
