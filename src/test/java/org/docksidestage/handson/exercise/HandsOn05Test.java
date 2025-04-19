@@ -81,13 +81,19 @@ public class HandsOn05Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(members);
         members.forEach(member -> {
+            OptionalEntity<MemberAddress> optMemberAddressAsValid = member.getMemberAddressAsValid();
             log("memberName: {}, memberAddress: {}",
-                    member.getMemberName(), member.getMemberAddressAsValid());
+                    member.getMemberName(), optMemberAddressAsValid);
             // done jflute「会員と共に現在の住所を取得して検索」は、現住所が存在する会員を取得するイメージでしょうか？ 今の実装だと「会員と現住所が存在したら取得」になってしまっていて、assert で落ちるなと思ってますby m.inoue (2025/04/05)
             // done mayukorin [へんじ] いえ、「共に現在の住所」ということでくっつけるだけです。なので住所が存在しない人も検索対象です by jflute (2025/04/08)
             // done jflute 変えてみたのですが、下だと、setupSelect してなくてもassertが通るので、「会員住所情報が取得できていること」を確かめることにはなってないですかね？ by m.inoue (2025/04/13)
-            // TODO mayukorin membersには住所が存在しない人も混ざっているが、"会員住所情報が取得できていることのアサート" では気にしなくていい by jflute (2025/04/15)
-            assertTrue(member.getMemberAddressAsValid().isPresent());
+            // TODO done mayukorin membersには住所が存在しない人も混ざっているが、"会員住所情報が取得できていることのアサート" では気にしなくていい by jflute (2025/04/15)
+
+            optMemberAddressAsValid.ifPresent(memberAddressAsValid -> {
+                // TODO m.inoue これだとアサートが通ることは当たり前。会員住所が存在し得る人がちゃんと取得できていることを確認する必要がある（しかも、ifPresentの素通りパターンもある） (2025/04/19)
+                // memberAddressAsValidが存在するmember を assert で取ってきたいけどやり方が分からない...existsMemberAddressで条件指定したらできるけど、それだと業務的one-to-one使ってる意味がない
+                assertNotNull(memberAddressAsValid);
+            });
             
             // [1on1でのふぉろー] これだと、getterが絶対にnot nullなので意味がないアサートになっている
             //assertNotNull(member.getMemberAddressAsValid());
@@ -107,8 +113,8 @@ public class HandsOn05Test extends UnitContainerTestCase {
             cb.setupSelect_Member().withMemberStatus();
             cb.setupSelect_Member().withMemberAddressAsValid(currentLocalDate()).withRegion();
             cb.query().setPaymentCompleteFlg_Equal_True();
-            // TODO mayukorin MEMBER_ADDRESS自身が、REGION_IDを持ってるので、REGIONまで行かなくてもいい by jflute (2025/04/15)
-            cb.query().queryMember().queryMemberAddressAsValid(currentLocalDate()).queryRegion().setRegionId_Equal_千葉();
+            // TODO done mayukorin MEMBER_ADDRESS自身が、REGION_IDを持ってるので、REGIONまで行かなくてもいい by jflute (2025/04/15)
+            cb.query().queryMember().queryMemberAddressAsValid(currentLocalDate()).setRegionId_Equal_千葉();
         });
         // ## Assert ##
         assertHasAnyElement(purchases);
@@ -119,9 +125,9 @@ public class HandsOn05Test extends UnitContainerTestCase {
             log("memberStatusName: {}, memberAddress: {}",
                     member.getMemberStatus().get().getMemberStatusName(), memberAddress.getAddress());
 
-            // TODO mayukorin ここもおんなじ by jflute (2025/04/15)
+            // TODO done mayukorin ここもおんなじ by jflute (2025/04/15)
             // [1on1でのふぉろー] 名前によるイメージではなく、構造に着目して欲しい
-            assertTrue(memberAddress.getRegion().get().isRegionId千葉());
+            assertTrue(memberAddress.isRegionId千葉());
         });
     }
 

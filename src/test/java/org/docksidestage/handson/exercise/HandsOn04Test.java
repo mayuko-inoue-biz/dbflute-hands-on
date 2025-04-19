@@ -1,9 +1,7 @@
 package org.docksidestage.handson.exercise;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -17,7 +15,7 @@ import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
 import org.docksidestage.handson.dbflute.exentity.*;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
-// TODO mayukorin セクション４最後のtodo, importの警告 by jflute (2025/04/15)
+// TODO done mayukorin セクション４最後のtodo, importの警告 by jflute (2025/04/15)
 
 /**
  * DBFluteハンズオン04のためのクラス
