@@ -149,14 +149,14 @@ public class BsProductCategoryCQ extends AbstractBsProductCategoryCQ {
 
     /**
      * Add order-by as ascend. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
      * @return this. (NotNull)
      */
     public BsProductCategoryCQ addOrderBy_ParentCategoryCode_Asc() { regOBA("PARENT_CATEGORY_CODE"); return this; }
 
     /**
      * Add order-by as descend. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
      * @return this. (NotNull)
      */
     public BsProductCategoryCQ addOrderBy_ParentCategoryCode_Desc() { regOBD("PARENT_CATEGORY_CODE"); return this; }
@@ -212,7 +212,7 @@ public class BsProductCategoryCQ extends AbstractBsProductCategoryCQ {
     //                                                                       =============
     /**
      * Get the condition-query for relation table. <br>
-     * product_category by my PARENT_CATEGORY_CODE, named 'productCategorySelf'.
+     * (商品カテゴリ)product_category by my PARENT_CATEGORY_CODE, named 'productCategorySelf'.
      * @return The instance of condition-query. (NotNull)
      */
     public ProductCategoryCQ queryProductCategorySelf() {

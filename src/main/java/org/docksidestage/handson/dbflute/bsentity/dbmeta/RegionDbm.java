@@ -67,6 +67,8 @@ public class RegionDbm extends AbstractDBMeta {
     public String getTableDispName() { return _tableDispName; }
     public String getTablePropertyName() { return _tablePropertyName; }
     public TableSqlName getTableSqlName() { return _tableSqlName; }
+    protected final String _tableAlias = "地域";
+    public String getTableAlias() { return _tableAlias; }
 
     // ===================================================================================
     //                                                                         Column Info
@@ -117,7 +119,7 @@ public class RegionDbm extends AbstractDBMeta {
     //                                     Referrer Property
     //                                     -----------------
     /**
-     * member_address by REGION_ID, named 'memberAddressList'.
+     * (会員住所情報)member_address by REGION_ID, named 'memberAddressList'.
      * @return The information object of referrer property. (NotNull)
      */
     public ReferrerInfo referrerMemberAddressList() {

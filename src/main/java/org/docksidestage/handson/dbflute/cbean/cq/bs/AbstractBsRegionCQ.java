@@ -202,7 +202,7 @@ public abstract class AbstractBsRegionCQ extends AbstractConditionQuery {
     /**
      * Set up ExistsReferrer (correlated sub-query). <br>
      * {exists (select REGION_ID from member_address where ...)} <br>
-     * member_address by REGION_ID, named 'memberAddressAsOne'.
+     * (会員住所情報)member_address by REGION_ID, named 'memberAddressAsOne'.
      * <pre>
      * cb.query().<span style="color: #CC4747">existsMemberAddress</span>(addressCB <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
      *     addressCB.query().set...
@@ -221,7 +221,7 @@ public abstract class AbstractBsRegionCQ extends AbstractConditionQuery {
     /**
      * Set up NotExistsReferrer (correlated sub-query). <br>
      * {not exists (select REGION_ID from member_address where ...)} <br>
-     * member_address by REGION_ID, named 'memberAddressAsOne'.
+     * (会員住所情報)member_address by REGION_ID, named 'memberAddressAsOne'.
      * <pre>
      * cb.query().<span style="color: #CC4747">notExistsMemberAddress</span>(addressCB <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
      *     addressCB.query().set...
@@ -248,7 +248,7 @@ public abstract class AbstractBsRegionCQ extends AbstractConditionQuery {
     /**
      * Prepare for (Query)DerivedReferrer (correlated sub-query). <br>
      * {FOO &lt;= (select max(BAR) from member_address where ...)} <br>
-     * member_address by REGION_ID, named 'memberAddressAsOne'.
+     * (会員住所情報)member_address by REGION_ID, named 'memberAddressAsOne'.
      * <pre>
      * cb.query().<span style="color: #CC4747">derivedMemberAddress()</span>.<span style="color: #CC4747">max</span>(addressCB <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
      *     addressCB.specify().<span style="color: #CC4747">columnFoo...</span> <span style="color: #3F7E5E">// derived column by function</span>

@@ -115,14 +115,14 @@ public class BsWithdrawalReasonCQ extends AbstractBsWithdrawalReasonCQ {
 
     /**
      * Add order-by as ascend. <br>
-     * WITHDRAWAL_REASON_TEXT: {NotNull, TEXT(65535)}
+     * (退会理由テキスト)WITHDRAWAL_REASON_TEXT: {NotNull, TEXT(65535)}
      * @return this. (NotNull)
      */
     public BsWithdrawalReasonCQ addOrderBy_WithdrawalReasonText_Asc() { regOBA("WITHDRAWAL_REASON_TEXT"); return this; }
 
     /**
      * Add order-by as descend. <br>
-     * WITHDRAWAL_REASON_TEXT: {NotNull, TEXT(65535)}
+     * (退会理由テキスト)WITHDRAWAL_REASON_TEXT: {NotNull, TEXT(65535)}
      * @return this. (NotNull)
      */
     public BsWithdrawalReasonCQ addOrderBy_WithdrawalReasonText_Desc() { regOBD("WITHDRAWAL_REASON_TEXT"); return this; }

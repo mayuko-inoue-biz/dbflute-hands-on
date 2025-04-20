@@ -97,7 +97,7 @@ public class BsProductCB extends AbstractConditionBean {
 
     /**
      * Accept the query condition of unique key as equal.
-     * @param productHandleCode : UQ, NotNull, VARCHAR(100). (NotNull)
+     * @param productHandleCode (商品ハンドルコード): UQ, NotNull, VARCHAR(100). (NotNull)
      * @return this. (NotNull)
      */
     public ProductCB acceptUniqueOf(String productHandleCode) {
@@ -261,7 +261,7 @@ public class BsProductCB extends AbstractConditionBean {
     }
     /**
      * Set up relation columns to select clause. <br>
-     * product_category by my PRODUCT_CATEGORY_CODE, named 'productCategory'.
+     * (商品カテゴリ)product_category by my PRODUCT_CATEGORY_CODE, named 'productCategory'.
      * <pre>
      * <span style="color: #0000C0">productBhv</span>.selectEntity(<span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
      *     <span style="color: #553000">cb</span>.<span style="color: #CC4747">setupSelect_ProductCategory()</span>; <span style="color: #3F7E5E">// ...().with[nested-relation]()</span>
@@ -361,7 +361,7 @@ public class BsProductCB extends AbstractConditionBean {
          */
         public SpecifiedColumn columnProductName() { return doColumn("PRODUCT_NAME"); }
         /**
-         * PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
+         * (商品ハンドルコード)PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
          * @return The information object of specified column. (NotNull)
          */
         public SpecifiedColumn columnProductHandleCode() { return doColumn("PRODUCT_HANDLE_CODE"); }
@@ -423,7 +423,7 @@ public class BsProductCB extends AbstractConditionBean {
         protected String getTableDbName() { return "product"; }
         /**
          * Prepare to specify functions about relation table. <br>
-         * product_category by my PRODUCT_CATEGORY_CODE, named 'productCategory'.
+         * (商品カテゴリ)product_category by my PRODUCT_CATEGORY_CODE, named 'productCategory'.
          * @return The instance for specification for relation table to specify. (NotNull)
          */
         public ProductCategoryCB.HpSpecification specifyProductCategory() {
@@ -464,7 +464,7 @@ public class BsProductCB extends AbstractConditionBean {
         /**
          * Prepare for (Specify)DerivedReferrer (correlated sub-query). <br>
          * {select max(FOO) from purchase where ...) as FOO_MAX} <br>
-         * purchase by PRODUCT_ID, named 'purchaseList'.
+         * (購入)purchase by PRODUCT_ID, named 'purchaseList'.
          * <pre>
          * cb.specify().<span style="color: #CC4747">derived${relationMethodIdentityName}()</span>.<span style="color: #CC4747">max</span>(purchaseCB <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
          *     purchaseCB.specify().<span style="color: #CC4747">column...</span> <span style="color: #3F7E5E">// derived column by function</span>

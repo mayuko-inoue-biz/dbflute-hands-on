@@ -96,7 +96,7 @@ public class ProductDbm extends AbstractDBMeta {
     //                                                                         ===========
     protected final ColumnInfo _columnProductId = cci("PRODUCT_ID", "PRODUCT_ID", null, null, Integer.class, "productId", null, true, true, true, "INT", 10, 0, null, null, false, null, null, null, "purchaseList", null, false);
     protected final ColumnInfo _columnProductName = cci("PRODUCT_NAME", "PRODUCT_NAME", null, null, String.class, "productName", null, false, false, true, "VARCHAR", 50, 0, null, null, false, null, null, null, null, null, false);
-    protected final ColumnInfo _columnProductHandleCode = cci("PRODUCT_HANDLE_CODE", "PRODUCT_HANDLE_CODE", null, null, String.class, "productHandleCode", null, false, false, true, "VARCHAR", 100, 0, null, null, false, null, null, null, null, null, false);
+    protected final ColumnInfo _columnProductHandleCode = cci("PRODUCT_HANDLE_CODE", "PRODUCT_HANDLE_CODE", null, "商品ハンドルコード", String.class, "productHandleCode", null, false, false, true, "VARCHAR", 100, 0, null, null, false, null, null, null, null, null, false);
     protected final ColumnInfo _columnProductCategoryCode = cci("PRODUCT_CATEGORY_CODE", "PRODUCT_CATEGORY_CODE", null, null, String.class, "productCategoryCode", null, false, false, true, "CHAR", 3, 0, null, null, false, null, null, "productCategory", null, null, false);
     protected final ColumnInfo _columnProductStatusCode = cci("PRODUCT_STATUS_CODE", "PRODUCT_STATUS_CODE", null, null, String.class, "productStatusCode", null, false, false, true, "CHAR", 3, 0, null, null, false, null, null, "productStatus", null, CDef.DefMeta.ProductStatus, false);
     protected final ColumnInfo _columnRegularPrice = cci("REGULAR_PRICE", "REGULAR_PRICE", null, null, Integer.class, "regularPrice", null, false, false, false, "INT", 10, 0, null, null, false, null, null, null, null, null, false);
@@ -117,7 +117,7 @@ public class ProductDbm extends AbstractDBMeta {
      */
     public ColumnInfo columnProductName() { return _columnProductName; }
     /**
-     * PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
+     * (商品ハンドルコード)PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
      * @return The information object of specified column. (NotNull)
      */
     public ColumnInfo columnProductHandleCode() { return _columnProductHandleCode; }
@@ -204,7 +204,7 @@ public class ProductDbm extends AbstractDBMeta {
     //                                      Foreign Property
     //                                      ----------------
     /**
-     * product_category by my PRODUCT_CATEGORY_CODE, named 'productCategory'.
+     * (商品カテゴリ)product_category by my PRODUCT_CATEGORY_CODE, named 'productCategory'.
      * @return The information object of foreign property. (NotNull)
      */
     public ForeignInfo foreignProductCategory() {
@@ -224,7 +224,7 @@ public class ProductDbm extends AbstractDBMeta {
     //                                     Referrer Property
     //                                     -----------------
     /**
-     * purchase by PRODUCT_ID, named 'purchaseList'.
+     * (購入)purchase by PRODUCT_ID, named 'purchaseList'.
      * @return The information object of referrer property. (NotNull)
      */
     public ReferrerInfo referrerPurchaseList() {

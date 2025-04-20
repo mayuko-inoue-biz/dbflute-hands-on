@@ -160,7 +160,7 @@ public abstract class AbstractBsProductCQ extends AbstractConditionQuery {
     /**
      * Set up ExistsReferrer (correlated sub-query). <br>
      * {exists (select PRODUCT_ID from purchase where ...)} <br>
-     * purchase by PRODUCT_ID, named 'purchaseAsOne'.
+     * (購入)purchase by PRODUCT_ID, named 'purchaseAsOne'.
      * <pre>
      * cb.query().<span style="color: #CC4747">existsPurchase</span>(purchaseCB <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
      *     purchaseCB.query().set...
@@ -179,7 +179,7 @@ public abstract class AbstractBsProductCQ extends AbstractConditionQuery {
     /**
      * Set up NotExistsReferrer (correlated sub-query). <br>
      * {not exists (select PRODUCT_ID from purchase where ...)} <br>
-     * purchase by PRODUCT_ID, named 'purchaseAsOne'.
+     * (購入)purchase by PRODUCT_ID, named 'purchaseAsOne'.
      * <pre>
      * cb.query().<span style="color: #CC4747">notExistsPurchase</span>(purchaseCB <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
      *     purchaseCB.query().set...
@@ -206,7 +206,7 @@ public abstract class AbstractBsProductCQ extends AbstractConditionQuery {
     /**
      * Prepare for (Query)DerivedReferrer (correlated sub-query). <br>
      * {FOO &lt;= (select max(BAR) from purchase where ...)} <br>
-     * purchase by PRODUCT_ID, named 'purchaseAsOne'.
+     * (購入)purchase by PRODUCT_ID, named 'purchaseAsOne'.
      * <pre>
      * cb.query().<span style="color: #CC4747">derivedPurchase()</span>.<span style="color: #CC4747">max</span>(purchaseCB <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
      *     purchaseCB.specify().<span style="color: #CC4747">columnFoo...</span> <span style="color: #3F7E5E">// derived column by function</span>
@@ -382,7 +382,7 @@ public abstract class AbstractBsProductCQ extends AbstractConditionQuery {
 
     /**
      * Equal(=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
-     * PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
+     * (商品ハンドルコード)PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
      * @param productHandleCode The value of productHandleCode as equal. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
     public void setProductHandleCode_Equal(String productHandleCode) {
@@ -395,7 +395,7 @@ public abstract class AbstractBsProductCQ extends AbstractConditionQuery {
 
     /**
      * NotEqual(&lt;&gt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
-     * PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
+     * (商品ハンドルコード)PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
      * @param productHandleCode The value of productHandleCode as notEqual. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
     public void setProductHandleCode_NotEqual(String productHandleCode) {
@@ -408,7 +408,7 @@ public abstract class AbstractBsProductCQ extends AbstractConditionQuery {
 
     /**
      * GreaterThan(&gt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
-     * PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
+     * (商品ハンドルコード)PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
      * @param productHandleCode The value of productHandleCode as greaterThan. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
     public void setProductHandleCode_GreaterThan(String productHandleCode) {
@@ -417,7 +417,7 @@ public abstract class AbstractBsProductCQ extends AbstractConditionQuery {
 
     /**
      * LessThan(&lt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
-     * PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
+     * (商品ハンドルコード)PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
      * @param productHandleCode The value of productHandleCode as lessThan. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
     public void setProductHandleCode_LessThan(String productHandleCode) {
@@ -426,7 +426,7 @@ public abstract class AbstractBsProductCQ extends AbstractConditionQuery {
 
     /**
      * GreaterEqual(&gt;=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
-     * PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
+     * (商品ハンドルコード)PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
      * @param productHandleCode The value of productHandleCode as greaterEqual. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
     public void setProductHandleCode_GreaterEqual(String productHandleCode) {
@@ -435,7 +435,7 @@ public abstract class AbstractBsProductCQ extends AbstractConditionQuery {
 
     /**
      * LessEqual(&lt;=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
-     * PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
+     * (商品ハンドルコード)PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
      * @param productHandleCode The value of productHandleCode as lessEqual. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
     public void setProductHandleCode_LessEqual(String productHandleCode) {
@@ -444,7 +444,7 @@ public abstract class AbstractBsProductCQ extends AbstractConditionQuery {
 
     /**
      * InScope {in ('a', 'b')}. And NullOrEmptyIgnored, NullOrEmptyElementIgnored, SeveralRegistered. <br>
-     * PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
+     * (商品ハンドルコード)PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
      * @param productHandleCodeList The collection of productHandleCode as inScope. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
     public void setProductHandleCode_InScope(Collection<String> productHandleCodeList) {
@@ -457,7 +457,7 @@ public abstract class AbstractBsProductCQ extends AbstractConditionQuery {
 
     /**
      * NotInScope {not in ('a', 'b')}. And NullOrEmptyIgnored, NullOrEmptyElementIgnored, SeveralRegistered. <br>
-     * PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
+     * (商品ハンドルコード)PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
      * @param productHandleCodeList The collection of productHandleCode as notInScope. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
     public void setProductHandleCode_NotInScope(Collection<String> productHandleCodeList) {
@@ -470,7 +470,7 @@ public abstract class AbstractBsProductCQ extends AbstractConditionQuery {
 
     /**
      * LikeSearch with various options. (versatile) {like '%xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br>
-     * PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)} <br>
+     * (商品ハンドルコード)PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)} <br>
      * <pre>e.g. setProductHandleCode_LikeSearch("xxx", op <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> op.<span style="color: #CC4747">likeContain()</span>);</pre>
      * @param productHandleCode The value of productHandleCode as likeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
      * @param opLambda The callback for option of like-search. (NotNull)
@@ -481,7 +481,7 @@ public abstract class AbstractBsProductCQ extends AbstractConditionQuery {
 
     /**
      * LikeSearch with various options. (versatile) {like '%xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br>
-     * PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)} <br>
+     * (商品ハンドルコード)PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)} <br>
      * <pre>e.g. setProductHandleCode_LikeSearch("xxx", new <span style="color: #CC4747">LikeSearchOption</span>().likeContain());</pre>
      * @param productHandleCode The value of productHandleCode as likeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
      * @param likeSearchOption The option of like-search. (NotNull)
@@ -493,7 +493,7 @@ public abstract class AbstractBsProductCQ extends AbstractConditionQuery {
     /**
      * NotLikeSearch with various options. (versatile) {not like 'xxx%' escape ...} <br>
      * And NullOrEmptyIgnored, SeveralRegistered. <br>
-     * PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
+     * (商品ハンドルコード)PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
      * @param productHandleCode The value of productHandleCode as notLikeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
      * @param opLambda The callback for option of like-search. (NotNull)
      */
@@ -504,7 +504,7 @@ public abstract class AbstractBsProductCQ extends AbstractConditionQuery {
     /**
      * NotLikeSearch with various options. (versatile) {not like 'xxx%' escape ...} <br>
      * And NullOrEmptyIgnored, SeveralRegistered. <br>
-     * PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
+     * (商品ハンドルコード)PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
      * @param productHandleCode The value of productHandleCode as notLikeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
      * @param likeSearchOption The option of not-like-search. (NotNull)
      */

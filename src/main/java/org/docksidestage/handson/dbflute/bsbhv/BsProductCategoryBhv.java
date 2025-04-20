@@ -20,7 +20,7 @@ import org.docksidestage.handson.dbflute.bsentity.dbmeta.*;
 import org.docksidestage.handson.dbflute.cbean.*;
 
 /**
- * The behavior of product_category as TABLE.
+ * The behavior of (商品カテゴリ)product_category as TABLE.
  * @author DBFlute(AutoGenerator)
  */
 public abstract class BsProductCategoryBhv extends AbstractBehaviorWritable<ProductCategory, ProductCategoryCB> {
@@ -397,7 +397,7 @@ public abstract class BsProductCategoryBhv extends AbstractBehaviorWritable<Prod
 
     /**
      * Load referrer of productCategorySelfList by the set-upper of referrer. <br>
-     * product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfList'.
+     * (商品カテゴリ)product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfList'.
      * <pre>
      * <span style="color: #0000C0">productCategoryBhv</span>.<span style="color: #CC4747">loadProductCategorySelf</span>(<span style="color: #553000">productCategoryList</span>, <span style="color: #553000">categoryCB</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
      *     <span style="color: #553000">categoryCB</span>.setupSelect...
@@ -428,7 +428,7 @@ public abstract class BsProductCategoryBhv extends AbstractBehaviorWritable<Prod
 
     /**
      * Load referrer of productCategorySelfList by the set-upper of referrer. <br>
-     * product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfList'.
+     * (商品カテゴリ)product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfList'.
      * <pre>
      * <span style="color: #0000C0">productCategoryBhv</span>.<span style="color: #CC4747">loadProductCategorySelf</span>(<span style="color: #553000">productCategory</span>, <span style="color: #553000">categoryCB</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
      *     <span style="color: #553000">categoryCB</span>.setupSelect...

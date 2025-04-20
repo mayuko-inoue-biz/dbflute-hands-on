@@ -197,7 +197,7 @@ public abstract class AbstractBsProductCategoryCQ extends AbstractConditionQuery
     /**
      * Set up ExistsReferrer (correlated sub-query). <br>
      * {exists (select PARENT_CATEGORY_CODE from product_category where ...)} <br>
-     * product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfAsOne'.
+     * (商品カテゴリ)product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfAsOne'.
      * <pre>
      * cb.query().<span style="color: #CC4747">existsProductCategorySelf</span>(categoryCB <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
      *     categoryCB.query().set...
@@ -235,7 +235,7 @@ public abstract class AbstractBsProductCategoryCQ extends AbstractConditionQuery
     /**
      * Set up NotExistsReferrer (correlated sub-query). <br>
      * {not exists (select PARENT_CATEGORY_CODE from product_category where ...)} <br>
-     * product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfAsOne'.
+     * (商品カテゴリ)product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfAsOne'.
      * <pre>
      * cb.query().<span style="color: #CC4747">notExistsProductCategorySelf</span>(categoryCB <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
      *     categoryCB.query().set...
@@ -297,7 +297,7 @@ public abstract class AbstractBsProductCategoryCQ extends AbstractConditionQuery
     /**
      * Prepare for (Query)DerivedReferrer (correlated sub-query). <br>
      * {FOO &lt;= (select max(BAR) from product_category where ...)} <br>
-     * product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfAsOne'.
+     * (商品カテゴリ)product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfAsOne'.
      * <pre>
      * cb.query().<span style="color: #CC4747">derivedProductCategorySelf()</span>.<span style="color: #CC4747">max</span>(categoryCB <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
      *     categoryCB.specify().<span style="color: #CC4747">columnFoo...</span> <span style="color: #3F7E5E">// derived column by function</span>
@@ -473,7 +473,7 @@ public abstract class AbstractBsProductCategoryCQ extends AbstractConditionQuery
 
     /**
      * Equal(=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
      * @param parentCategoryCode The value of parentCategoryCode as equal. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
     public void setParentCategoryCode_Equal(String parentCategoryCode) {
@@ -486,7 +486,7 @@ public abstract class AbstractBsProductCategoryCQ extends AbstractConditionQuery
 
     /**
      * NotEqual(&lt;&gt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
      * @param parentCategoryCode The value of parentCategoryCode as notEqual. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
     public void setParentCategoryCode_NotEqual(String parentCategoryCode) {
@@ -499,7 +499,7 @@ public abstract class AbstractBsProductCategoryCQ extends AbstractConditionQuery
 
     /**
      * GreaterThan(&gt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
      * @param parentCategoryCode The value of parentCategoryCode as greaterThan. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
     public void setParentCategoryCode_GreaterThan(String parentCategoryCode) {
@@ -508,7 +508,7 @@ public abstract class AbstractBsProductCategoryCQ extends AbstractConditionQuery
 
     /**
      * LessThan(&lt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
      * @param parentCategoryCode The value of parentCategoryCode as lessThan. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
     public void setParentCategoryCode_LessThan(String parentCategoryCode) {
@@ -517,7 +517,7 @@ public abstract class AbstractBsProductCategoryCQ extends AbstractConditionQuery
 
     /**
      * GreaterEqual(&gt;=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
      * @param parentCategoryCode The value of parentCategoryCode as greaterEqual. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
     public void setParentCategoryCode_GreaterEqual(String parentCategoryCode) {
@@ -526,7 +526,7 @@ public abstract class AbstractBsProductCategoryCQ extends AbstractConditionQuery
 
     /**
      * LessEqual(&lt;=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
      * @param parentCategoryCode The value of parentCategoryCode as lessEqual. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
     public void setParentCategoryCode_LessEqual(String parentCategoryCode) {
@@ -535,7 +535,7 @@ public abstract class AbstractBsProductCategoryCQ extends AbstractConditionQuery
 
     /**
      * InScope {in ('a', 'b')}. And NullOrEmptyIgnored, NullOrEmptyElementIgnored, SeveralRegistered. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
      * @param parentCategoryCodeList The collection of parentCategoryCode as inScope. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
     public void setParentCategoryCode_InScope(Collection<String> parentCategoryCodeList) {
@@ -548,7 +548,7 @@ public abstract class AbstractBsProductCategoryCQ extends AbstractConditionQuery
 
     /**
      * NotInScope {not in ('a', 'b')}. And NullOrEmptyIgnored, NullOrEmptyElementIgnored, SeveralRegistered. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
      * @param parentCategoryCodeList The collection of parentCategoryCode as notInScope. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
     public void setParentCategoryCode_NotInScope(Collection<String> parentCategoryCodeList) {
@@ -561,7 +561,7 @@ public abstract class AbstractBsProductCategoryCQ extends AbstractConditionQuery
 
     /**
      * LikeSearch with various options. (versatile) {like '%xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category} <br>
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category} <br>
      * <pre>e.g. setParentCategoryCode_LikeSearch("xxx", op <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> op.<span style="color: #CC4747">likeContain()</span>);</pre>
      * @param parentCategoryCode The value of parentCategoryCode as likeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
      * @param opLambda The callback for option of like-search. (NotNull)
@@ -572,7 +572,7 @@ public abstract class AbstractBsProductCategoryCQ extends AbstractConditionQuery
 
     /**
      * LikeSearch with various options. (versatile) {like '%xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category} <br>
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category} <br>
      * <pre>e.g. setParentCategoryCode_LikeSearch("xxx", new <span style="color: #CC4747">LikeSearchOption</span>().likeContain());</pre>
      * @param parentCategoryCode The value of parentCategoryCode as likeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
      * @param likeSearchOption The option of like-search. (NotNull)
@@ -584,7 +584,7 @@ public abstract class AbstractBsProductCategoryCQ extends AbstractConditionQuery
     /**
      * NotLikeSearch with various options. (versatile) {not like 'xxx%' escape ...} <br>
      * And NullOrEmptyIgnored, SeveralRegistered. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
      * @param parentCategoryCode The value of parentCategoryCode as notLikeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
      * @param opLambda The callback for option of like-search. (NotNull)
      */
@@ -595,7 +595,7 @@ public abstract class AbstractBsProductCategoryCQ extends AbstractConditionQuery
     /**
      * NotLikeSearch with various options. (versatile) {not like 'xxx%' escape ...} <br>
      * And NullOrEmptyIgnored, SeveralRegistered. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
      * @param parentCategoryCode The value of parentCategoryCode as notLikeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
      * @param likeSearchOption The option of not-like-search. (NotNull)
      */
@@ -605,19 +605,19 @@ public abstract class AbstractBsProductCategoryCQ extends AbstractConditionQuery
 
     /**
      * IsNull {is null}. And OnlyOnceRegistered. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
      */
     public void setParentCategoryCode_IsNull() { regParentCategoryCode(CK_ISN, DOBJ); }
 
     /**
      * IsNullOrEmpty {is null or empty}. And OnlyOnceRegistered. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
      */
     public void setParentCategoryCode_IsNullOrEmpty() { regParentCategoryCode(CK_ISNOE, DOBJ); }
 
     /**
      * IsNotNull {is not null}. And OnlyOnceRegistered. <br>
-     * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
+     * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
      */
     public void setParentCategoryCode_IsNotNull() { regParentCategoryCode(CK_ISNN, DOBJ); }
 

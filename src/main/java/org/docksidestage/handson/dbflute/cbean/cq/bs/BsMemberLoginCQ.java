@@ -121,14 +121,14 @@ public class BsMemberLoginCQ extends AbstractBsMemberLoginCQ {
 
     /**
      * Add order-by as ascend. <br>
-     * LOGIN_DATETIME: {+UQ, IX, NotNull, DATETIME(19)}
+     * (ログイン日時)LOGIN_DATETIME: {+UQ, IX, NotNull, DATETIME(19)}
      * @return this. (NotNull)
      */
     public BsMemberLoginCQ addOrderBy_LoginDatetime_Asc() { regOBA("LOGIN_DATETIME"); return this; }
 
     /**
      * Add order-by as descend. <br>
-     * LOGIN_DATETIME: {+UQ, IX, NotNull, DATETIME(19)}
+     * (ログイン日時)LOGIN_DATETIME: {+UQ, IX, NotNull, DATETIME(19)}
      * @return this. (NotNull)
      */
     public BsMemberLoginCQ addOrderBy_LoginDatetime_Desc() { regOBD("LOGIN_DATETIME"); return this; }
@@ -141,14 +141,14 @@ public class BsMemberLoginCQ extends AbstractBsMemberLoginCQ {
 
     /**
      * Add order-by as ascend. <br>
-     * MOBILE_LOGIN_FLG: {NotNull, INT(10), classification=Flg}
+     * (モバイルログインフラグ)MOBILE_LOGIN_FLG: {NotNull, INT(10), classification=Flg}
      * @return this. (NotNull)
      */
     public BsMemberLoginCQ addOrderBy_MobileLoginFlg_Asc() { regOBA("MOBILE_LOGIN_FLG"); return this; }
 
     /**
      * Add order-by as descend. <br>
-     * MOBILE_LOGIN_FLG: {NotNull, INT(10), classification=Flg}
+     * (モバイルログインフラグ)MOBILE_LOGIN_FLG: {NotNull, INT(10), classification=Flg}
      * @return this. (NotNull)
      */
     public BsMemberLoginCQ addOrderBy_MobileLoginFlg_Desc() { regOBD("MOBILE_LOGIN_FLG"); return this; }
@@ -161,14 +161,14 @@ public class BsMemberLoginCQ extends AbstractBsMemberLoginCQ {
 
     /**
      * Add order-by as ascend. <br>
-     * LOGIN_MEMBER_STATUS_CODE: {IX, NotNull, CHAR(3), FK to member_status, classification=MemberStatus}
+     * (ログイン会員ステータスコード)LOGIN_MEMBER_STATUS_CODE: {IX, NotNull, CHAR(3), FK to member_status, classification=MemberStatus}
      * @return this. (NotNull)
      */
     public BsMemberLoginCQ addOrderBy_LoginMemberStatusCode_Asc() { regOBA("LOGIN_MEMBER_STATUS_CODE"); return this; }
 
     /**
      * Add order-by as descend. <br>
-     * LOGIN_MEMBER_STATUS_CODE: {IX, NotNull, CHAR(3), FK to member_status, classification=MemberStatus}
+     * (ログイン会員ステータスコード)LOGIN_MEMBER_STATUS_CODE: {IX, NotNull, CHAR(3), FK to member_status, classification=MemberStatus}
      * @return this. (NotNull)
      */
     public BsMemberLoginCQ addOrderBy_LoginMemberStatusCode_Desc() { regOBD("LOGIN_MEMBER_STATUS_CODE"); return this; }
@@ -247,7 +247,7 @@ public class BsMemberLoginCQ extends AbstractBsMemberLoginCQ {
 
     /**
      * Get the condition-query for relation table. <br>
-     * member by my MEMBER_ID, named 'member'.
+     * (会員)member by my MEMBER_ID, named 'member'.
      * @return The instance of condition-query. (NotNull)
      */
     public MemberCQ queryMember() {

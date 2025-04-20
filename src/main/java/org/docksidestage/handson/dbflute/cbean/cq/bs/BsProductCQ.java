@@ -135,14 +135,14 @@ public class BsProductCQ extends AbstractBsProductCQ {
 
     /**
      * Add order-by as ascend. <br>
-     * PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
+     * (商品ハンドルコード)PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
      * @return this. (NotNull)
      */
     public BsProductCQ addOrderBy_ProductHandleCode_Asc() { regOBA("PRODUCT_HANDLE_CODE"); return this; }
 
     /**
      * Add order-by as descend. <br>
-     * PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
+     * (商品ハンドルコード)PRODUCT_HANDLE_CODE: {UQ, NotNull, VARCHAR(100)}
      * @return this. (NotNull)
      */
     public BsProductCQ addOrderBy_ProductHandleCode_Desc() { regOBD("PRODUCT_HANDLE_CODE"); return this; }
@@ -361,7 +361,7 @@ public class BsProductCQ extends AbstractBsProductCQ {
     //                                                                       =============
     /**
      * Get the condition-query for relation table. <br>
-     * product_category by my PRODUCT_CATEGORY_CODE, named 'productCategory'.
+     * (商品カテゴリ)product_category by my PRODUCT_CATEGORY_CODE, named 'productCategory'.
      * @return The instance of condition-query. (NotNull)
      */
     public ProductCategoryCQ queryProductCategory() {

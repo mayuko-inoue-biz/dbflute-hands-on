@@ -249,7 +249,7 @@ public class BsProductCategoryCB extends AbstractConditionBean {
     }
     /**
      * Set up relation columns to select clause. <br>
-     * product_category by my PARENT_CATEGORY_CODE, named 'productCategorySelf'.
+     * (商品カテゴリ)product_category by my PARENT_CATEGORY_CODE, named 'productCategorySelf'.
      * <pre>
      * <span style="color: #0000C0">productCategoryBhv</span>.selectEntity(<span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
      *     <span style="color: #553000">cb</span>.<span style="color: #CC4747">setupSelect_ProductCategorySelf()</span>; <span style="color: #3F7E5E">// ...().with[nested-relation]()</span>
@@ -328,7 +328,7 @@ public class BsProductCategoryCB extends AbstractConditionBean {
          */
         public SpecifiedColumn columnProductCategoryName() { return doColumn("PRODUCT_CATEGORY_NAME"); }
         /**
-         * PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
+         * (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category}
          * @return The information object of specified column. (NotNull)
          */
         public SpecifiedColumn columnParentCategoryCode() { return doColumn("PARENT_CATEGORY_CODE"); }
@@ -346,7 +346,7 @@ public class BsProductCategoryCB extends AbstractConditionBean {
         protected String getTableDbName() { return "product_category"; }
         /**
          * Prepare to specify functions about relation table. <br>
-         * product_category by my PARENT_CATEGORY_CODE, named 'productCategorySelf'.
+         * (商品カテゴリ)product_category by my PARENT_CATEGORY_CODE, named 'productCategorySelf'.
          * @return The instance for specification for relation table to specify. (NotNull)
          */
         public ProductCategoryCB.HpSpecification specifyProductCategorySelf() {
@@ -384,7 +384,7 @@ public class BsProductCategoryCB extends AbstractConditionBean {
         /**
          * Prepare for (Specify)DerivedReferrer (correlated sub-query). <br>
          * {select max(FOO) from product_category where ...) as FOO_MAX} <br>
-         * product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfList'.
+         * (商品カテゴリ)product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfList'.
          * <pre>
          * cb.specify().<span style="color: #CC4747">derived${relationMethodIdentityName}()</span>.<span style="color: #CC4747">max</span>(categoryCB <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
          *     categoryCB.specify().<span style="color: #CC4747">column...</span> <span style="color: #3F7E5E">// derived column by function</span>

@@ -20,7 +20,7 @@ import org.docksidestage.handson.dbflute.bsentity.dbmeta.*;
 import org.docksidestage.handson.dbflute.cbean.*;
 
 /**
- * The behavior of member_login as TABLE.
+ * The behavior of (会員ログイン情報)member_login as TABLE.
  * @author DBFlute(AutoGenerator)
  */
 public abstract class BsMemberLoginBhv extends AbstractBehaviorWritable<MemberLogin, MemberLoginCB> {
@@ -159,7 +159,7 @@ public abstract class BsMemberLoginBhv extends AbstractBehaviorWritable<MemberLo
     /**
      * Select the entity by the unique-key value.
      * @param memberId : UQ+, NotNull, INT(10), FK to member. (NotNull)
-     * @param loginDatetime : +UQ, IX, NotNull, DATETIME(19). (NotNull)
+     * @param loginDatetime (ログイン日時): +UQ, IX, NotNull, DATETIME(19). (NotNull)
      * @return The optional entity selected by the unique key. (NotNull: if no data, empty entity)
      * @throws EntityAlreadyDeletedException When get(), required() of return value is called and the value is null, which means entity has already been deleted (not found).
      * @throws EntityDuplicatedException When the entity has been duplicated.

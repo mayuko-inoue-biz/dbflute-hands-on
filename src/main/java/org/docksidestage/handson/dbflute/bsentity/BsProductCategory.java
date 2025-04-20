@@ -12,8 +12,8 @@ import org.docksidestage.handson.dbflute.allcommon.DBMetaInstanceHandler;
 import org.docksidestage.handson.dbflute.exentity.*;
 
 /**
- * The entity of product_category as TABLE. <br>
- * 商品カテゴリ: 商品のカテゴリを表現するマスタ。<br>
+ * The entity of (商品カテゴリ)product_category as TABLE. <br>
+ * 商品のカテゴリを表現するマスタ。<br>
  * 自己参照の階層になっている。
  * @author DBFlute(AutoGenerator)
  */
@@ -34,7 +34,7 @@ public abstract class BsProductCategory extends AbstractEntity implements Domain
     /** PRODUCT_CATEGORY_NAME: {NotNull, VARCHAR(50)} */
     protected String _productCategoryName;
 
-    /** PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category} */
+    /** (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category} */
     protected String _parentCategoryCode;
 
     // ===================================================================================
@@ -62,11 +62,11 @@ public abstract class BsProductCategory extends AbstractEntity implements Domain
     // ===================================================================================
     //                                                                    Foreign Property
     //                                                                    ================
-    /** product_category by my PARENT_CATEGORY_CODE, named 'productCategorySelf'. */
+    /** (商品カテゴリ)product_category by my PARENT_CATEGORY_CODE, named 'productCategorySelf'. */
     protected OptionalEntity<ProductCategory> _productCategorySelf;
 
     /**
-     * [get] product_category by my PARENT_CATEGORY_CODE, named 'productCategorySelf'. <br>
+     * [get] (商品カテゴリ)product_category by my PARENT_CATEGORY_CODE, named 'productCategorySelf'. <br>
      * Optional: alwaysPresent(), ifPresent().orElse(), get(), ...
      * @return The entity of foreign property 'productCategorySelf'. (NotNull, EmptyAllowed: when e.g. null FK column, no setupSelect)
      */
@@ -76,7 +76,7 @@ public abstract class BsProductCategory extends AbstractEntity implements Domain
     }
 
     /**
-     * [set] product_category by my PARENT_CATEGORY_CODE, named 'productCategorySelf'.
+     * [set] (商品カテゴリ)product_category by my PARENT_CATEGORY_CODE, named 'productCategorySelf'.
      * @param productCategorySelf The entity of foreign property 'productCategorySelf'. (NullAllowed)
      */
     public void setProductCategorySelf(OptionalEntity<ProductCategory> productCategorySelf) {
@@ -106,11 +106,11 @@ public abstract class BsProductCategory extends AbstractEntity implements Domain
         _productList = productList;
     }
 
-    /** product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfList'. */
+    /** (商品カテゴリ)product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfList'. */
     protected List<ProductCategory> _productCategorySelfList;
 
     /**
-     * [get] product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfList'.
+     * [get] (商品カテゴリ)product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfList'.
      * @return The entity list of referrer property 'productCategorySelfList'. (NotNull: even if no loading, returns empty list)
      */
     public List<ProductCategory> getProductCategorySelfList() {
@@ -119,7 +119,7 @@ public abstract class BsProductCategory extends AbstractEntity implements Domain
     }
 
     /**
-     * [set] product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfList'.
+     * [set] (商品カテゴリ)product_category by PARENT_CATEGORY_CODE, named 'productCategorySelfList'.
      * @param productCategorySelfList The entity list of referrer property 'productCategorySelfList'. (NullAllowed)
      */
     public void setProductCategorySelfList(List<ProductCategory> productCategorySelfList) {
@@ -244,8 +244,8 @@ public abstract class BsProductCategory extends AbstractEntity implements Domain
     }
 
     /**
-     * [get] PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category} <br>
-     * 親カテゴリコード: 最上位の場合はデータなし。
+     * [get] (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category} <br>
+     * 最上位の場合はデータなし。
      * @return The value of the column 'PARENT_CATEGORY_CODE'. (NullAllowed even if selected: for no constraint)
      */
     public String getParentCategoryCode() {
@@ -254,8 +254,8 @@ public abstract class BsProductCategory extends AbstractEntity implements Domain
     }
 
     /**
-     * [set] PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category} <br>
-     * 親カテゴリコード: 最上位の場合はデータなし。
+     * [set] (親カテゴリコード)PARENT_CATEGORY_CODE: {IX, CHAR(3), FK to product_category} <br>
+     * 最上位の場合はデータなし。
      * @param parentCategoryCode The value of the column 'PARENT_CATEGORY_CODE'. (NullAllowed: null update allowed for no constraint)
      */
     public void setParentCategoryCode(String parentCategoryCode) {
