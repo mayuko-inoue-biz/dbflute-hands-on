@@ -15,7 +15,7 @@ import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
 import org.docksidestage.handson.dbflute.exentity.*;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
-// TODO done mayukorin セクション４最後のtodo, importの警告 by jflute (2025/04/15)
+// done mayukorin セクション４最後のtodo, importの警告 by jflute (2025/04/15)
 
 /**
  * DBFluteハンズオン04のためのクラス

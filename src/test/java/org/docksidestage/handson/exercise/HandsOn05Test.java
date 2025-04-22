@@ -79,6 +79,8 @@ public class HandsOn05Test extends UnitContainerTestCase {
         });
 
         // ## Assert ##
+        // TODO mayukorin booleanの代わりに、markHere() というメソッドが使えるので使ってみてください by jflute (2025/04/22)
+        //  e.g. markHere("住所が存在する"); => JavaDoc読んでみてください。
         assertHasAnyElement(members);
         members.forEach(member -> {
             OptionalEntity<MemberAddress> optMemberAddressAsValid = member.getMemberAddressAsValid();
@@ -92,6 +94,7 @@ public class HandsOn05Test extends UnitContainerTestCase {
             optMemberAddressAsValid.ifPresent(memberAddressAsValid -> {
                 // TODO m.inoue これだとアサートが通ることは当たり前。会員住所が存在し得る人がちゃんと取得できていることを確認する必要がある（しかも、ifPresentの素通りパターンもある） (2025/04/19)
                 // memberAddressAsValidが存在するmember を assert で取ってきたいけどやり方が分からない...existsMemberAddressで条件指定したらできるけど、それだと業務的one-to-one使ってる意味がない
+                // TODO mayukorin section4の "test_searchMemberWithMemberWithdrawal()" で似たことやっている by jflute (2025/04/22)
                 assertNotNull(memberAddressAsValid);
             });
             
@@ -113,7 +116,7 @@ public class HandsOn05Test extends UnitContainerTestCase {
             cb.setupSelect_Member().withMemberStatus();
             cb.setupSelect_Member().withMemberAddressAsValid(currentLocalDate()).withRegion();
             cb.query().setPaymentCompleteFlg_Equal_True();
-            // TODO done mayukorin MEMBER_ADDRESS自身が、REGION_IDを持ってるので、REGIONまで行かなくてもいい by jflute (2025/04/15)
+            // done mayukorin MEMBER_ADDRESS自身が、REGION_IDを持ってるので、REGIONまで行かなくてもいい by jflute (2025/04/15)
             cb.query().queryMember().queryMemberAddressAsValid(currentLocalDate()).setRegionId_Equal_千葉();
         });
         // ## Assert ##
@@ -125,7 +128,7 @@ public class HandsOn05Test extends UnitContainerTestCase {
             log("memberStatusName: {}, memberAddress: {}",
                     member.getMemberStatus().get().getMemberStatusName(), memberAddress.getAddress());
 
-            // TODO done mayukorin ここもおんなじ by jflute (2025/04/15)
+            // done mayukorin ここもおんなじ by jflute (2025/04/15)
             // [1on1でのふぉろー] 名前によるイメージではなく、構造に着目して欲しい
             assertTrue(memberAddress.isRegionId千葉());
         });
@@ -205,4 +208,17 @@ public class HandsOn05Test extends UnitContainerTestCase {
     // 業務的one-to-oneは、相手を絞る。
     // 業務的many-to-oneは、自分を絞って汎用的なIDを特定しないといけない。
     //  -> 一応、DBFluteで業務的many-to-oneも表現しようと思えばできる。(推奨するわけではないが)
+    
+    // [1on1でのふぉろー] テストデータの品質の大切さ
+    // o システムの品質に直結する (間違ったデータでテストして通っても信頼度が低い)
+    // o さんざんデバッグして最終的にテストデータが間違っていただけだった問題
+    //
+    // 現場でもまあまあ使われている。
+
+    // [1on1でのふぉろー] SQLフォーマット話
+    // o 例えばJavaだと、フォーマットってほぼ世界共通に近い (Java自身がオススメフォーマットを出している(ようなもの))
+    // o ただ、SQLだと、世の中バラバラ、幾つかの方法論があるけど、どれもメジャーじゃない
+    // TODO mayukorin take-finally.sql, もう少しだけConditionBeanスタイルに近づけてみてください by jflute (2025/04/22)
+    // ちなみに、ConditionBeanスタイルと似ているガイド！
+    // https://www.sqlstyle.guide/ja/
 }
