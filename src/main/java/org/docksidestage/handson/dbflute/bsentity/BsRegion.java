@@ -280,7 +280,7 @@ public abstract class BsRegion extends AbstractEntity implements DomainEntity {
      */
     public String getRegionName() {
         checkSpecifiedProperty("regionName");
-        return _regionName;
+        return convertEmptyToNull(_regionName);
     }
 
     /**

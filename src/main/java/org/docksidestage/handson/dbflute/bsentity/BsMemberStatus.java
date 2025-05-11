@@ -292,7 +292,7 @@ public abstract class BsMemberStatus extends AbstractEntity implements DomainEnt
      */
     public String getMemberStatusCode() {
         checkSpecifiedProperty("memberStatusCode");
-        return _memberStatusCode;
+        return convertEmptyToNull(_memberStatusCode);
     }
 
     /**
@@ -313,7 +313,7 @@ public abstract class BsMemberStatus extends AbstractEntity implements DomainEnt
      */
     public String getMemberStatusName() {
         checkSpecifiedProperty("memberStatusName");
-        return _memberStatusName;
+        return convertEmptyToNull(_memberStatusName);
     }
 
     /**
@@ -334,7 +334,7 @@ public abstract class BsMemberStatus extends AbstractEntity implements DomainEnt
      */
     public String getDescription() {
         checkSpecifiedProperty("description");
-        return _description;
+        return convertEmptyToNull(_description);
     }
 
     /**

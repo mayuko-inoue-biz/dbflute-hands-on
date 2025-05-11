@@ -210,7 +210,7 @@ public abstract class BsProductCategory extends AbstractEntity implements Domain
      */
     public String getProductCategoryCode() {
         checkSpecifiedProperty("productCategoryCode");
-        return _productCategoryCode;
+        return convertEmptyToNull(_productCategoryCode);
     }
 
     /**
@@ -230,7 +230,7 @@ public abstract class BsProductCategory extends AbstractEntity implements Domain
      */
     public String getProductCategoryName() {
         checkSpecifiedProperty("productCategoryName");
-        return _productCategoryName;
+        return convertEmptyToNull(_productCategoryName);
     }
 
     /**
@@ -250,7 +250,7 @@ public abstract class BsProductCategory extends AbstractEntity implements Domain
      */
     public String getParentCategoryCode() {
         checkSpecifiedProperty("parentCategoryCode");
-        return _parentCategoryCode;
+        return convertEmptyToNull(_parentCategoryCode);
     }
 
     /**

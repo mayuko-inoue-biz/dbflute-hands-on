@@ -239,7 +239,7 @@ public abstract class BsProductStatus extends AbstractEntity implements DomainEn
      */
     public String getProductStatusCode() {
         checkSpecifiedProperty("productStatusCode");
-        return _productStatusCode;
+        return convertEmptyToNull(_productStatusCode);
     }
 
     /**
@@ -260,7 +260,7 @@ public abstract class BsProductStatus extends AbstractEntity implements DomainEn
      */
     public String getProductStatusName() {
         checkSpecifiedProperty("productStatusName");
-        return _productStatusName;
+        return convertEmptyToNull(_productStatusName);
     }
 
     /**
