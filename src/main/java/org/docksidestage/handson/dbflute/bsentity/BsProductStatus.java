@@ -11,7 +11,7 @@ import org.docksidestage.handson.dbflute.allcommon.CDef;
 import org.docksidestage.handson.dbflute.exentity.*;
 
 /**
- * The entity of product_status as TABLE. <br>
+ * The entity of PRODUCT_STATUS as TABLE. <br>
  * 商品ステータス
  * @author DBFlute(AutoGenerator)
  */
@@ -147,11 +147,11 @@ public abstract class BsProductStatus extends AbstractEntity implements DomainEn
     // ===================================================================================
     //                                                                   Referrer Property
     //                                                                   =================
-    /** product by PRODUCT_STATUS_CODE, named 'productList'. */
+    /** PRODUCT by PRODUCT_STATUS_CODE, named 'productList'. */
     protected List<Product> _productList;
 
     /**
-     * [get] product by PRODUCT_STATUS_CODE, named 'productList'.
+     * [get] PRODUCT by PRODUCT_STATUS_CODE, named 'productList'.
      * @return The entity list of referrer property 'productList'. (NotNull: even if no loading, returns empty list)
      */
     public List<Product> getProductList() {
@@ -160,7 +160,7 @@ public abstract class BsProductStatus extends AbstractEntity implements DomainEn
     }
 
     /**
-     * [set] product by PRODUCT_STATUS_CODE, named 'productList'.
+     * [set] PRODUCT by PRODUCT_STATUS_CODE, named 'productList'.
      * @param productList The entity list of referrer property 'productList'. (NullAllowed)
      */
     public void setProductList(List<Product> productList) {

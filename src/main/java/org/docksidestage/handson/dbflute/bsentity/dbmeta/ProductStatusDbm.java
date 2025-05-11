@@ -59,9 +59,9 @@ public class ProductStatusDbm extends AbstractDBMeta {
     //                                                                          Table Info
     //                                                                          ==========
     protected final String _tableDbName = "product_status";
-    protected final String _tableDispName = "product_status";
+    protected final String _tableDispName = "PRODUCT_STATUS";
     protected final String _tablePropertyName = "productStatus";
-    protected final TableSqlName _tableSqlName = new TableSqlName("product_status", _tableDbName);
+    protected final TableSqlName _tableSqlName = new TableSqlName("PRODUCT_STATUS", _tableDbName);
     { _tableSqlName.xacceptFilter(DBFluteConfig.getInstance().getTableSqlNameFilter()); }
     public String getTableDbName() { return _tableDbName; }
     public String getTableDispName() { return _tableDispName; }
@@ -117,7 +117,7 @@ public class ProductStatusDbm extends AbstractDBMeta {
     //                                     Referrer Property
     //                                     -----------------
     /**
-     * product by PRODUCT_STATUS_CODE, named 'productList'.
+     * PRODUCT by PRODUCT_STATUS_CODE, named 'productList'.
      * @return The information object of referrer property. (NotNull)
      */
     public ReferrerInfo referrerProductList() {

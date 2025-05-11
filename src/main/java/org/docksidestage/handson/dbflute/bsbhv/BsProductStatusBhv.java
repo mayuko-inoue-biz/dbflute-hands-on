@@ -21,7 +21,7 @@ import org.docksidestage.handson.dbflute.bsentity.dbmeta.*;
 import org.docksidestage.handson.dbflute.cbean.*;
 
 /**
- * The behavior of product_status as TABLE.
+ * The behavior of PRODUCT_STATUS as TABLE.
  * @author DBFlute(AutoGenerator)
  */
 public abstract class BsProductStatusBhv extends AbstractBehaviorWritable<ProductStatus, ProductStatusCB> {
@@ -334,7 +334,7 @@ public abstract class BsProductStatusBhv extends AbstractBehaviorWritable<Produc
 
     /**
      * Load referrer of productList by the set-upper of referrer. <br>
-     * product by PRODUCT_STATUS_CODE, named 'productList'.
+     * PRODUCT by PRODUCT_STATUS_CODE, named 'productList'.
      * <pre>
      * <span style="color: #0000C0">productStatusBhv</span>.<span style="color: #CC4747">loadProduct</span>(<span style="color: #553000">productStatusList</span>, <span style="color: #553000">productCB</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
      *     <span style="color: #553000">productCB</span>.setupSelect...
@@ -365,7 +365,7 @@ public abstract class BsProductStatusBhv extends AbstractBehaviorWritable<Produc
 
     /**
      * Load referrer of productList by the set-upper of referrer. <br>
-     * product by PRODUCT_STATUS_CODE, named 'productList'.
+     * PRODUCT by PRODUCT_STATUS_CODE, named 'productList'.
      * <pre>
      * <span style="color: #0000C0">productStatusBhv</span>.<span style="color: #CC4747">loadProduct</span>(<span style="color: #553000">productStatus</span>, <span style="color: #553000">productCB</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
      *     <span style="color: #553000">productCB</span>.setupSelect...
