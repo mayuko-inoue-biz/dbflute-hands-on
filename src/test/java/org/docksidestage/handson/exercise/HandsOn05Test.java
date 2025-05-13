@@ -79,7 +79,7 @@ public class HandsOn05Test extends UnitContainerTestCase {
         });
 
         // ## Assert ##
-        // TODO done mayukorin booleanの代わりに、markHere() というメソッドが使えるので使ってみてください by jflute (2025/04/22)
+        // done mayukorin booleanの代わりに、markHere() というメソッドが使えるので使ってみてください by jflute (2025/04/22)
         //  e.g. markHere("住所が存在する"); => JavaDoc読んでみてください。
         assertHasAnyElement(members);
         members.forEach(member -> {
@@ -89,12 +89,12 @@ public class HandsOn05Test extends UnitContainerTestCase {
             // done jflute「会員と共に現在の住所を取得して検索」は、現住所が存在する会員を取得するイメージでしょうか？ 今の実装だと「会員と現住所が存在したら取得」になってしまっていて、assert で落ちるなと思ってますby m.inoue (2025/04/05)
             // done mayukorin [へんじ] いえ、「共に現在の住所」ということでくっつけるだけです。なので住所が存在しない人も検索対象です by jflute (2025/04/08)
             // done jflute 変えてみたのですが、下だと、setupSelect してなくてもassertが通るので、「会員住所情報が取得できていること」を確かめることにはなってないですかね？ by m.inoue (2025/04/13)
-            // TODO done mayukorin membersには住所が存在しない人も混ざっているが、"会員住所情報が取得できていることのアサート" では気にしなくていい by jflute (2025/04/15)
+            // done mayukorin membersには住所が存在しない人も混ざっているが、"会員住所情報が取得できていることのアサート" では気にしなくていい by jflute (2025/04/15)
 
             optMemberAddressAsValid.ifPresent(memberAddressAsValid -> {
-                // TODO done m.inoue これだとアサートが通ることは当たり前。会員住所が存在し得る人がちゃんと取得できていることを確認する必要がある（しかも、ifPresentの素通りパターンもある） (2025/04/19)
+                // done m.inoue これだとアサートが通ることは当たり前。会員住所が存在し得る人がちゃんと取得できていることを確認する必要がある（しかも、ifPresentの素通りパターンもある） (2025/04/19)
                 // memberAddressAsValidが存在するmember を assert で取ってきたいけどやり方が分からない...existsMemberAddressで条件指定したらできるけど、それだと業務的one-to-one使ってる意味がない
-                // TODO done mayukorin section4の "test_searchMemberWithMemberWithdrawal()" で似たことやっている by jflute (2025/04/22)
+                // done mayukorin section4の "test_searchMemberWithMemberWithdrawal()" で似たことやっている by jflute (2025/04/22)
 //                assertNotNull(memberAddressAsValid);
                 markHere("会員住所情報が取得できている");
             });
@@ -158,7 +158,7 @@ public class HandsOn05Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(members);
         members.forEach(member -> {
-            // TODO done m.inoue これも、searchCurrentMemberAddress と同じ問題で、最終ログイン時がない会員も取ってきてるので、例外になっている。「最終ログイン時がある会員においてちゃんと最終ログインが取得できていること」を確かめれば良い？ (2025/04/05)
+            // done m.inoue これも、searchCurrentMemberAddress と同じ問題で、最終ログイン時がない会員も取ってきてるので、例外になっている。「最終ログイン時がある会員においてちゃんと最終ログインが取得できていること」を確かめれば良い？ (2025/04/05)
             OptionalEntity<MemberLogin> optMemberLoginAsLatest = member.getMemberLoginAsLatest();
 
             optMemberLoginAsLatest.ifPresent(memberLoginAsLatest -> {
@@ -228,7 +228,7 @@ public class HandsOn05Test extends UnitContainerTestCase {
     // [1on1でのふぉろー] SQLフォーマット話
     // o 例えばJavaだと、フォーマットってほぼ世界共通に近い (Java自身がオススメフォーマットを出している(ようなもの))
     // o ただ、SQLだと、世の中バラバラ、幾つかの方法論があるけど、どれもメジャーじゃない
-    // TODO done mayukorin take-finally.sql, もう少しだけConditionBeanスタイルに近づけてみてください by jflute (2025/04/22)
+    // done mayukorin take-finally.sql, もう少しだけConditionBeanスタイルに近づけてみてください by jflute (2025/04/22)
     // ちなみに、ConditionBeanスタイルと似ているガイド！
     // https://www.sqlstyle.guide/ja/
 }

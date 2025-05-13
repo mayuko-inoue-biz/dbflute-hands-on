@@ -8,6 +8,27 @@ import org.docksidestage.handson.dbflute.exentity.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/* [1on1でのふぉろー]
+[有償]
+Oracle (Oracle) :: 大文字
+SQLServer (Microsoft) :: どっちでもない (内部的には区別してる) // MemberStatus
+DB2 (IBM) :: 大文字
+
+[OSS]
+MySQL (Oracle) :: デフォルトどっちでもない、設定入れると小文字
+　→ しかも、デフォルトだとSQLも大文字・小文字を区別することがある
+　→ デフォルト、Linux/Macだと区別する、Windowsだと区別しない
+　→ 設定入れると、小文字ベースになって、SQLで大文字・小文字を区別しなくなる
+PostgreSQL (Community) :: 小文字
+
+※基本的にはみんなSQLは大文字・小文字を区別しない
+
+
+e.g. MEMBER_STATUS
+why not MemberStatus
+ans. create table MemberStatus → MEMBERSTATUS
+ */
+
 /**
  * DBFluteハンズオン06のためのクラス
  * @author mayukorin
