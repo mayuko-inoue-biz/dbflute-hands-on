@@ -1,6 +1,6 @@
 map:{
     ; formatVersion = 1.1
-    ; pickupDatetime = 2025-05-18T21:14:32.526
+    ; pickupDatetime = 2025-05-18T22:37:23.371
     ; decoMap = map:{
         ; tableList = list:{
             ; map:{
@@ -8,19 +8,20 @@ map:{
                 ; mappingList = list:{}
                 ; propertyList = list:{
                     ; map:{
-                        ; decomment = ログイン情報
+                        ; decomment = 会員のログイン履歴（例：ログイン日時、ログイン時の会員ステータス）。
+ログインする度に登録される。
+一度もログインしたことのない会員にはデータが存在しない。
                         ; databaseComment = ログインするたびに登録されるログイン履歴。
                         ; commentVersion = 0
                         ; authorList = list:{
                             ; m.inoue
                         }
-                        ; pieceCode = 5ac51b24
+                        ; pieceCode = 923ce36f
                         ; pieceOwner = m.inoue
                         ; pieceGitBranch = master
-                        ; pieceDatetime = 2025-05-18T21:04:12.589
+                        ; pieceDatetime = 2025-05-18T22:20:05.358
                         ; previousPieceList = list:{
-                            ; 9a747296
-                            ; 13988281
+                            ; dfa6383f
                         }
                     }
                 }
@@ -55,18 +56,22 @@ map:{
                         ; mappingList = list:{}
                         ; propertyList = list:{
                             ; map:{
-                                ; decomment = 有効開始日
+                                ; decomment = その住所の有効期間の開始日。
+当たり前だけど、同じレコードの有効終了日より前の値を入れる必要がある。
+現住所を検索するときなどに、この有効開始日や有効終了日が使われる。
                                 ; databaseComment = 一つの有効期間の開始を示す日付。
 前の有効終了日の次の日の値が格納される。
                                 ; commentVersion = 0
                                 ; authorList = list:{
                                     ; m.inoue
                                 }
-                                ; pieceCode = 34de5259
+                                ; pieceCode = 6934bb9
                                 ; pieceOwner = m.inoue
                                 ; pieceGitBranch = master
-                                ; pieceDatetime = 2025-05-18T21:00:34.289
-                                ; previousPieceList = list:{}
+                                ; pieceDatetime = 2025-05-18T22:32:34.276
+                                ; previousPieceList = list:{
+                                    ; 95d7fd84
+                                }
                             }
                         }
                     }
@@ -77,19 +82,20 @@ map:{
                 ; mappingList = list:{}
                 ; propertyList = list:{
                     ; map:{
-                        ; decomment = 会員ステータスです
+                        ; decomment = 会員ステータス（例：正式会員、仮会員、退会会員）
+
+どの会員にも、one-to-oneで、必ず1人の会員につき1つの紐づく会員ステータスが存在する。
                         ; databaseComment = 会員ステータス
                         ; commentVersion = 0
                         ; authorList = list:{
                             ; m.inoue
                         }
-                        ; pieceCode = d0f5c22b
+                        ; pieceCode = 9cb1bb95
                         ; pieceOwner = m.inoue
                         ; pieceGitBranch = master
-                        ; pieceDatetime = 2025-05-18T21:13:31.364
+                        ; pieceDatetime = 2025-05-18T22:22:43.513
                         ; previousPieceList = list:{
-                            ; 901b3035
-                            ; 8353e716
+                            ; 7b2c6073
                         }
                     }
                 }

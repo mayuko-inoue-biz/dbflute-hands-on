@@ -4042,13 +4042,13 @@ function StoreClient() {
 				]
 				, 'properties': [
 						{
-						'decomment': 'ログイン情報'
+						'decomment': '会員のログイン履歴（例：ログイン日時、ログイン時の会員ステータス）。<br>ログインする度に登録される。<br>一度もログインしたことのない会員にはデータが存在しない。'
 						, 'databaseComment': 'ログインするたびに登録されるログイン履歴。'
 						, 'commentVersion': 0
 						, 'authors': ['m.inoue']
-						, 'pieceCode': '5ac51b24'
-						, 'pieceDatatime': '2025-05-18T21:04:12.589'
-						, 'previousPieces': ['9a747296','13988281']
+						, 'pieceCode': '923ce36f'
+						, 'pieceDatatime': '2025-05-18T22:20:05.358'
+						, 'previousPieces': ['dfa6383f']
 					}
 				]
 				, 'columns': [
@@ -4083,13 +4083,13 @@ function StoreClient() {
 						]
 						, 'properties': [
 								 {
-								'decomment': '有効開始日'
+								'decomment': 'その住所の有効期間の開始日。<br>当たり前だけど、同じレコードの有効終了日より前の値を入れる必要がある。<br>現住所を検索するときなどに、この有効開始日や有効終了日が使われる。'
 								, 'databaseComment': '一つの有効期間の開始を示す日付。<br>前の有効終了日の次の日の値が格納される。'
 								, 'commentVersion': 0
 								, 'authors': ['m.inoue']
-								, 'pieceCode': '34de5259'
-								, 'pieceDatatime': '2025-05-18T21:00:34.289'
-								, 'previousPieces': []
+								, 'pieceCode': '6934bb9'
+								, 'pieceDatatime': '2025-05-18T22:32:34.276'
+								, 'previousPieces': ['95d7fd84']
 							}
 						]
 					}
@@ -4101,13 +4101,13 @@ function StoreClient() {
 				]
 				, 'properties': [
 						{
-						'decomment': '会員ステータスです'
+						'decomment': '会員ステータス（例：正式会員、仮会員、退会会員）<br><br>どの会員にも、one-to-oneで、必ず1人の会員につき1つの紐づく会員ステータスが存在する。'
 						, 'databaseComment': '会員ステータス'
 						, 'commentVersion': 0
 						, 'authors': ['m.inoue']
-						, 'pieceCode': 'd0f5c22b'
-						, 'pieceDatatime': '2025-05-18T21:13:31.364'
-						, 'previousPieces': ['901b3035','8353e716']
+						, 'pieceCode': '9cb1bb95'
+						, 'pieceDatatime': '2025-05-18T22:22:43.513'
+						, 'previousPieces': ['7b2c6073']
 					}
 				]
 				, 'columns': [
