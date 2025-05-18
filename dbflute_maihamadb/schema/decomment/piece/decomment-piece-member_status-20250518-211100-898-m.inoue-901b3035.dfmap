@@ -1,0 +1,17 @@
+map:{
+    ; formatVersion = 1.1
+    ; tableName = member_status
+    ; columnName = null
+    ; targetType = TABLE
+    ; decomment = 会員ステータスです
+    ; databaseComment = 会員ステータス
+    ; commentVersion = 0
+    ; authorList = list:{
+        ; m.inoue
+    }
+    ; pieceCode = 901b3035
+    ; pieceDatetime = 2025-05-18T21:11:00.898
+    ; pieceOwner = m.inoue
+    ; pieceGitBranch = master
+    ; previousPieceList = list:{}
+}
