@@ -1,6 +1,6 @@
 map:{
     ; formatVersion = 1.1
-    ; pickupDatetime = 2025-05-18T21:12:02.231
+    ; pickupDatetime = 2025-05-18T21:14:32.526
     ; decoMap = map:{
         ; tableList = list:{
             ; map:{
@@ -83,24 +83,14 @@ map:{
                         ; authorList = list:{
                             ; m.inoue
                         }
-                        ; pieceCode = 901b3035
+                        ; pieceCode = d0f5c22b
                         ; pieceOwner = m.inoue
                         ; pieceGitBranch = master
-                        ; pieceDatetime = 2025-05-18T21:11:00.898
-                        ; previousPieceList = list:{}
-                    }
-                    ; map:{
-                        ; decomment = 会員ステータスだよ
-                        ; databaseComment = 会員ステータス
-                        ; commentVersion = 0
-                        ; authorList = list:{
-                            ; m.inoue
+                        ; pieceDatetime = 2025-05-18T21:13:31.364
+                        ; previousPieceList = list:{
+                            ; 901b3035
+                            ; 8353e716
                         }
-                        ; pieceCode = 8353e716
-                        ; pieceOwner = m.inoue
-                        ; pieceGitBranch = master
-                        ; pieceDatetime = 2025-05-18T21:11:03.049
-                        ; previousPieceList = list:{}
                     }
                 }
                 ; columnList = list:{}
