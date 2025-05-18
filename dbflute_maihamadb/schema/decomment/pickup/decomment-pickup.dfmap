@@ -1,0 +1,77 @@
+map:{
+    ; formatVersion = 1.1
+    ; pickupDatetime = 2025-05-18T21:05:49.826
+    ; decoMap = map:{
+        ; tableList = list:{
+            ; map:{
+                ; tableName = member_login
+                ; mappingList = list:{}
+                ; propertyList = list:{
+                    ; map:{
+                        ; decomment = ログイン情報
+                        ; databaseComment = ログインするたびに登録されるログイン履歴。
+                        ; commentVersion = 0
+                        ; authorList = list:{
+                            ; m.inoue
+                        }
+                        ; pieceCode = 5ac51b24
+                        ; pieceOwner = m.inoue
+                        ; pieceGitBranch = master
+                        ; pieceDatetime = 2025-05-18T21:04:12.589
+                        ; previousPieceList = list:{
+                            ; 9a747296
+                            ; 13988281
+                        }
+                    }
+                }
+                ; columnList = list:{}
+            }
+            ; map:{
+                ; tableName = member_address
+                ; mappingList = list:{}
+                ; propertyList = list:{}
+                ; columnList = list:{
+                    ; map:{
+                        ; columnName = ADDRESS
+                        ; mappingList = list:{}
+                        ; propertyList = list:{
+                            ; map:{
+                                ; decomment = 住所が入る
+                                ; databaseComment = まるごと住所
+                                ; commentVersion = 0
+                                ; authorList = list:{
+                                    ; m.inoue
+                                }
+                                ; pieceCode = d227450c
+                                ; pieceOwner = m.inoue
+                                ; pieceGitBranch = master
+                                ; pieceDatetime = 2025-05-18T21:01:29.426
+                                ; previousPieceList = list:{}
+                            }
+                        }
+                    }
+                    ; map:{
+                        ; columnName = VALID_BEGIN_DATE
+                        ; mappingList = list:{}
+                        ; propertyList = list:{
+                            ; map:{
+                                ; decomment = 有効開始日
+                                ; databaseComment = 一つの有効期間の開始を示す日付。
+前の有効終了日の次の日の値が格納される。
+                                ; commentVersion = 0
+                                ; authorList = list:{
+                                    ; m.inoue
+                                }
+                                ; pieceCode = 34de5259
+                                ; pieceOwner = m.inoue
+                                ; pieceGitBranch = master
+                                ; pieceDatetime = 2025-05-18T21:00:34.289
+                                ; previousPieceList = list:{}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

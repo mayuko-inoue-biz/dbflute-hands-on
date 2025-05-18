@@ -4036,6 +4036,65 @@ function StoreClient() {
 	// setup from dbflute if decomment pickup exists
 	this.embeddedPickup = {
 		'tables': [
+			{
+				'tableName': 'member_login'
+				, 'mappings' : [
+				]
+				, 'properties': [
+						{
+						'decomment': 'ログイン情報'
+						, 'databaseComment': 'ログインするたびに登録されるログイン履歴。'
+						, 'commentVersion': 0
+						, 'authors': ['m.inoue']
+						, 'pieceCode': '5ac51b24'
+						, 'pieceDatatime': '2025-05-18T21:04:12.589'
+						, 'previousPieces': ['9a747296','13988281']
+					}
+				]
+				, 'columns': [
+				]
+			}
+			, {
+				'tableName': 'member_address'
+				, 'mappings' : [
+				]
+				, 'properties': [
+				]
+				, 'columns': [
+					 {
+						'columnName': 'ADDRESS'
+						, 'mappings' : [
+						]
+						, 'properties': [
+								 {
+								'decomment': '住所が入る'
+								, 'databaseComment': 'まるごと住所'
+								, 'commentVersion': 0
+								, 'authors': ['m.inoue']
+								, 'pieceCode': 'd227450c'
+								, 'pieceDatatime': '2025-05-18T21:01:29.426'
+								, 'previousPieces': []
+							}
+						]
+					}
+					, {
+						'columnName': 'VALID_BEGIN_DATE'
+						, 'mappings' : [
+						]
+						, 'properties': [
+								 {
+								'decomment': '有効開始日'
+								, 'databaseComment': '一つの有効期間の開始を示す日付。<br>前の有効終了日の次の日の値が格納される。'
+								, 'commentVersion': 0
+								, 'authors': ['m.inoue']
+								, 'pieceCode': '34de5259'
+								, 'pieceDatatime': '2025-05-18T21:00:34.289'
+								, 'previousPieces': []
+							}
+						]
+					}
+				]
+			}
 		]
 	}
 	this.pickupStore = {
