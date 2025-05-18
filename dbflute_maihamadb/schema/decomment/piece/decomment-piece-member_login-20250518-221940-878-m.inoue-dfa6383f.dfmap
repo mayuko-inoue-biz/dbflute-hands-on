@@ -1,0 +1,21 @@
+map:{
+    ; formatVersion = 1.1
+    ; tableName = member_login
+    ; columnName = null
+    ; targetType = TABLE
+    ; decomment = 会員のログインに関する情報（例：ログイン日時、ログイン時の会員ステータス）。
+ログインする度に登録される。
+一度もログインしたことのない会員にはデータが存在しない。
+    ; databaseComment = ログインするたびに登録されるログイン履歴。
+    ; commentVersion = 0
+    ; authorList = list:{
+        ; m.inoue
+    }
+    ; pieceCode = dfa6383f
+    ; pieceDatetime = 2025-05-18T22:19:40.878
+    ; pieceOwner = m.inoue
+    ; pieceGitBranch = master
+    ; previousPieceList = list:{
+        ; 7104af6e
+    }
+}

@@ -1,0 +1,21 @@
+map:{
+    ; formatVersion = 1.1
+    ; tableName = member_address
+    ; columnName = VALID_BEGIN_DATE
+    ; targetType = COLUMN
+    ; decomment = その住所の有効期間の開始日。
+当たり前だけど、同じレコードの有効終了日より前の値を入れる必要がある。
+    ; databaseComment = 一つの有効期間の開始を示す日付。
+前の有効終了日の次の日の値が格納される。
+    ; commentVersion = 0
+    ; authorList = list:{
+        ; m.inoue
+    }
+    ; pieceCode = 95d7fd84
+    ; pieceDatetime = 2025-05-18T22:30:22.605
+    ; pieceOwner = m.inoue
+    ; pieceGitBranch = master
+    ; previousPieceList = list:{
+        ; 6373f258
+    }
+}
