@@ -1,0 +1,19 @@
+map:{
+    ; formatVersion = 1.1
+    ; tableName = member_login
+    ; columnName = null
+    ; targetType = TABLE
+    ; decomment = ログイン情報です
+    ; databaseComment = ログインするたびに登録されるログイン履歴。
+    ; commentVersion = 0
+    ; authorList = list:{
+        ; m.inoue
+    }
+    ; pieceCode = 13988281
+    ; pieceDatetime = 2025-05-18T21:04:02.068
+    ; pieceOwner = m.inoue
+    ; pieceGitBranch = master
+    ; previousPieceList = list:{
+        ; db09cd64
+    }
+}
