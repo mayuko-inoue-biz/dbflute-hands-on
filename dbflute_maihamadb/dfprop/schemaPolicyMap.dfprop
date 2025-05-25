@@ -52,6 +52,12 @@ map:{
         ; themeList = list:{}
         ; statementList = list:{
             ; if columnName is suffix:_FLG then notNull
+            # 個人的な分かりやすさかもしれないが、主キーは_IDで終わってくれた方がカラム名を見るだけで主キーだと分かりやすい。外部キーも同様
+            ; if firstDate is after:2025/05/25 and column is pk then columnName is suffix:_ID
+            ; if firstDate is after:2025/05/25 and column is fk then columnName is suffix:_ID
+            # 登録日時、更新日時は値が入っていてほしい。お問い合わせのログ調査で、どのデータがいつ登録・更新されたかを調べるのにめちゃめちゃ使う。値が入ってなかったら調査できないので絶対に入っててほしい。
+            ; if columnName is REGISTER_DATETIME then notNull
+            ; if columnName is UPDATE_DATETIME then notNull
         }
     }
 }

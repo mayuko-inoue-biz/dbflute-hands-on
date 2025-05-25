@@ -3530,6 +3530,10 @@ PRODUCT_STATUS
    themeList: []
    statementList:
     {if:{columnName is suffix:_FLG}} {then notNull}
+    {if:{firstDate is after:2025/05/25} and if:{column is pk}} {then:{columnName is suffix:_ID # 個人的な分かりやすさかもしれないが、主キーは_IDで終わってくれた方がカラム名を見るだけで主キーだと分かりやすい}}
+    {if:{firstDate is after:2025/05/25} and if:{column is fk}} {then:{columnName is suffix:_ID # 外部キーも同様}}
+    {if:{columnName is REGISTER_DATETIME}} {then notNull}
+    {if:{columnName is UPDATE_DATETIME}} {then notNull}
 </pre>
 
 <h2 id="thanks">Thanks</h2>
