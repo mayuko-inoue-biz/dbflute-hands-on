@@ -29,6 +29,30 @@ why not MemberStatus
 ans. create table MemberStatus → MEMBERSTATUS
  */
 
+/* [1on1でのふぉろー]
+pp conditionBean の名前の由来。なぜ「Bean」なのか、Spring の「Bean」と関係ある？
+o そもそもJavaBeansという技術仕様がある (Javaはコーヒー？ということは豆？)
+o ただし、JavaBeans自体がそこまで広まってないので、Beanはアドリブ的に入れ物クラスで広まってる
+o SpringのBeanは、実質DIコンポーネントだけども、2004年発のフレームワークなので...
+ i おそらくJavaBeansのニュアンスに影響を受けているのかな!?
+o DBFluteのConditionBean (2005年くらい) は、まあSpringと似た感じ、若干入れ物寄り
+ i 検索条件を指定するという振る舞いもあるけど、検索条件の情報を保持する入れ物クラスとも言える
+ i Beanって最後に付けると、イメージが湧きやすかった!? (少なくとも当時は)
+ i 結果的に良かったとは思っている。Conditionだけだと一般用語で認識しづらい用語になるけど...
+ i ConditionBeanってのは固有名詞で独自の言葉なので、それだけでDBFluteと特定できる
+ i (他のツールの用語と比較的かぶらない)
+ i DBFluteは他にも独自の言葉になるように命名しているものが多くある
+ i 業務的one-to-one, Decomment, ...
+ i Beanは、言いやすい/聞きとりやすい言葉であるので、使いやすかった
+
+pp BsクラスとExクラスの違い
+o ジェネレーションギャップパターンのお話
+o 教育番組は昔3チャンネルだった
+o Exクラスの意義の話に加えて、vmの制御のコードまで見てもらった
+
+pp 現場のEntityのお話
+o おそらくデータの出どころの隠蔽
+ */
 /**
  * DBFluteハンズオン06のためのクラス
  * @author mayukorin
