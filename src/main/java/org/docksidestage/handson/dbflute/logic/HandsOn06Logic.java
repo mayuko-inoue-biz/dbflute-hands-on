@@ -97,3 +97,35 @@ public class HandsOn06Logic {
         return members;
     }
 }
+
+/* [1on1でのふぉろー]
+o 「Actionの作り方 (HTMLスタイル)」をやってみた
+o https://dbflute.seasar.org/ja/lastaflute/howto/action/makeashtml.html
+o 久保さんに質問したいこと
+  - 「フォローしている会員の購入一覧」を条件で絞り込むところで、以下のようにExistsReferrerで指定して絞り込んでると思います
+    - ListResultBean<Purchase> purchaseList = purchaseBhv.selectList(cb -> {
+            cb.setupSelect_Member();
+            cb.setupSelect_Product();
+            cb.orScopeQuery(orCB -> {
+                orCB.query().setMemberId_Equal(userId);
+                orCB.query().queryMember().existsMemberFollowingByYourMemberId(followingCB -> {
+                    followingCB.query().setMyMemberId_Equal(userId);
+                });
+            });
+            ...
+        });
+    - 実際のSQLのイメージ
+        - SELECT ... FROM PURCHASE
+            INNER JOIN MEMBER ON ...
+            INNER JOIN PRODUCT ON ...
+            WHERE (PURCHASE.MEMBER_ID = ? OR EXISTS (SELECT MEMBER_ID FROM MEMBER_FOLLOWING WHERE YOUR_MEMBER_ID = MY_MEMBER_ID AND MY_MEMBER_ID = ?))
+
+  - 自分的には、以下のように「その購入会員のIDSが（userIdがフォローしてる会員のID）に含まれる」みたいな絞り方の方が自然に思いつきやすかったのですが、そのような書き方はあまり推奨されてないのでしょうか？
+  - DBFlute でMyselfInScopeそのような書き方ができそうかなと思ったのですが、ExistsReferrerよりはマイナーな感じがしたので...
+  - 以下、SQLのイメージ（OR EXISTS ではなく、OR PURCHASE.MEMBER_ID IN を使う）
+  - SELECT ... FROM PURCHASE
+            INNER JOIN MEMBER ON ...
+            INNER JOIN PRODUCT ON ...
+            WHERE (PURCHASE.MEMBER_ID = ? OR PURCHASE.MEMBER_ID IN (SELECT MEMBER_ID FROM MEMBER_FOLLOWING WHERE YOUR_MEMBER_ID = MY_MEMBER_ID AND MY_MEMBER_ID = 1))
+「フォローしている会員の購入一覧」を条件で絞り込むところで、
+ */
