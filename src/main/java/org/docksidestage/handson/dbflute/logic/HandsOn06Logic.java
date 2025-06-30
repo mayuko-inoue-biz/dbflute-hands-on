@@ -128,4 +128,27 @@ o 久保さんに質問したいこと
             INNER JOIN PRODUCT ON ...
             WHERE (PURCHASE.MEMBER_ID = ? OR PURCHASE.MEMBER_ID IN (SELECT MEMBER_ID FROM MEMBER_FOLLOWING WHERE YOUR_MEMBER_ID = MY_MEMBER_ID AND MY_MEMBER_ID = 1))
 「フォローしている会員の購入一覧」を条件で絞り込むところで、
+
+↓↓↓ くぼふぉろー (2025/06/30)
+
+// +
+// データベース論理として...
+// ↓その会員がフォローしている会員の購入一覧↑
+// ↓(その購入が、ログイン会員にフォローされている会員であれば生き残る)↑
+// ↓(その購入が、ログイン会員にフォローされているという情報がフォローイングに存在していれば生き残る)↑
+// ↓(ここからExistsReferrerなのか、InScopeSubQueryなのか、が分かれるイメージ)
+orCB.query().queryMember().existsMemberFollowingByYourMemberId(followingCB -> {
+    followingCB.useInScopeSubQuery(); // あらかじめオプション
+    followingCB.query().setMyMemberId_Equal(userId);
+});
+
+パフォーマンスチューニングの話。
+ExistsReferrer が速いときもあれば、InScopeSubQueryが速いときもある。
+(両方のケースのお話)
+(MySQL-8.0.xだったら、どっちも速いかも!?)
+
+ID飛び直当ての話。
+ConditionBeanの思想、リレーションシップを重視。
+リレーションシップのないID同士の直当ては業務論理が保証できないのでやらない。
+やらない方が良いだろうという考え方。(joinの省略は微々たるものと捉えて)
  */
